@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.kau.ttokttok.R
-import com.kau.ttokttok.ui.compose.LoginFragment
+import com.kau.ttokttok.ui.compose.login.LoginFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
