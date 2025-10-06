@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:layout_margin="8dp"
+    android:background="#1AFFFFFF"
+    android:gravity="center_vertical"
+    android:minHeight="64dp">
+
+    <!-- Response Icon -->
+    <ImageView
+        android:id="@+id/ivResponseIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_clock"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="응답 상태 아이콘" />
+
+    <!-- Location Text -->
+    <!-- 위층 직접은 임의로 적은것-->
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="위층 직접"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginEnd="16dp" />
+
+    <!-- Response Content -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/tvResponseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="응답 대기 중..."
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvResponseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="23:08"
+            android:textColor="#99FFFFFF"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Response Indicator -->
+    <View
+        android:id="@+id/viewResponseIndicator"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="#4ADE80"
+        android:layout_marginStart="8dp"
+        android:visibility="gone" />
+
+</LinearLayout>
