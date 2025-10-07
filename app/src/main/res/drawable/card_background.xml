@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 아래쪽 그림자 레이어 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1F000000" />  <!-- 그림자 색 (반투명 검정) -->
+            <corners android:radius="12dp" />    <!-- 모서리 둥글게 -->
+        </shape>
+    </item>
+
+    <!-- 위쪽 실제 카드 본체 -->
+    <item android:top="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF" />   <!-- 흰색 카드 -->
+            <corners android:radius="12dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#E0E0E0" />        <!-- 옅은 테두리 -->
+        </shape>
+    </item>
+
+</layer-list>

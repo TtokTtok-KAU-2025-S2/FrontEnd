@@ -11,6 +11,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ttokttok"
-        tools:targetApi="31" />
+        tools:targetApi="31">
+
+        <!-- ✅ 앱 처음 실행 시 열리는 화면 -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Ttokttok.NoActionBar">   <!-- 🔥 이 줄 추가 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ✅ 게시글 상세 화면 -->
+        <activity
+            android:name=".PostActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ttokttok.NoActionBar" /> <!-- 🔥 여기도 선택적으로 추가 가능 -->
+
+    </application>
 
 </manifest>
