@@ -131,4 +131,12 @@ class NoiseInquiryRepository {
     fun resetInquiry() {
         _inquiryState.value = null
     }
+
+    /**
+     * 응답 수집을 종료하고 결과 화면으로 전환
+     */
+    fun completeInquiry() {
+        val current = _inquiryState.value ?: return
+        _inquiryState.value = current.copy(status = InquiryStatus.RESULT)
+    }
 }
