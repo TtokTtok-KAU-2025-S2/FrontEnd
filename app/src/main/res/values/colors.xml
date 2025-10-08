@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- 추가: ResponseAdapter에서 사용하는 색상들 -->
+    <color name="red">#EF4444</color>
+    <color name="gray">#9CA3AF</color>
+    <color name="orange">#F59E0B</color>
+    <color name="light_gray">#D1D5DB</color>
 </resources>
