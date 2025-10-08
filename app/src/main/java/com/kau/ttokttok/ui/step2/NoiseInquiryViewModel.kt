@@ -3,7 +3,8 @@ package com.kau.ttokttok.ui.step2
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.data.remote.NoiseInquiryRepository
-import com.kau.ttokttok.domain.model.*
+import com.kau.ttokttok.domain.model.step2.*
+import com.kau.ttokttok.domain.model.step2.enums.ResponseType
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 

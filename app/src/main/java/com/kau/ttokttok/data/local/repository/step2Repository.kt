@@ -1,6 +1,12 @@
 package com.kau.ttokttok.data.remote
 
-import com.kau.ttokttok.domain.model.*
+import com.kau.ttokttok.domain.model.step2.InquiryResult
+import com.kau.ttokttok.domain.model.step2.NeighborResponse
+import com.kau.ttokttok.domain.model.step2.NoiseCategory
+import com.kau.ttokttok.domain.model.step2.NoiseInquiry
+import com.kau.ttokttok.domain.model.step2.enums.InquiryStatus
+import com.kau.ttokttok.domain.model.step2.enums.NoiseRange
+import com.kau.ttokttok.domain.model.step2.enums.ResponseType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
