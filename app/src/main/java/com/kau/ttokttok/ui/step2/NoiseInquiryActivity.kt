@@ -9,10 +9,11 @@ import com.kau.ttokttok.databinding.ActivityStep2CategoryBinding
 import com.kau.ttokttok.databinding.ActivityStep2SendingBinding
 import com.kau.ttokttok.databinding.ActivityStep2ResponsesBinding
 import com.kau.ttokttok.databinding.ActivityStep2ResultBinding
+import com.kau.ttokttok.domain.model.step2.NoiseCategory
 import com.kau.ttokttok.domain.model.step2.enums.InquiryStatus
 import kotlinx.coroutines.launch
 
-// 소음 탐색 메인 액티비티 - 카테고리 선택 → 전송 → 응답 수집 → 결과 화면의 4단계 화면을 관리
+// 소음 탐색 메인 액티비티 - 카테고리 선택 → 전송 → 응답 수집 → 결과 화면의 4페이지 화면을 관리
 class NoiseInquiryActivity : AppCompatActivity() {
 
     // 최소 결과 진입 응답 수(총 응답 수가 더 적으면 총 응답 수로 대체) - 기본 5명
@@ -21,7 +22,7 @@ class NoiseInquiryActivity : AppCompatActivity() {
     // 현재 표시 중인 상태(중복 화면 전환 방지)
     private var lastShownStatus: InquiryStatus? = null
 
-    // ViewBinding을 위한 변수들 (각 단계별로 다른 레이아웃 사용)
+    // ViewBinding을 위한 변수들 (각 페이지별로 다른 레이아웃 사용)
     private var categoryBinding: ActivityStep2CategoryBinding? = null
     private var sendingBinding: ActivityStep2SendingBinding? = null
     private var responsesBinding: ActivityStep2ResponsesBinding? = null
@@ -72,15 +73,64 @@ class NoiseInquiryActivity : AppCompatActivity() {
         }
     }
 
-    // 1페이지: 카테고리 선택 화면 표시
+    // 1페이지: 카테고리 선택 페이지 표시
     private fun showCategorySelection() {
         clearBindings()
         categoryBinding = ActivityStep2CategoryBinding.inflate(layoutInflater)
         setContentView(categoryBinding!!.root)
-        // TODO: 카테고리 버튼 설정
+
+        // 카테고리 버튼들 설정
+        setupCategoryButtons(viewModel.getCategories())
+
+        // 뒤로가기 버튼 클릭 리스너
+        categoryBinding!!.btnBack.setOnClickListener {
+            finish() // 액티비티 종료
+        }
     }
 
-    // 2페이지: 알림 전송 중 화면 표시
+    // 카테고리 버튼들 설정
+    private fun setupCategoryButtons(categories: List<NoiseCategory>) {
+        categoryBinding?.let { binding ->
+            // 각 카테고리 버튼에 클릭 리스너 설정
+            binding.categoryLiving.setOnClickListener {
+                categories.firstOrNull { it.id == "living" }?.let { category ->
+                    viewModel.startInquiry(category)
+                }
+            }
+
+            binding.categoryPet.setOnClickListener {
+                categories.firstOrNull { it.id == "pet" }?.let { category ->
+                    viewModel.startInquiry(category)
+                }
+            }
+
+            binding.categoryMachine.setOnClickListener {
+                categories.firstOrNull { it.id == "machine" }?.let { category ->
+                    viewModel.startInquiry(category)
+                }
+            }
+
+            binding.categoryPlumbing.setOnClickListener {
+                categories.firstOrNull { it.id == "plumbing" }?.let { category ->
+                    viewModel.startInquiry(category)
+                }
+            }
+
+            binding.categoryExternal.setOnClickListener {
+                categories.firstOrNull { it.id == "external" }?.let { category ->
+                    viewModel.startInquiry(category)
+                }
+            }
+
+            binding.categoryOther.setOnClickListener {
+                categories.firstOrNull { it.id == "other" }?.let { category ->
+                    viewModel.startInquiry(category)
+                }
+            }
+        }
+    }
+
+    // 2페이지: 알림 전송 중 페이지 표시
     private fun showSending() {
         clearBindings()
         sendingBinding = ActivityStep2SendingBinding.inflate(layoutInflater)
@@ -88,7 +138,7 @@ class NoiseInquiryActivity : AppCompatActivity() {
         // TODO: 전송 화면 설정
     }
 
-    // 3페이지: 응답 수집 화면 표시
+    // 3페이지: 응답 수집 페이지 표시
     private fun showResponses() {
         clearBindings()
         responsesBinding = ActivityStep2ResponsesBinding.inflate(layoutInflater)
@@ -96,7 +146,7 @@ class NoiseInquiryActivity : AppCompatActivity() {
         // TODO: 응답 수집 화면 설정
     }
 
-    // 4페이지: 결과 화면 표시
+    // 4페이지: 결과 페이지 표시
     private fun showResult() {
         clearBindings()
         resultBinding = ActivityStep2ResultBinding.inflate(layoutInflater)
