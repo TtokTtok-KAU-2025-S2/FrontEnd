@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
+    id("kotlin-kapt")
 }
 
 android {
@@ -91,4 +92,10 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // hlt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    // (선택) Compose에서 HiltViewModel 쓸 경우
+    implementation(libs.hilt.navigation.compose)
 }
