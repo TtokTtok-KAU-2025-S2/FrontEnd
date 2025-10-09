@@ -44,9 +44,9 @@ fun LoginScreen(
     onClickLogin: (email: String, password: String) -> Unit = { _, _ -> },
     onClickSignup: () -> Unit = {},
     onClickKaKao: () -> Unit = {},
-    onclickNaver: () -> Unit = {},
+    onClickNaver: () -> Unit = {},
     onClickFindId: () -> Unit = {},
-    onClickFindPassword: () -> Unit = {}
+    onClickFindPassword: () -> Unit = {},
 ) {
     val focus = LocalFocusManager.current
     val scroll = rememberScrollState()
@@ -174,7 +174,7 @@ fun LoginScreen(
 
                 LoginButton(
                     onClick = {
-                        // 로그인 처리
+
                     }
                 )
 
@@ -198,7 +198,7 @@ fun LoginScreen(
                         modifier = Modifier.weight(1f)
                     )
                     NaverButton(
-                        onClick = onclickNaver,
+                        onClick = onClickNaver,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -210,7 +210,7 @@ fun LoginScreen(
                 Spacer(Modifier.height(16.dp))
 
                 SignupButton(
-                    onClick = { /* TODO: 회원가입 네비게이션 */ }
+                    onClick = onClickSignup
                 )
             }
 
