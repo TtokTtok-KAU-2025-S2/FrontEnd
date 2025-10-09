@@ -1,14 +1,17 @@
 package com.kau.ttokttok.ui.step2
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.kau.ttokttok.data.remote.NoiseInquiryRepository
 import com.kau.ttokttok.databinding.ActivityStep2CategoryBinding
 import com.kau.ttokttok.databinding.ActivityStep2SendingBinding
 import com.kau.ttokttok.databinding.ActivityStep2ResponsesBinding
 import com.kau.ttokttok.databinding.ActivityStep2ResultBinding
+import com.kau.ttokttok.domain.model.step2.InquiryResult
 import com.kau.ttokttok.domain.model.step2.NoiseCategory
 import com.kau.ttokttok.domain.model.step2.enums.InquiryStatus
 import kotlinx.coroutines.launch
@@ -135,7 +138,15 @@ class NoiseInquiryActivity : AppCompatActivity() {
         clearBindings()
         sendingBinding = ActivityStep2SendingBinding.inflate(layoutInflater)
         setContentView(sendingBinding!!.root)
-        // TODO: 전송 화면 설정
+
+        // 선택된 카테고리 정보 표시
+        lifecycleScope.launch {
+            viewModel.inquiryState.collect { inquiry ->
+                inquiry?.category?.let { category ->
+                    sendingBinding?.tvCategoryName?.text = category.name
+                }
+            }
+        }
     }
 
     // 3페이지: 응답 수집 페이지 표시
@@ -143,7 +154,24 @@ class NoiseInquiryActivity : AppCompatActivity() {
         clearBindings()
         responsesBinding = ActivityStep2ResponsesBinding.inflate(layoutInflater)
         setContentView(responsesBinding!!.root)
-        // TODO: 응답 수집 화면 설정
+
+        // RecyclerView 설정
+        setupResponsesRecyclerView()
+
+        // 결과 보기 버튼 클릭 리스너
+        responsesBinding!!.btnViewResults.setOnClickListener {
+            viewModel.completeInquiry()
+        }
+
+        // 응답 목록 관찰하여 UI 업데이트
+        lifecycleScope.launch {
+            viewModel.inquiryState.collect { inquiry ->
+                inquiry?.let {
+                    responseAdapter.updateResponses(it.responses)
+                    updateResponseProgress(it.responses.size, viewModel.getCompletedResponseCount())
+                }
+            }
+        }
     }
 
     // 4페이지: 결과 페이지 표시
@@ -151,7 +179,71 @@ class NoiseInquiryActivity : AppCompatActivity() {
         clearBindings()
         resultBinding = ActivityStep2ResultBinding.inflate(layoutInflater)
         setContentView(resultBinding!!.root)
-        // TODO: 결과 화면 설정
+
+        // 결과 데이터로 UI 업데이트
+        updateResultUI(viewModel.getResult())
+
+        // 헤더 뒤로가기 버튼
+        resultBinding!!.btnBack.setOnClickListener { finish() }
+
+        // 관리사무소 전송/취소/확인 플로우
+        resultBinding!!.btnSendToManagement.setOnClickListener {
+            resultBinding!!.cardReportConfirmation.visibility = View.VISIBLE
+        }
+        resultBinding!!.btnCancelSend.setOnClickListener {
+            resultBinding!!.cardReportConfirmation.visibility = View.GONE
+        }
+        resultBinding!!.btnConfirmSend.setOnClickListener {
+            resultBinding!!.cardReportConfirmation.visibility = View.GONE
+            resultBinding!!.cardReportSent.visibility = View.VISIBLE
+        }
+
+        // 전송 건너뛰기 → 새 탐색 시작
+        resultBinding!!.btnSkipReport.setOnClickListener {
+            viewModel.resetInquiry()
+            showCategorySelection()
+        }
+
+        // 완료 카드에서 메인으로 복귀
+        resultBinding!!.btnReturnToMainSent.setOnClickListener { finish() }
+        resultBinding!!.btnReturnToMainResolved.setOnClickListener { finish() }
+    }
+
+    // 응답 수집 페이지의 RecyclerView 설정
+    private fun setupResponsesRecyclerView() {
+        responsesBinding?.let { binding ->
+            binding.rvResponses.apply {
+                layoutManager = LinearLayoutManager(this@NoiseInquiryActivity)
+                adapter = responseAdapter
+            }
+        }
+    }
+
+    // 응답 진행률 업데이트
+    private fun updateResponseProgress(total: Int, completed: Int) {
+        responsesBinding?.let { binding ->
+            binding.tvResponseCount.text = "$completed/$total"
+            binding.progressResponses.max = total
+            binding.progressResponses.progress = completed
+
+            // 결과 보기 버튼 활성화 조건
+            val threshold = if (total >= MIN_COMPLETE_FOR_RESULT) MIN_COMPLETE_FOR_RESULT else total
+            val canViewResult = completed >= threshold && threshold > 0
+
+            binding.cardCompleteButton.visibility = if (canViewResult) View.VISIBLE else View.GONE
+            binding.btnViewResults.isEnabled = canViewResult
+        }
+    }
+
+    // 결과 UI 업데이트
+    private fun updateResultUI(result: InquiryResult) {
+        resultBinding?.let { binding ->
+            // 각 응답 유형별 개수 표시
+            binding.tvResultHeardCount.text = result.heardCount.toString()
+            binding.tvResultQuietCount.text = result.quietCount.toString()
+            binding.tvResultSorryCount.text = result.sorryCount.toString()
+            binding.tvTotalResponses.text = "• 총 응답: ${result.totalResponses}명"
+        }
     }
 
     // 모든 바인딩 해제

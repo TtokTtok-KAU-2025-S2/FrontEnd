@@ -47,4 +47,9 @@ class NoiseInquiryViewModel(
 
     // 전체 이웃 수
     fun getTotalNeighborCount(): Int = getCurrentResponses().size
+
+    // 탐색 데이터 초기화 (새 탐색 시작 시 사용)
+    fun resetInquiry() {
+        repository.resetInquiry()
+    }
 }
