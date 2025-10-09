@@ -1,38 +1,27 @@
 package com.kau.ttokttok.ui
 
 import android.os.Bundle
-import androidx.activity.addCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import com.kau.ttokttok.R
-import com.kau.ttokttok.ui.compose.login.LoginFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        supportActionBar?.hide()
         setContentView(R.layout.activity_main)
 
+        // 메인 홈, 내비게이션이 완성되기 전까지는 show 안의 Fragment를 바꿔서 테스트
         if (savedInstanceState == null) {
-            replaceFragment(LoginFragment(), false)
-        }
-
-        onBackPressedDispatcher.addCallback(this) {
-            val fm = supportFragmentManager
-            if (fm.backStackEntryCount > 0) fm.popBackStack() else finish()
+            show(ComposeFragment.newInstance(), addToBackStack = false)
         }
     }
-
-    private fun replaceFragment(
-        fragment: Fragment,
-        addToBackStack: Boolean = true
-    ) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(R.id.container, fragment)
-            if (addToBackStack) addToBackStack(null)
-        }
+    fun show(fragment: Fragment, addToBackStack: Boolean = true) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .apply { if (addToBackStack) addToBackStack(fragment::class.java.simpleName)}
+            .commit()
     }
 }

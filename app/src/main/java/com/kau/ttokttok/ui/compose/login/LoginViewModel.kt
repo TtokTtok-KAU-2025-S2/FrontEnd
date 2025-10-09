@@ -23,7 +23,6 @@ sealed interface LoginEvent {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
 
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
