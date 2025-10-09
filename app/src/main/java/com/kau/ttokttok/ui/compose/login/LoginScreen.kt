@@ -174,7 +174,7 @@ fun LoginScreen(
 
                 LoginButton(
                     onClick = {
-
+                        onClickLogin(email, pw)
                     }
                 )
 
