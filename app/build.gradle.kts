@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt)
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
     id("kotlin-kapt")
 }
