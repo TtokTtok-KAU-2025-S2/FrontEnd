@@ -265,11 +265,10 @@ private fun FrostedPanel(
         shape = corner,
         color = panelColor,
         tonalElevation = 0.dp,
-        shadowElevation = 20.dp,
+        shadowElevation = 0.dp,
         border = BorderStroke(1.dp, borderColor),
         modifier = modifier
             .clip(corner)
-            .background(panelColor) // 안전하게 한 번 더 배경 입힘
     ) {
         Column(Modifier.padding(24.dp)) { // p-8
             content()
@@ -619,8 +618,6 @@ fun BottomNotice(
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 private fun PreviewLogin() {
@@ -628,4 +625,3 @@ private fun PreviewLogin() {
         LoginScreen()
     }
 }
-
