@@ -1,4 +1,4 @@
-package com.kau.ttokttok
+package com.kau.ttokttok.ui.Notification
 
 import android.app.Activity
 
