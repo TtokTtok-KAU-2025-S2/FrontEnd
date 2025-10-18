@@ -2,11 +2,9 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
-    tools:context=".NotificationActivity">
+    android:background="@drawable/main_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -88,7 +86,8 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#6A5ACD"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:id="@+id/ivBellIcon"
@@ -110,6 +109,7 @@
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/bellIconContainer"
                     app:layout_constraintTop_toTopOf="@id/bellIconContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/bellIconContainer"
                     app:layout_constraintEnd_toStartOf="@id/switchAllNotifications" />
 
                 <TextView
@@ -132,7 +132,7 @@
                     android:checked="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@id/tvAllNotificationsDesc" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -189,7 +189,8 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#6A5ACD"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -210,6 +211,7 @@
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/noiseIconContainer"
                     app:layout_constraintTop_toTopOf="@id/noiseIconContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/noiseIconContainer"
                     app:layout_constraintEnd_toStartOf="@id/switchNoise" />
 
                 <TextView
@@ -232,7 +234,7 @@
                     android:checked="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@id/tvNoiseDesc" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -263,7 +265,8 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#6A5ACD"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -284,6 +287,7 @@
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/heartIconContainer"
                     app:layout_constraintTop_toTopOf="@id/heartIconContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/heartIconContainer"
                     app:layout_constraintEnd_toStartOf="@id/switchHeart" />
 
                 <TextView
@@ -306,7 +310,7 @@
                     android:checked="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@id/tvHeartDesc" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -337,7 +341,8 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#6A5ACD"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -358,6 +363,7 @@
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/messageIconContainer"
                     app:layout_constraintTop_toTopOf="@id/messageIconContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/messageIconContainer"
                     app:layout_constraintEnd_toStartOf="@id/switchMessage" />
 
                 <TextView
@@ -380,7 +386,7 @@
                     android:checked="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@id/tvMessageDesc" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -411,7 +417,8 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#6A5ACD"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -432,6 +439,7 @@
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/buildingIconContainer"
                     app:layout_constraintTop_toTopOf="@id/buildingIconContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/buildingIconContainer"
                     app:layout_constraintEnd_toStartOf="@id/switchBuilding" />
 
                 <TextView
@@ -454,7 +462,7 @@
                     android:checked="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@id/tvBuildingDesc" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -486,7 +494,8 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#6A5ACD"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -507,6 +516,7 @@
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/moonIconContainer"
                     app:layout_constraintTop_toTopOf="@id/moonIconContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/moonIconContainer"
                     app:layout_constraintEnd_toEndOf="parent" />
 
                 <TextView

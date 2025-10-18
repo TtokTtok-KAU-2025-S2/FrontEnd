@@ -2,11 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
-    tools:context=".NotificationActivity">
+    android:background="@drawable/main_background">
 
     <!-- 뒤로가기 버튼 -->
     <ImageButton
@@ -55,7 +53,7 @@
         android:layout_marginTop="16dp"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/purple_700"
+        app:cardBackgroundColor="#4A3B7A"
         app:layout_constraintTop_toBottomOf="@id/btnBack">
 
         <LinearLayout
@@ -74,13 +72,13 @@
                 android:layout_marginEnd="2dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/purple_500"
+                app:cardBackgroundColor="#6A5ACD"
                 android:clickable="true"
                 android:foreground="?attr/selectableItemBackground">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="43dp"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="전체"
                     android:textColor="#FFFFFF"
@@ -105,7 +103,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="읽지 않음 (6)"
+                    android:text="읽지 않음"
                     android:textColor="#B8B3E6"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -232,7 +230,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 빈 상태 아이콘을 CardView로 원형 배경 구현 -->
+        <!-- 빈 상태 아이콘 -->
         <androidx.cardview.widget.CardView
             android:layout_width="80dp"
             android:layout_height="80dp"

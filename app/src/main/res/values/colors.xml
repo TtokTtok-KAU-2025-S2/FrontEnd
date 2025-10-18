@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Notification 탭 선택 배경색 (XML에서 사용 중인 #6A5ACD와 동일 톤) -->
+    <color name="tab_selected_bg">#6A5ACD</color>
 </resources>
