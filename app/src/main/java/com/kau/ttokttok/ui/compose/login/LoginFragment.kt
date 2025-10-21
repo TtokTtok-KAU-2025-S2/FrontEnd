@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+
+import com.kau.ttokttok.R
 
 class LoginFragment : Fragment() {
     override fun onCreateView(
@@ -19,7 +22,10 @@ class LoginFragment : Fragment() {
         )
 
         setContent {
-            LoginRoute()
+            LoginRoute(
+                onSuccess = { findNavController().navigate(R.id.mainFragment) },
+                onBack = { findNavController().popBackStack() }
+            )
         }
     }
 }
