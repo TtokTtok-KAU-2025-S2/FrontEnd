@@ -10,4 +10,10 @@
         android:label="Login"
         />
 
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.kau.ttokttok.ui.compose.main.MainFragment"
+        android:label="Main"
+        />
+
 </navigation>
