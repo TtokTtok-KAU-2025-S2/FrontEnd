@@ -71,7 +71,7 @@ fun NavController.navigateTo(
         Destination.STEP1 -> TODO()
         Destination.STEP2 -> TODO()
         Destination.STEP3 -> TODO()
-        Destination.SETTING -> TODO()
+        Destination.SETTING -> navigate(R.id.settingFragment, args, options)
         Destination.NOTIFICATION -> TODO()
     }
 }
