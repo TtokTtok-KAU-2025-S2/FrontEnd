@@ -30,7 +30,7 @@ class NotificationSettingsFragment : Fragment() {
 
     // 저장된 설정을 화면에 표시
     private fun loadSettings() {
-        // TODO: 백엔드 연동 시 서버에서 사용자별 설정 불러오기 (API GET /api/notification/settings)
+        // TODO: 백엔드 연동 시 서버에서 사용자별 설정 불러오기
         val s = vm.settings
         binding.apply {
             switchAllNotifications.isChecked = s.allNotifications  // 전체 알림
@@ -65,7 +65,7 @@ class NotificationSettingsFragment : Fragment() {
                 doNotDisturbStart = tvStartTime.text.toString(),
                 doNotDisturbEnd = tvEndTime.text.toString()
             )
-            // TODO: 백엔드 연동 시 서버에 설정 저장 요청 (API POST /api/notification/settings)
+            // TODO: 백엔드 연동 시 서버에 설정 저장 요청
             // TODO: 서버 응답 성공/실패에 따라 Toast 메시지 변경 필요
             vm.updateSettings(newSettings)  // ViewModel에 저장
         }
