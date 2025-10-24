@@ -8,6 +8,7 @@ import com.kau.ttokttok.domain.model.step2.enums.ResponseType
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// TODO: 백엔드 연동 시 에러 처리 로직 추가 필요 (네트워크 에러, 타임아웃 등)
 /**
  * 소음 탐색 ViewModel
  * - 카테고리 목록은 즉시 조회(getCategories)
@@ -18,37 +19,33 @@ class NoiseInquiryViewModel(
     private val repository: NoiseInquiryRepository
 ) : ViewModel() {
 
-    // 레포지토리의 현재 탐색 상태(카테고리/단계/응답 목록)가 들어있음
+    // TODO: 백엔드 연동 시 서버 실시간 데이터 반영
     val inquiryState: StateFlow<NoiseInquiry?> = repository.inquiryState
 
-    // 카테고리 목록을 즉시 반환
+    // TODO: 백엔드 연동 시 서버에서 카테고리 가져오는 동안 로딩 상태 관리 필요
     fun getCategories(): List<NoiseCategory> = repository.getNoiseCategories()
 
-    // 선택한 카테고리로 탐색 시작
+    // TODO: 백엔드 연동 시 서버 응답 에러 처리 추가
     fun startInquiry(category: NoiseCategory) {
         viewModelScope.launch {
             repository.startInquiry(category)
         }
     }
 
-    //응답 수집 종료 → 결과 화면으로 전환
+    // TODO: 백엔드 연동 시 서버에 완료 요청 전송 및 응답 처리
     fun completeInquiry() {
         repository.completeInquiry()
     }
 
-    // 현재 응답들을 바탕으로 결과 계산
+    // TODO: 백엔드 연동 시 서버에서 집계된 결과 가져오기
     fun getResult(): InquiryResult = repository.getInquiryResult()
 
-    // 현재 응답 리스트
     fun getCurrentResponses(): List<NeighborResponse> = inquiryState.value?.responses ?: emptyList()
 
-    // 응답 완료된 이웃 수
     fun getCompletedResponseCount(): Int = getCurrentResponses().count { it.response != ResponseType.PENDING }
 
-    // 전체 이웃 수
     fun getTotalNeighborCount(): Int = getCurrentResponses().size
 
-    // 탐색 데이터 초기화 (새 탐색 시작 시 사용)
     fun resetInquiry() {
         repository.resetInquiry()
     }

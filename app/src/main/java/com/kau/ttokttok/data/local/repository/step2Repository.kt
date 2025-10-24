@@ -1,4 +1,4 @@
-package com.kau.ttokttok.data.remote
+com.kau.ttokttok.data.local.repository
 
 import com.kau.ttokttok.domain.model.step2.InquiryResult
 import com.kau.ttokttok.domain.model.step2.NeighborResponse
@@ -13,16 +13,18 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 import kotlin.random.Random
 
+// TODO: 백엔드 연동 시 ApiService 추가하여 실제 서버 통신 구현 필요
 /**
  * 소음 탐색 기능 관련 데이터를 관리하는 저장소 클래스
- * 서버 통신은 없고, 하드코딩 및 시뮬레이션으로 동작함
+ * 현재는 서버 통신 없이 하드코딩 및 시뮬레이션으로 동작함
  */
 class NoiseInquiryRepository {
 
-    // 현재 탐색 상태를 저장하며 변경 시 UI로 전달
+    // TODO: 백엔드 연동 시 서버에서 받은 실시간 상태를 반영하도록 수정
     private val _inquiryState = MutableStateFlow<NoiseInquiry?>(null)
     val inquiryState: StateFlow<NoiseInquiry?> get() = _inquiryState
 
+    // TODO: 백엔드 연동 시 서버 API에서 카테고리 목록을 가져오도록 수정 (GET /api/noise/categories)
     fun getNoiseCategories(): List<NoiseCategory> {
         return listOf(
             NoiseCategory("living", "생활소음", "ic_home", NoiseRange.SURROUNDING, "#3B82F6"),
@@ -34,15 +36,16 @@ class NoiseInquiryRepository {
         )
     }
 
+    // TODO: 백엔드 연동 시 실제 서버에 탐색 요청 전송 (POST /api/noise/inquiry)
+    // TODO: 서버 응답으로 받은 inquiry_id를 저장하고 이후 폴링/웹소켓으로 상태 업데이트
     /**
      * 새로운 소음 탐색 시작
      * 선택된 카테고리 기반으로 가상의 이웃 리스트 생성 후 탐색 진행 상태 업데이트
      */
     suspend fun startInquiry(category: NoiseCategory) {
-        // 탐색 범위에 맞는 가상의 이웃 응답 리스트 생성
+        // TODO: 실제 이웃 리스트는 서버에서 받아오도록 수정 (사용자의 위치 정보 기반)
         val responses = generateDummyResponses(category.range)
 
-        // 초기 탐색 상태 생성 (전송 중 상태)
         val inquiry = NoiseInquiry(
             category = category,
             status = InquiryStatus.SENDING,
@@ -50,23 +53,22 @@ class NoiseInquiryRepository {
         )
         _inquiryState.value = inquiry
 
-        // 전송 중인 것처럼 2초 딜레이
+        // TODO: 백엔드 연동 시 실제 전송 완료 여부를 서버 응답으로 확인
         delay(2000L)
 
-        // 전송 완료, 응답 수집 단계로 상태 변경
         _inquiryState.value = inquiry.copy(status = InquiryStatus.RESPONSES)
 
-        // 각 이웃 응답 결과 무작위로 시뮬레이션 시작
+        // TODO: 백엔드 연동 시 실시간 응답 수신 (폴링 또는 WebSocket)으로 대체
         simulateResponses()
     }
 
+    // TODO: 백엔드 연동 시 삭제 예정 - 서버에서 실제 이웃 정보 제공
     /**
      * 가상의 이웃 응답 리스트 생성
      * 동 전체 또는 주변 8세대 기준으로 위치 이름 생성
      */
     private fun generateDummyResponses(range: NoiseRange): List<NeighborResponse> {
         if (range == NoiseRange.BUILDING) {
-            // 동 전체 20세대 임의로 생성
             return (1..20).map { idx ->
                 NeighborResponse(
                     id = "building-$idx",
@@ -74,7 +76,6 @@ class NoiseInquiryRepository {
                 )
             }
         } else {
-            // 주변 8세대 위치 이름 미리 지정, 어디서 온 답변인지는 모르게 해야할 듯 함
             return listOf(
                 "위층 직접", "위층 대각", "아래층 직접", "아래층 대각",
                 "좌측 인접", "좌측 2칸", "우측 인접", "우측 2칸"
@@ -87,6 +88,7 @@ class NoiseInquiryRepository {
         }
     }
 
+    // TODO: 백엔드 연동 시 삭제 예정 - 실시간 응답은 폴링/웹소켓으로 수신
     /**
      * 응답 상태를 무작위로 변경하는 시뮬레이션 함수 (임의의 수치)
      * 한 명씩 0.5초 간격으로 응답 상태 저장하고 상태 업데이트
@@ -99,19 +101,18 @@ class NoiseInquiryRepository {
         for (i in currentResponses.indices) {
             delay(500L)
 
-            // 응답 70% 확률로 기록, 30%는 대기 유지
             if (Random.nextFloat() < 0.7f) {
                 val randomResponse = possibleResponses.random()
                 currentResponses[i] = currentResponses[i].copy(
                     response = randomResponse,
                     timestamp = Date()
                 )
-                // 상태 갱신 (응답 수신 상태로 변경)
                 _inquiryState.value = inquiry.copy(responses = currentResponses.toList())
             }
         }
     }
 
+    // TODO: 백엔드 연동 시 서버에서 계산된 결과를 받아오도록 수정 (GET /api/noise/inquiry/{id}/result)
     /**
      * 현재 응답 통계 계산해서 결과 객체 반환
      */
@@ -138,6 +139,7 @@ class NoiseInquiryRepository {
         _inquiryState.value = null
     }
 
+    // TODO: 백엔드 연동 시 서버에 탐색 완료 알림 전송 (POST /api/noise/inquiry/{id}/complete)
     /**
      * 응답 수집을 종료하고 결과 화면으로 전환
      */
