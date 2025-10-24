@@ -46,10 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -69,20 +66,18 @@ import androidx.compose.ui.zIndex
 import com.kau.ttokttok.ui.component.common.background.StarField
 import com.kau.ttokttok.ui.component.common.card.GlassCard
 import com.kau.ttokttok.ui.component.common.card.GlassCardClickable
+import com.kau.ttokttok.ui.navigation.Destination
 
 @Preview
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    onNavigate: (String) -> Unit = {}
+    onNavigate: (Destination) -> Unit = {}
 ) {
     // TODO: 디자인 디테일 한번 더 잡기
 
     val focus = LocalFocusManager.current
     val scroll = rememberScrollState()
-
-    // 화면 상태 (디자인/미리보기용)
-    var email by rememberSaveable { mutableStateOf("") }
 
     Box(
         modifier = modifier
@@ -122,7 +117,10 @@ fun MainScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         ) {
-            HomeHeader()
+            HomeHeader(
+                onClickNotification = { onNavigate(Destination.NOTIFICATION) },
+                onClickSetting = { onNavigate(Destination.SETTING) },
+            )
 
             Spacer(Modifier.height(32.dp))
 
@@ -131,13 +129,15 @@ fun MainScreen(
             Spacer(Modifier.height(32.dp))
 
             // TODO: 섬 구현
-            NavigatorPreview()
+            NavigatorPreview(
+                onNavigate = { dest -> onNavigate(dest)}
+            )
 
             Spacer(Modifier.height(32.dp))
 
             // 사전 양해 / 게시판
             QuickActionsGrid(
-                onNavigate = onNavigate,
+                onNavigate = { dest -> onNavigate(dest)},
                 modifier = modifier.fillMaxWidth()
             )
 
@@ -145,7 +145,7 @@ fun MainScreen(
 
             // 나의 배려 현황
             MyCareStatusCard(
-                onNavigate = onNavigate
+                onNavigate = { dest -> onNavigate(dest)}
             )
         }
     }
@@ -153,6 +153,8 @@ fun MainScreen(
 
 @Composable
 fun HomeHeader(
+    onClickNotification: () -> Unit,
+    onClickSetting: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -238,7 +240,7 @@ fun HomeHeader(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     IconButton(
-                        onClick = {  },
+                        onClick = onClickNotification,
                         modifier = Modifier
                             .size(36.dp)
                             .border(1.dp, Color.White.copy(alpha = 0.1f))
@@ -253,7 +255,7 @@ fun HomeHeader(
                     }
 
                     IconButton(
-                        onClick = {  },
+                        onClick = onClickSetting,
                         modifier = Modifier
                             .size(36.dp)
                             .border(1.dp, Color.White.copy(alpha = 0.1f))
@@ -444,7 +446,7 @@ fun MonthlyNeighborCard(
 
 @Composable
 fun QuickActionsGrid(
-    onNavigate: (String) -> Unit,
+    onNavigate: (Destination) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -465,7 +467,7 @@ fun QuickActionsGrid(
                     modifier = Modifier.size(24.dp)
                 )
             },
-            onClick = { onNavigate("pre-consideration") },
+            onClick = { onNavigate(Destination.PRECONSIDERATION) },
             modifier = Modifier.weight(1f)
         )
 
@@ -483,7 +485,7 @@ fun QuickActionsGrid(
                     modifier = Modifier.size(22.dp)
                 )
             },
-            onClick = { onNavigate("community") },
+            onClick = { onNavigate(Destination.COMMUNITY) },
             modifier = Modifier.weight(1f)
         )
     }
@@ -545,7 +547,9 @@ private fun ActionCardItem(
                     .shadow(8.dp, RoundedCornerShape(12.dp), clip = false)
                     .align(Alignment.CenterHorizontally),
                 contentAlignment = Alignment.Center
-            ) { icon() }
+            ) {
+                icon()
+            }
 
             Spacer(Modifier.height(8.dp))
 
@@ -566,7 +570,7 @@ private fun ActionCardItem(
 @Composable
 fun MyCareStatusCard(
     earnedBadgesCount: Int = 3,
-    onNavigate: (String) -> Unit
+    onNavigate: (Destination) -> Unit
 ) {
     // 등장 애니메이션
     val offsetY = remember { Animatable(50f) }
@@ -605,7 +609,7 @@ fun MyCareStatusCard(
                     value = "95",
                     label = "신뢰지수",
                     delay = 0.0, // TODO: 테스트 이후 바꾸기
-                    onClick = { onNavigate("trust-score") },
+                    onClick = { onNavigate(Destination.TRUST_SCORE) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -613,7 +617,7 @@ fun MyCareStatusCard(
                     value = "1250",
                     label = "배려포인트",
                     delay = 0.0, // TODO: 테스트 이후 바꾸기
-                    onClick = { onNavigate("care-points") },
+                    onClick = { onNavigate(Destination.CARE_POINT) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -622,7 +626,7 @@ fun MyCareStatusCard(
                     label = "배려 뱃지",
                     delay = 0.0, // TODO: 테스트 이후 바꾸기
                     isBadge = true,
-                    onClick = { onNavigate("badge-collection") },
+                    onClick = { onNavigate(Destination.BADGE) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -662,7 +666,7 @@ private fun CareStatusItem(
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White.copy(alpha = 0.1f))
             .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
-            .clickable(interactionSource = press, indication = null) { onClick() }
+            .clickable(interactionSource = press, indication = null, onClick = onClick )
             .graphicsLayer {
                 scaleX = scale * pressScale
                 scaleY = scale * pressScale
@@ -697,29 +701,31 @@ private fun CareStatusItem(
 }
 
 data class FloatingIslandStep(
-    val id: String,
+    val destination: Destination,
     val title: String,
     val screen: String
 )
 
 @Composable
-fun NavigatorPreview() {
+fun NavigatorPreview(
+    onNavigate: (Destination) -> Unit
+) {
     val steps = listOf(
-        FloatingIslandStep("step1", "소음 캘린더", "step1"),
-        FloatingIslandStep("step2", "똑똑 공동 탐색", "step2"),
-        FloatingIslandStep("step3", "월간 소음 리포트", "monthly-report")
+        FloatingIslandStep(Destination.STEP1, "소음 캘린더", "step1"),
+        FloatingIslandStep(Destination.STEP2, "월간 소음 리포트", "step2"),
+        FloatingIslandStep(Destination.STEP3, "똑똑 공동 탐색", "step3")
     )
 
     FloatingIslandNavigator(
         steps = steps,
-        onNavigate = { id -> println("Navigate to $id") }
+        onNavigate = onNavigate
     )
 }
 
 @Composable
 fun FloatingIslandNavigator(
     steps: List<FloatingIslandStep>,
-    onNavigate: (String) -> Unit,
+    onNavigate: (Destination) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -729,7 +735,7 @@ fun FloatingIslandNavigator(
     ) {
         steps.forEach { step ->
             GlassCardClickable(
-                onClick = { onNavigate(step.id) },
+                onClick = { onNavigate(step.destination) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
