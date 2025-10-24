@@ -56,7 +56,7 @@ class NotificationAdapter(
 
             // NEW 배지 표시 (새 알림일 때만)
             b.newBadgeContainer.visibility = if (item.isNew) View.VISIBLE else View.GONE
-            
+
             // 읽지 않음 인디케이터 (안 읽은 알림일 때만)
             b.unreadIndicatorContainer.visibility = if (!item.isRead) View.VISIBLE else View.GONE
 

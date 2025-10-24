@@ -77,6 +77,7 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <TextView
+                    android:id="@+id/tvTabAll"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -101,6 +102,7 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <TextView
+                    android:id="@+id/tvTabUnread"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="읽지 않음"
