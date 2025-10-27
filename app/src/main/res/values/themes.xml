@@ -13,4 +13,11 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- Custom Calendar Theme -->
+    <style name="CustomCalendarTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">#8B5CF6</item>
+        <item name="colorAccent">#8B5CF6</item>
+        <item name="android:datePickerStyle">@android:style/Widget.Material.DatePicker</item>
+    </style>
 </resources>
