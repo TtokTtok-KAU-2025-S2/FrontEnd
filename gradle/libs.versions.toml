@@ -25,6 +25,8 @@ androidxHilt = "1.2.0"   # hilt-navigation-compose, hilt-work 등
 
 javapoet = "1.13.0"
 
+navigation = "2.8.4"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -47,6 +49,8 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences", v
 
 # Optional: Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.5" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+androidx-navigation-ui-ktx       = { module = "androidx.navigation:navigation-ui-ktx",       version.ref = "navigation" }
 
 # Optional: ViewModel integration
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-compose" }

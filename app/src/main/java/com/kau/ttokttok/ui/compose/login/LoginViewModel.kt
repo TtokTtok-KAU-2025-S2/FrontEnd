@@ -42,6 +42,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // TODO: 나중에 repository로 부르기
+                _events.emit(LoginEvent.NavigateHome)
+
                 throw Exception("테스트용 실패")
             } catch (e: Exception) {
                 emit(LoginEvent.ShowAlert("로그인 실패", e.message ?: "알 수 없는 오류입니다."))
