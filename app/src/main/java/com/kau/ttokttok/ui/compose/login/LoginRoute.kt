@@ -62,7 +62,8 @@ fun LoginRoute(
         },
 
         onClickSignup = {
-            viewModel.onClickSignUp()
+            // TODO: register -> 화면 전환으로 바꾸기
+            viewModel.onClickKaKao()
         },
 
         onClickKaKao = {

@@ -210,7 +210,7 @@ fun LoginScreen(
                 Spacer(Modifier.height(16.dp))
 
                 SignupButton(
-                    onClick = onClickSignup
+                    onClick = { }
                 )
             }
 
