@@ -1,46 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ttokttok</string>
+    <string name="app_name">똑똑</string>
 
-    <!-- Noise Calendar Activity -->
-    <string name="back_button">뒤로가기</string>
-    <string name="noise_calendar_title">소음 캘린더</string>
-    <string name="noise_calendar_subtitle">기록된 소음을 확인하고 새로운 기록을 추가하세요</string>
-    <string name="record_count_placeholder">2건 기록</string>
-    <string name="monthly_noise_diary">월간 소음 일지</string>
-    <string name="total_records_placeholder">총 3건</string>
-    <string name="legend_has_record">기록 있는 날</string>
-    <string name="legend_no_record">기록 없는 날</string>
-    <string name="selected_date_records">2025. 10. 27. 기록</string>
-    <string name="noise_pattern_analysis">소음 패턴 분석</string>
-    <string name="emotional_stress_to_data">감정적 스트레스를 객관적 데이터로 변환</string>
-    <string name="total_records">총 기록</string>
-    <string name="average_intensity">평균 강도</string>
-    <string name="add_noise_record">소음 기록 추가</string>
-    <string name="calendar_icon">캘린더 아이콘</string>
-    <string name="book_icon">책 아이콘</string>
-    <string name="chart_icon">차트 아이콘</string>
+    <!-- 측정 화면 -->
+    <string name="noise_measurement">소음 측정</string>
+    <string name="measuring_noise">마이크를 통해 소음을 측정합니다</string>
+    <string name="start_measurement">측정 시작</string>
+    <string name="stop_measurement">정지</string>
+    <string name="max_db">최대</string>
+    <string name="avg_db">평균</string>
+    <string name="duration">시간</string>
 
-    <!-- Category Selection Dialog -->
-    <string name="category_step_title">3. 소음 카테고리</string>
-    <string name="category_description">소음의 종류를 선택해주세요</string>
-    <string name="category_label">소음 카테고리</string>
-    <string name="living_noise">생활소음</string>
-    <string name="living_noise_desc">발소리, 문 닫는 소리, 가구 이동 등</string>
-    <string name="pet_noise">애완동물 소음</string>
-    <string name="pet_noise_desc">개 짖는 소리, 고양이 뛰는 소리 등</string>
-    <string name="machine_noise">기계 소음</string>
-    <string name="machine_noise_desc">세탁기, 청소기, 에어컨 등</string>
-    <string name="other_noise">기타 소음</string>
-    <string name="other_noise_desc">위에 해당하지 않는 기타 소음</string>
-    <string name="btn_previous">이전</string>
-    <string name="btn_cancel">취소</string>
-    <string name="btn_next">다음</string>
-    <string name="tag_icon">태그 아이콘</string>
+    <!-- 일기 화면 -->
+    <string name="measurement_result">측정 결과</string>
+    <string name="measurement_time">측정 시간</string>
+    <string name="max_noise">최대 소음</string>
+    <string name="avg_noise">평균 소음</string>
+    <string name="ai_suggested_type">AI 추천 소음 유형</string>
+    <string name="select_noise_type">소음 유형 선택</string>
+    <string name="simple_memo">간단한 메모 *</string>
+    <string name="memo_hint">소음의 특징이나 상황을 간단히 기록해주세요 (필수)</string>
+    <string name="ai_generated_diary">AI가 생성한 일기</string>
+    <string name="save_log">일기 저장</string>
 
-    <!-- Daily Records Dialog -->
-    <string name="close_dialog">닫기</string>
-    <string name="no_records_for_this_day">이 날짜에 등록된 기록이 없습니다</string>
-    <string name="add_record">기록 추가</string>
-    <string name="btn_close">닫기</string>
-    <string name="view_detail">상세보기</string>
+    <!-- 소음 유형 -->
+    <string name="noise_type_step">발걸음</string>
+    <string name="noise_type_hammer">망치질</string>
+    <string name="noise_type_furniture">가구 끄는 소리</string>
+    <string name="noise_type_music">음악 소리</string>
+    <string name="noise_type_kids">아이들 뛰는 소리</string>
+    <string name="noise_type_vacuum">청소기 소리</string>
+    <string name="noise_type_etc">기타</string>
 </resources>
