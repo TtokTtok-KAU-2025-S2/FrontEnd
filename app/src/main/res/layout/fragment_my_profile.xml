@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 소음 일기 메인 화면 레이아웃 -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light">
+    android:background="#0f172a">
 
+    <!-- 스크롤 가능한 영역 -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Blue header card -->
+            <!-- 상단 파란색 헤더 카드 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -26,6 +28,7 @@
                 android:paddingEnd="24dp"
                 android:paddingBottom="80dp">
 
+                <!-- 앱 타이틀 -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -35,6 +38,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+                <!-- 주소 표시 -->
                 <TextView
                     android:id="@+id/tvAddress"
                     android:layout_width="wrap_content"
@@ -46,7 +50,7 @@
 
             </LinearLayout>
 
-            <!-- Stats cards (총 기록, 이번 달, 평균 dB) -->
+            <!-- 통계 카드들 (총 기록, 이번 달, 평균 dB) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,12 +61,13 @@
                 android:orientation="horizontal"
                 android:weightSum="3">
 
-                <!-- 총 기록 카드 -->
+                <!-- 총 기록 수 카드 -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
+                    app:cardBackgroundColor="#1e293b"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp">
 
@@ -78,7 +83,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="총 기록"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="#94a3b8"
                             android:textSize="12sp" />
 
                         <TextView
@@ -87,7 +92,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="4건"
-                            android:textColor="@android:color/black"
+                            android:textColor="#f1f5f9"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -95,13 +100,14 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- 이번 달 카드 -->
+                <!-- 이번 달 기록 수 카드 -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
+                    app:cardBackgroundColor="#1e293b"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp">
 
@@ -117,7 +123,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="이번 달"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="#94a3b8"
                             android:textSize="12sp" />
 
                         <TextView
@@ -126,7 +132,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="1건"
-                            android:textColor="@android:color/black"
+                            android:textColor="#f1f5f9"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -140,6 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    app:cardBackgroundColor="#1e293b"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp">
 
@@ -155,7 +162,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="평균 dB"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="#94a3b8"
                             android:textSize="12sp" />
 
                         <TextView
@@ -164,7 +171,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="66"
-                            android:textColor="@android:color/black"
+                            android:textColor="#f1f5f9"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -174,11 +181,12 @@
 
             </LinearLayout>
 
-            <!-- 날짜별 조회 카드 -->
+            <!-- 캘린더 선택 카드 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                app:cardBackgroundColor="#1e293b"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp">
 
@@ -188,33 +196,29 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <!-- 캘린더 제목 -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📅 날짜별 조회"
-                        android:textColor="@android:color/black"
+                        android:text="📅 날짜 선택"
+                        android:textColor="#f1f5f9"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <EditText
-                        android:id="@+id/etDate"
+                    <!-- 캘린더 뷰 -->
+                    <CalendarView
+                        android:id="@+id/calendarView"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:background="@drawable/bg_input"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:hint="날짜를 선택하세요"
-                        android:importantForAutofill="no"
-                        android:inputType="none"
-                        android:padding="12dp"
-                        android:textSize="14sp" />
+                        android:dateTextAppearance="@android:style/TextAppearance.Small"
+                        android:theme="@style/CalendarViewTheme" />
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- 리스트 요약 -->
+            <!-- 리스트 요약 및 리포트 생성 버튼 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -225,27 +229,29 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp">
 
+                <!-- 선택된 항목 수 표시 -->
                 <TextView
                     android:id="@+id/tvListSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="1개 선택됨"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="#94a3b8"
                     android:textSize="14sp" />
 
+                <!-- 리포트 생성 버튼 -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCreateReport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="리포트 생성"
                     android:textColor="@android:color/white"
-                    app:backgroundTint="@color/colorPrimary"
+                    app:backgroundTint="#2563eb"
                     app:cornerRadius="8dp" />
 
             </LinearLayout>
 
-            <!-- 일기 리스트 -->
+            <!-- 소음 일기 목록 RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLogs"
                 android:layout_width="match_parent"
@@ -259,7 +265,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- 추가 FAB -->
+    <!-- 소음 측정 추가 FAB (Floating Action Button) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
@@ -268,7 +274,7 @@
         android:layout_margin="16dp"
         android:contentDescription="추가"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="#2563eb"
         app:tint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
