@@ -34,10 +34,10 @@ class NotificationSettingsFragment : Fragment() {
         val s = vm.settings
         binding.apply {
             switchAllNotifications.isChecked = s.allNotifications  // 전체 알림
-            switchNoise.isChecked = s.noiseDetection  // 똑똑 공동 탐색
-            switchHeart.isChecked = s.priorConsent  // 사전 양해
-            switchMessage.isChecked = s.comments  // 게시판 댓글
-            switchBuilding.isChecked = s.announcements  // 관리사무소 공지
+            switchNoiseStatus.isChecked = s.noiseStatus  // 소음 현황판
+            switchPriorConsent.isChecked = s.priorConsent  // 사전 양해
+            switchAnnouncements.isChecked = s.announcements  // 공지사항
+            switchMonthlyReport.isChecked = s.monthlyReport  // 월간 리포트
             tvStartTime.text = s.doNotDisturbStart  // 방해금지 시작
             tvEndTime.text = s.doNotDisturbEnd  // 방해금지 종료
         }
@@ -58,10 +58,10 @@ class NotificationSettingsFragment : Fragment() {
         binding.apply {
             val newSettings = vm.settings.copy(
                 allNotifications = switchAllNotifications.isChecked,
-                noiseDetection = switchNoise.isChecked,
-                priorConsent = switchHeart.isChecked,
-                comments = switchMessage.isChecked,
-                announcements = switchBuilding.isChecked,
+                noiseStatus = switchNoiseStatus.isChecked,
+                priorConsent = switchPriorConsent.isChecked,
+                announcements = switchAnnouncements.isChecked,
+                monthlyReport = switchMonthlyReport.isChecked,
                 doNotDisturbStart = tvStartTime.text.toString(),
                 doNotDisturbEnd = tvEndTime.text.toString()
             )

@@ -44,13 +44,13 @@ class NotificationAdapter(
             b.tvNotificationMessage.text = item.message   // 내용
             b.tvTimestamp.text = item.timeAgo             // 시간
 
-            // 알림 타입별 아이콘 설정
+            // 알림 타입별 아이콘 설정 (변경된 카테고리에 맞게 업데이트)
             val iconRes = when (item.iconType) {
-                "noise" -> R.drawable.ic_volume_up        // 소음 탐지
-                "consent" -> R.drawable.ic_favorite       // 사전 양해
-                "comments" -> R.drawable.ic_message       // 댓글
-                "announcement" -> R.drawable.ic_building  // 공지
-                else -> R.drawable.ic_bell                // 기본
+                "noise_status" -> R.drawable.ic_volume_up      // 소음 현황판
+                "prior_consent" -> R.drawable.ic_favorite      // 사전 양해
+                "announcement" -> R.drawable.ic_building       // 공지사항
+                "monthly_report" -> R.drawable.ic_bar_chart    // 월간 리포트
+                else -> R.drawable.ic_bell                     // 기본
             }
             b.ivNotificationIcon.setImageResource(iconRes)
 

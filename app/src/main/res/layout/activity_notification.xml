@@ -14,10 +14,10 @@
         android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_arrow_left"
-        android:tint="#FFFFFF"
         android:contentDescription="뒤로가기"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#FFFFFF" />
 
     <!-- 제목 -->
     <TextView
@@ -41,10 +41,10 @@
         android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_settings"
-        android:tint="#FFFFFF"
         android:contentDescription="설정"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#FFFFFF" />
 
     <!-- 탭 레이아웃 -->
     <androidx.cardview.widget.CardView
@@ -154,8 +154,8 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_check_circle"
-                    android:tint="#FFFFFF"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_marginEnd="8dp"
+                    app:tint="#FFFFFF" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -192,8 +192,8 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_delete"
-                    android:tint="#FFFFFF"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_marginEnd="8dp"
+                    app:tint="#FFFFFF" />
 
                 <TextView
                     android:layout_width="wrap_content"

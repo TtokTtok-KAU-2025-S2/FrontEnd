@@ -8,10 +8,10 @@ class NotificationRepository {
 
     // 테스트용 더미 데이터 (추후 서버에서 받아옴)
     private val notifications = mutableListOf(
-        NotificationItem(1, "똑똑 공동 탐색 응답", "소음 탐지 알림", "10분 전", false, true, "noise"),
-        NotificationItem(2, "사전 양해", "사전 양해 알림", "5시간 전", false, true, "consent"),
-        NotificationItem(3, "새 댓글 알림", "댓글 알림", "1시간 전", true, false, "comments"),
-        NotificationItem(4, "관리사무소 공지", "중요 공지사항", "어제", true, false, "announcement")
+        NotificationItem(1, "소음 현황판", "새로운 소음 리포트가 공지되었습니다", "10분 전", false, true, "noise_status"),
+        NotificationItem(2, "사전 양해", "302동 주민이 사전 양해를 요청했습니다", "5시간 전", false, true, "prior_consent"),
+        NotificationItem(3, "공지사항", "관리자가 새 공지사항을 등록했습니다", "1시간 전", true, false, "announcement"),
+        NotificationItem(4, "월간 리포트", "11월 소음 분석 리포트가 생성되었습니다", "어제", true, false, "monthly_report")
     )
 
     private var settings = NotificationSettings()  // 알림 설정 (추후 DataStore에 저장)

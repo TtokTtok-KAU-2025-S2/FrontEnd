@@ -19,8 +19,8 @@
             android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_left"
-            android:tint="#FFFFFF"
-            android:contentDescription="뒤로가기"
+            app:tint="#FFFFFF"
+            android:contentDescription="@string/back_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,7 +87,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_bell"
-                    android:tint="#FFFFFF" />
+                    android:contentDescription="@string/notification_icon"
+                    app:tint="#FFFFFF" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -159,9 +160,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvCategoryDesc">
 
-            <!-- 똑똑 공동 탐색 -->
+            <!-- 소음 현황판 -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardNoiseDetection"
+                android:id="@+id/cardNoiseStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="#1e293b"
@@ -179,20 +180,21 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_volume_up"
-                        android:tint="#FFFFFF" />
+                        android:contentDescription="@string/noise_status_icon"
+                        app:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="똑똑 공동 탐색"
+                        android:text="소음 현황판"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginStart="12dp" />
 
                     <Switch
-                        android:id="@+id/switchNoise"
+                        android:id="@+id/switchNoiseStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true" />
@@ -220,7 +222,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_favorite"
-                        android:tint="#FFFFFF" />
+                        android:contentDescription="@string/prior_consent_icon"
+                        app:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -233,55 +236,14 @@
                         android:layout_marginStart="12dp" />
 
                     <Switch
-                        android:id="@+id/switchHeart"
+                        android:id="@+id/switchPriorConsent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 게시판 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardComments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="#1e293b"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_message"
-                        android:tint="#FFFFFF" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="게시판"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_marginStart="12dp" />
-
-                    <Switch
-                        android:id="@+id/switchMessage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- 관리사무소 공지 -->
+            <!-- 공지사항 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardAnnouncements"
                 android:layout_width="match_parent"
@@ -302,20 +264,63 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_building"
-                        android:tint="#FFFFFF" />
+                        android:contentDescription="@string/announcement_icon"
+                        app:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="관리사무소 공지"
+                        android:text="공지사항"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginStart="12dp" />
 
                     <Switch
-                        android:id="@+id/switchBuilding"
+                        android:id="@+id/switchAnnouncements"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 월간 리포트 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMonthlyReport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="#1e293b"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_bar_chart"
+                        android:contentDescription="@string/monthly_report_icon"
+                        app:tint="#FFFFFF" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="월간 리포트"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="12dp" />
+
+                    <Switch
+                        android:id="@+id/switchMonthlyReport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true" />
@@ -354,7 +359,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_moon"
-                        android:tint="#FFFFFF" />
+                        android:contentDescription="@string/do_not_disturb_icon"
+                        app:tint="#FFFFFF" />
 
                     <LinearLayout
                         android:layout_width="0dp"
