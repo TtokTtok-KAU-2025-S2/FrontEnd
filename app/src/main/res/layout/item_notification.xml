@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="4dp"
-    app:cardBackgroundColor="#4A3B7A"
+    app:cardBackgroundColor="#1e293b"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp">
 
@@ -22,7 +22,7 @@
             android:layout_height="40dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#6A5ACD"
+            app:cardBackgroundColor="#2563eb"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -32,6 +32,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_bell"
+                android:tint="#FFFFFF"
                 tools:src="@drawable/ic_volume_up" />
 
         </androidx.cardview.widget.CardView>
@@ -44,7 +45,7 @@
             android:visibility="gone"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#FF6B6B"
+            app:cardBackgroundColor="#2563eb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible">
@@ -82,7 +83,7 @@
             android:id="@+id/tvNotificationMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="#B8B3E6"
+            android:textColor="#94a3b8"
             android:textSize="14sp"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
@@ -99,7 +100,7 @@
             android:id="@+id/tvTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#9A91D4"
+            android:textColor="#64748b"
             android:textSize="12sp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
@@ -115,7 +116,7 @@
             android:visibility="gone"
             app:cardCornerRadius="4dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#4FC3F7"
+            app:cardBackgroundColor="#2563eb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:visibility="visible" />

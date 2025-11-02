@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background">
+    android:background="#0f172a">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,6 +19,7 @@
             android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_left"
+            android:tint="#FFFFFF"
             android:contentDescription="뒤로가기"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +44,7 @@
             android:layout_marginEnd="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#6A5ACD"
+            app:cardBackgroundColor="#2563eb"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#6A5ACD"
+            app:cardBackgroundColor="#1e293b"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +86,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_bell" />
+                    android:src="@drawable/ic_bell"
+                    android:tint="#FFFFFF" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -106,7 +108,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="모든 알림을 받고 있습니다"
-                        android:textColor="#B8B3E6"
+                        android:textColor="#94a3b8"
                         android:textSize="13sp"
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
@@ -138,7 +140,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="받고 싶은 알림을 선택하세요"
-            android:textColor="#B8B3E6"
+            android:textColor="#94a3b8"
             android:textSize="13sp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
@@ -162,7 +164,7 @@
                 android:id="@+id/cardNoiseDetection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#6A5ACD"
+                app:cardBackgroundColor="#1e293b"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -176,7 +178,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_volume_up" />
+                        android:src="@drawable/ic_volume_up"
+                        android:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -202,7 +205,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:cardBackgroundColor="#6A5ACD"
+                app:cardBackgroundColor="#1e293b"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -216,7 +219,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_favorite" />
+                        android:src="@drawable/ic_favorite"
+                        android:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -242,7 +246,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:cardBackgroundColor="#6A5ACD"
+                app:cardBackgroundColor="#1e293b"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -256,7 +260,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_message" />
+                        android:src="@drawable/ic_message"
+                        android:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -282,7 +287,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:cardBackgroundColor="#6A5ACD"
+                app:cardBackgroundColor="#1e293b"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -296,7 +301,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_building" />
+                        android:src="@drawable/ic_building"
+                        android:tint="#FFFFFF" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -324,7 +330,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#6A5ACD"
+            app:cardBackgroundColor="#1e293b"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -347,7 +353,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_moon" />
+                        android:src="@drawable/ic_moon"
+                        android:tint="#FFFFFF" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -368,7 +375,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="지정한 시간에는 알림을 받지 않습니다"
-                            android:textColor="#B8B3E6"
+                            android:textColor="#94a3b8"
                             android:textSize="13sp"
                             android:layout_marginTop="4dp" />
                     </LinearLayout>
@@ -387,7 +394,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="시작 시간"
-                        android:textColor="#B8B3E6"
+                        android:textColor="#94a3b8"
                         android:textSize="14sp" />
 
                     <androidx.cardview.widget.CardView
@@ -396,7 +403,7 @@
                         android:layout_height="wrap_content"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="#5548B8"
+                        app:cardBackgroundColor="#2563eb"
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground">
 
@@ -425,7 +432,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="종료 시간"
-                        android:textColor="#B8B3E6"
+                        android:textColor="#94a3b8"
                         android:textSize="14sp" />
 
                     <androidx.cardview.widget.CardView
@@ -434,7 +441,7 @@
                         android:layout_height="wrap_content"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="#5548B8"
+                        app:cardBackgroundColor="#2563eb"
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground">
 

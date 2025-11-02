@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background">
+    android:background="#0f172a">
 
     <!-- 뒤로가기 버튼 -->
     <ImageButton
@@ -14,6 +14,7 @@
         android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_arrow_left"
+        android:tint="#FFFFFF"
         android:contentDescription="뒤로가기"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +41,7 @@
         android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_settings"
+        android:tint="#FFFFFF"
         android:contentDescription="설정"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +55,7 @@
         android:layout_marginTop="16dp"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="#4A3B7A"
+        app:cardBackgroundColor="#1e293b"
         app:layout_constraintTop_toBottomOf="@id/btnBack">
 
         <LinearLayout
@@ -72,7 +74,7 @@
                 android:layout_marginEnd="2dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#6A5ACD"
+                app:cardBackgroundColor="#2563eb"
                 android:clickable="true"
                 android:foreground="?attr/selectableItemBackground">
 
@@ -106,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="읽지 않음"
-                    android:textColor="#B8B3E6"
+                    android:textColor="#94a3b8"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center" />
@@ -152,6 +154,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_check_circle"
+                    android:tint="#FFFFFF"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
@@ -189,6 +192,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_delete"
+                    android:tint="#FFFFFF"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
@@ -238,7 +242,7 @@
             android:layout_height="80dp"
             app:cardCornerRadius="40dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#3A2D5A">
+            app:cardBackgroundColor="#1e293b">
 
             <ImageView
                 android:id="@+id/ivEmptyIcon"
@@ -255,7 +259,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="알림이 없습니다"
-            android:textColor="#B8B3E6"
+            android:textColor="#94a3b8"
             android:textSize="16sp"
             android:layout_marginTop="16dp" />
 
