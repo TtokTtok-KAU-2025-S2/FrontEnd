@@ -1,45 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material Design 기본 색상만 -->
+    <!-- 실제 사용 중인 색상만 유지 -->
     <color name="colorPrimary">#2563eb</color>
-    <color name="colorAccent">#4CAF50</color>
-
-    <!-- 기본 배경/텍스트 -->
-    <color name="background_light">#F5F5F5</color>
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-
-    <!-- dB 레벨 색상 -->
-    <color name="db_safe">#4CAF50</color>
-    <color name="db_moderate">#FF9800</color>
-    <color name="db_high">#F44336</color>
-
-    <!-- 카드 배경 색상 -->
-    <color name="card_blue_background">#DBEAFE</color>
-    <color name="card_pink_background">#FCE4EC</color>
-    <color name="card_white_background">#FFFFFF</color>
 
     <!-- AI 관련 색상 -->
-    <color name="ai_pink_dark">#C2185B</color>
     <color name="ai_pink_light">#E91E63</color>
     <color name="ai_purple">#CE93D8</color>
 
     <!-- Material Design 기본 색상 (themes.xml에서 참조) -->
     <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- 소리 강도 배경색 -->
-    <color name="level_green_bg">#DCFCE7</color>
-    <color name="level_green_text">#15803D</color>
-    <color name="level_yellow_bg">#FEF9C3</color>
-    <color name="level_yellow_text">#A16207</color>
-    <color name="level_orange_bg">#FFEDD5</color>
-    <color name="level_orange_text">#C2410C</color>
-    <color name="level_red_bg">#FEE2E2</color>
-    <color name="level_red_text">#B91C1C</color>
+    <!-- 소리 강도 배경색 (다크 테마 버전) -->
+    <color name="level_green_bg">#14532d</color>
+    <color name="level_yellow_bg">#713f12</color>
+    <color name="level_orange_bg">#7c2d12</color>
+    <color name="level_red_bg">#7f1d1d</color>
 </resources>

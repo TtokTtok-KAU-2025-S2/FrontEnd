@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.Ttokttok" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">#1e40af</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -14,10 +14,12 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <!-- Custom Calendar Theme -->
-    <style name="CustomCalendarTheme" parent="Theme.MaterialComponents.Light">
-        <item name="colorPrimary">#8B5CF6</item>
-        <item name="colorAccent">#8B5CF6</item>
-        <item name="android:datePickerStyle">@android:style/Widget.Material.DatePicker</item>
+    <!-- Dark Calendar Theme -->
+    <style name="CalendarViewTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">#2563eb</item>
+        <item name="colorAccent">#2563eb</item>
+        <item name="android:textColorPrimary">#f1f5f9</item>
+        <item name="android:textColorSecondary">#94a3b8</item>
+        <item name="android:colorBackground">#1e293b</item>
     </style>
 </resources>

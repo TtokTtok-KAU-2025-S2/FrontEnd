@@ -1,34 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">똑똑</string>
-
-    <!-- 측정 화면 -->
-    <string name="noise_measurement">소음 측정</string>
-    <string name="measuring_noise">마이크를 통해 소음을 측정합니다</string>
-    <string name="start_measurement">측정 시작</string>
-    <string name="stop_measurement">정지</string>
-    <string name="max_db">최대</string>
-    <string name="avg_db">평균</string>
-    <string name="duration">시간</string>
-
-    <!-- 일기 화면 -->
-    <string name="measurement_result">측정 결과</string>
-    <string name="measurement_time">측정 시간</string>
-    <string name="max_noise">최대 소음</string>
-    <string name="avg_noise">평균 소음</string>
-    <string name="ai_suggested_type">AI 추천 소음 유형</string>
-    <string name="select_noise_type">소음 유형 선택</string>
-    <string name="simple_memo">간단한 메모 *</string>
-    <string name="memo_hint">소음의 특징이나 상황을 간단히 기록해주세요 (필수)</string>
-    <string name="ai_generated_diary">AI가 생성한 일기</string>
-    <string name="save_log">일기 저장</string>
-
-    <!-- 소음 유형 -->
-    <string name="noise_type_step">발걸음</string>
-    <string name="noise_type_hammer">망치질</string>
-    <string name="noise_type_furniture">가구 끄는 소리</string>
-    <string name="noise_type_music">음악 소리</string>
-    <string name="noise_type_kids">아이들 뛰는 소리</string>
-    <string name="noise_type_vacuum">청소기 소리</string>
-    <string name="noise_type_etc">기타</string>
 </resources>
