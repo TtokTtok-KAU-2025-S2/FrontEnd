@@ -2,29 +2,27 @@ package com.kau.ttokttok.ui.calendar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kau.ttokttok.data.local.repository.NoiseLogRepositoryImpl
 import com.kau.ttokttok.domain.model.NoiseLog
 import com.kau.ttokttok.domain.repository.NoiseLogRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.Date
-import javax.inject.Inject
 
-@HiltViewModel
-class NoiseLogViewModel @Inject constructor(
-    private val repository: NoiseLogRepository
+class NoiseLogViewModel(
+    private val repository: NoiseLogRepository = NoiseLogRepositoryImpl()
 ) : ViewModel() {
 
     private val _noiseLogs = MutableStateFlow<List<NoiseLog>>(emptyList())
-    val noiseLogs: StateFlow<List<NoiseLog>> = _noiseLogs
+    val noiseLogs: StateFlow<List<NoiseLog>> = _noiseLogs.asStateFlow()
 
     private val _selectedDate = MutableStateFlow(Date())
-    val selectedDate: StateFlow<Date> = _selectedDate
+    val selectedDate: StateFlow<Date> = _selectedDate.asStateFlow()
 
     private val _selectedLogs = MutableStateFlow<List<NoiseLog>>(emptyList())
-    val selectedLogs: StateFlow<List<NoiseLog>> = _selectedLogs
+    val selectedLogs: StateFlow<List<NoiseLog>> = _selectedLogs.asStateFlow()
 
     init {
         loadAllLogs()
@@ -64,6 +62,16 @@ class NoiseLogViewModel @Inject constructor(
         viewModelScope.launch {
             val updated = log.copy(hasReport = !log.hasReport)
             repository.updateNoiseLog(updated).onSuccess {
+                loadAllLogs()
+                selectDate(_selectedDate.value)
+            }
+        }
+    }
+
+    // 새로운 소음 일기 저장
+    fun saveLog(log: NoiseLog) {
+        viewModelScope.launch {
+            repository.saveNoiseLog(log).onSuccess {
                 loadAllLogs()
                 selectDate(_selectedDate.value)
             }

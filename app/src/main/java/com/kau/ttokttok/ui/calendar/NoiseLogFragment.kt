@@ -4,24 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentMyProfileBinding
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Date
 
-// 소음 일기 캘린더 Fragment
-// ViewBinding을 사용하여 UI 요소에 접근
-@AndroidEntryPoint
 class NoiseLogFragment : Fragment() {
 
-    private val viewModel: NoiseLogViewModel by viewModels()
+    private val viewModel: NoiseLogViewModel by activityViewModels()
     private lateinit var adapter: NoiseLogAdapter
 
-    // ViewBinding
     private var _binding: FragmentMyProfileBinding? = null
     private val binding get() = _binding!!
 
@@ -36,21 +34,21 @@ class NoiseLogFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         setupCalendar()
         setupFab()
         setupReportButton()
         observeViewModel()
-        updateStats()
+
+        // 초기 로드 시 오늘 날짜를 선택
+        viewModel.selectDate(Date())
     }
 
-    // RecyclerView 설정
     private fun setupRecyclerView() {
         adapter = NoiseLogAdapter(
             onDeleteClick = { log -> viewModel.deleteLog(log.id!!) },
             onEditClick = { log -> /* TODO: 수정 화면으로 이동 */ },
-            onCheckChanged = { log -> viewModel.toggleReportStatus(log) }
+            onItemCheckChanged = { _, _ -> updateSelectionCount() }
         )
 
         binding.rvLogs.apply {
@@ -59,7 +57,6 @@ class NoiseLogFragment : Fragment() {
         }
     }
 
-    // 캘린더 설정
     private fun setupCalendar() {
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val calendar = Calendar.getInstance().apply {
@@ -69,57 +66,82 @@ class NoiseLogFragment : Fragment() {
         }
     }
 
-    // FAB 버튼 설정 (소음 측정 추가)
     private fun setupFab() {
         binding.fabAdd.setOnClickListener {
-            // TODO: 소음 측정 화면으로 이동
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, NoiseMeasurementFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
         }
     }
 
-    // 리포트 생성 버튼 설정
     private fun setupReportButton() {
         binding.btnCreateReport.setOnClickListener {
-            // TODO: 리포트 생성 로직 구현
+            val selectedLogs = adapter.getSelectedLogs()
+
+            if (selectedLogs.isEmpty()) {
+                Toast.makeText(requireContext(), "리포트로 만들 일기를 선택해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            selectedLogs.forEach { log ->
+                viewModel.toggleReportStatus(log)
+            }
+
+            adapter.clearSelection()
+            Toast.makeText(requireContext(), "${selectedLogs.size}개의 리포트가 생성되었습니다", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // ViewModel 데이터 관찰
     private fun observeViewModel() {
-        // 선택된 날짜의 일기 목록 관찰
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.selectedLogs.collect { logs ->
                 adapter.submitList(logs)
-                binding.tvListSummary.text = "${logs.size}개 선택됨"
+                updateSelectionCount()
             }
         }
-    }
 
-    // 통계 정보 업데이트 (총 기록, 이번 달, 평균 dB)
-    private fun updateStats() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.noiseLogs.collect { logs ->
-                // 총 기록 수
-                binding.tvTotalCount.text = "${logs.size}건"
-
-                // 이번 달 기록 수
-                val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
-                val monthCount = logs.count {
-                    val cal = Calendar.getInstance()
-                    cal.time = it.measuredAt
-                    cal.get(Calendar.MONTH) == thisMonth
-                }
-                binding.tvMonthCount.text = "${monthCount}건"
-
-                // 평균 dB
-                val avgDb = if (logs.isNotEmpty()) {
-                    logs.map { it.avgDecibel }.average().toInt()
-                } else 0
-                binding.tvAvgDb.text = "$avgDb"
+                updateStats(logs)
             }
         }
     }
 
-    // Fragment 종료 시 ViewBinding 정리
+    private fun updateSelectionCount() {
+        val selectedCount = adapter.getSelectedLogs().size
+        binding.tvListSummary.text = if (selectedCount > 0) {
+            "${selectedCount}개 선택됨"
+        } else {
+            "${adapter.currentList.size}개 항목"
+        }
+    }
+
+    private fun updateStats(logs: List<com.kau.ttokttok.domain.model.NoiseLog>) {
+        binding.tvTotalCount.text = "${logs.size}건"
+
+        val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
+        val monthCount = logs.count { log ->
+            val cal = Calendar.getInstance().apply { time = log.measuredAt }
+            cal.get(Calendar.MONTH) == thisMonth
+        }
+        binding.tvMonthCount.text = "${monthCount}건"
+
+        val avgDb = if (logs.isNotEmpty()) {
+            logs.map { it.avgDecibel }.average().toInt()
+        } else {
+            0
+        }
+        binding.tvAvgDb.text = "$avgDb"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 화면으로 돌아올 때 데이터 새로 고침
+        viewModel.loadAllLogs()
+        viewModel.selectDate(viewModel.selectedDate.value)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
