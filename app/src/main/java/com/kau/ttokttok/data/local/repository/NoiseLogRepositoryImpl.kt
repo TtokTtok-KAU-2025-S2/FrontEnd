@@ -2,14 +2,14 @@ package com.kau.ttokttok.data.local.repository
 
 import com.kau.ttokttok.domain.model.NoiseLog
 import com.kau.ttokttok.domain.repository.NoiseLogRepository
+import java.util.Calendar
 import java.util.Date
-import javax.inject.Inject
 
 /**
  * 소음 일기 Repository 구현
  * TODO: 나중에 실제 API 연동하기
  */
-class NoiseLogRepositoryImpl @Inject constructor() : NoiseLogRepository {
+class NoiseLogRepositoryImpl : NoiseLogRepository {
 
     // 임시 데이터 (나중에 실제 API로 교체)
     private val tempLogs = mutableListOf<NoiseLog>()
@@ -57,11 +57,16 @@ class NoiseLogRepositoryImpl @Inject constructor() : NoiseLogRepository {
 
     override suspend fun getNoiseLogsByDate(date: Date): Result<List<NoiseLog>> {
         return try {
-            val filtered = tempLogs.filter {
-                // 같은 날짜인지 비교 (시간 제외)
-                it.measuredAt.date == date.date &&
-                it.measuredAt.month == date.month &&
-                it.measuredAt.year == date.year
+            val calendar = Calendar.getInstance().apply { time = date }
+            val targetYear = calendar.get(Calendar.YEAR)
+            val targetMonth = calendar.get(Calendar.MONTH)
+            val targetDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val filtered = tempLogs.filter { log ->
+                val logCalendar = Calendar.getInstance().apply { time = log.measuredAt }
+                logCalendar.get(Calendar.YEAR) == targetYear &&
+                logCalendar.get(Calendar.MONTH) == targetMonth &&
+                logCalendar.get(Calendar.DAY_OF_MONTH) == targetDay
             }
             Result.success(filtered)
         } catch (e: Exception) {
