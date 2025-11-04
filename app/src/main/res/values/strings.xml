@@ -13,4 +13,13 @@
     <string name="add_noise_record">추가</string>
     <string name="record_count_format">%d건</string>
     <string name="selected_count_format">%d개 선택됨</string>
+
+    <!-- 알림 설정 페이지 -->
+    <string name="back_button">뒤로가기</string>
+    <string name="notification_icon">알림 아이콘</string>
+    <string name="noise_status_icon">소음 현황판 아이콘</string>
+    <string name="prior_consent_icon">사전 양해 아이콘</string>
+    <string name="announcement_icon">공지사항 아이콘</string>
+    <string name="monthly_report_icon">월간 리포트 아이콘</string>
+    <string name="do_not_disturb_icon">방해금지 아이콘</string>
 </resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.kau.ttokttok.ui.compose.login.LoginFragment"
+        android:label="Login"
+        />
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.kau.ttokttok.ui.compose.main.MainFragment"
+        android:label="Main"
+        />
+
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.SettingFragment"
+        android:label="Setting"
+        />
+
+</navigation>

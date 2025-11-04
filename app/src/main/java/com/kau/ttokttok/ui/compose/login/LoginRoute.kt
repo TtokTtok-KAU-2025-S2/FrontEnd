@@ -10,8 +10,9 @@ import com.kau.ttokttok.ui.component.common.AppDialog
 
 @Composable
 fun LoginRoute(
-    viewModel: LoginViewModel = hiltViewModel()
-    // TODO: Navigator 추가하기
+    viewModel: LoginViewModel = hiltViewModel(),
+    onSuccess: () -> Unit,
+    onBack: () -> Unit
 ) {
     // val uiState by viewModel.uiState.collectAsState()
     val snackbar = remember { SnackbarHostState() }
@@ -35,7 +36,7 @@ fun LoginRoute(
                 }
 
                 LoginEvent.NavigateHome -> {
-                    // TODO: Navigator 추가하기
+                    onSuccess()
                 }
 
                 LoginEvent.NavigateSignup -> {
