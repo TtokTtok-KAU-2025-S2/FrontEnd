@@ -99,6 +99,11 @@ class NoiseLogFormFragment : Fragment() {
     }
 
     private fun setupListeners() {
+        // 뒤로가기 버튼
+        binding.btnBack.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         binding.btnGenerateAiDiary.setOnClickListener {
             if (validateInput()) {
                 generateAiDiary()
@@ -130,11 +135,12 @@ class NoiseLogFormFragment : Fragment() {
     }
 
     private fun getSuggestedNoiseType(avgDb: Double): String = when {
-        avgDb >= 80.0 -> "망치질"
-        avgDb >= 70.0 -> "가구 끄는 소리"
-        avgDb >= 60.0 -> "발걸음"
-        avgDb >= 50.0 -> "음악 소리"
-        else -> "기타"
+        avgDb >= 60.0 -> "망치질"
+        avgDb >= 50.0 -> "가구 끄는 소리"
+        avgDb >= 45.0 -> "아이들 뛰는 소리"
+        avgDb >= 40.0 -> "발걸음"
+        avgDb >= 35.0 -> "음악 소리"
+        else -> "청소기 소리"
     }
 
     private fun validateInput(): Boolean {
