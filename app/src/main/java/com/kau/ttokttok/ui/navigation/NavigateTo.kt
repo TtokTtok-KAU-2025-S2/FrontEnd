@@ -66,7 +66,7 @@ fun NavController.navigateTo(
         Destination.MAIN -> navigate(R.id.mainFragment, args, options)
         Destination.PRECONSIDERATION -> navigate(R.id.preConsiderationFragment, args, options)
         Destination.NOISE_VOTE -> navigate(R.id.noiseVoteFragment, args, options)
-        Destination.MONTH_REPORT -> TODO()
+        Destination.MONTH_REPORT -> navigate(R.id.monthReportFragment, args, options)
         Destination.COMMUNITY -> navigate(R.id.communityFragment, args, options)
         Destination.CALENDAR -> TODO()
         Destination.SETTING -> navigate(R.id.settingFragment, args, options)

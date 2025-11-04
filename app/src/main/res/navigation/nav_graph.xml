@@ -29,6 +29,12 @@
         />
 
     <fragment
+        android:id="@+id/monthReportFragment"
+        android:name="com.kau.ttokttok.ui.compose.monthreport.MonthReportFragment"
+        android:label="MonthReport"
+        />
+
+    <fragment
         android:id="@+id/preConsiderationFragment"
         android:name="com.kau.ttokttok.ui.compose.preconsideration.PreConsiderationFragment"
         android:label="PreConsideration"
