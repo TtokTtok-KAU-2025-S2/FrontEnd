@@ -49,8 +49,6 @@ class NoiseMeasurementFragment : Fragment() {
     private var baselineRms: Double? = null
     private var calibrationCount = 0
     private val calibrationRmsList = mutableListOf<Double>()
-    private var baselineTargetSpl = NORMAL_BASELINE_DB
-    private var absCalOffset = 0.0
 
     // 스무딩 (급격한 변화 평활화)
     private var smoothedDb: Double? = null
@@ -173,7 +171,6 @@ class NoiseMeasurementFragment : Fragment() {
         calibrationCount = 0
         calibrationRmsList.clear()
         smoothedDb = null
-        absCalOffset = 0.0
         rmsEma = null
     }
 
@@ -210,7 +207,10 @@ class NoiseMeasurementFragment : Fragment() {
                     break
                 }
             }
-            delay(RECORDING_DELAY_MS)
+            // 캘리브레이션 중에도 지연 없이 빠르게 진행
+            if (baselineRms != null) {
+                delay(50) // 측정 중에만 짧은 지연
+            }
         }
     }
 
@@ -228,11 +228,11 @@ class NoiseMeasurementFragment : Fragment() {
 
         // 데시벨 계산 및 통계 업데이트
         val displayDb = calculateAndSmoothDb(rmsEma!!)
-        val peakForMax = calculatePeakDb(computePeakAbs(buffer, read))
 
+        // 최대값은 현재 표시 데시벨로 추적 (피크 계산 제거)
         synchronized(dbList) {
             dbList.add(displayDb)
-            if (peakForMax > maxDb) maxDb = peakForMax
+            if (displayDb > maxDb) maxDb = displayDb
             avgDb = dbList.average()
         }
 
@@ -240,50 +240,46 @@ class NoiseMeasurementFragment : Fragment() {
     }
 
     // 초기 환경 소음 기준점 설정
-    private suspend fun performCalibration(effRms: Double) {
+    private fun performCalibration(effRms: Double) {
         calibrationRmsList.add(effRms)
         if (++calibrationCount >= CALIBRATION_FRAMES) {
             calibrationRmsList.sort()
-            // 하위 25% 값을 기준점으로 설정
+            // 하위 25% 값을 기준점으로 설정 (배경 소음 레벨)
             val idx = (calibrationRmsList.size * 0.25).toInt().coerceIn(0, calibrationRmsList.lastIndex)
-            baselineRms = calibrationRmsList[idx].coerceAtLeast(1.0)
-
-            val estAbsDbRaw = 20.0 * log10(baselineRms!!)
-            baselineTargetSpl = if (estAbsDbRaw < 30.0) QUIET_BASELINE_DB else NORMAL_BASELINE_DB
-            absCalOffset = baselineTargetSpl - estAbsDbRaw
+            baselineRms = calibrationRmsList[idx].coerceAtLeast(10.0)
         }
-        delay(RECORDING_DELAY_MS)
     }
 
-    // RMS를 데시벨로 변환하고 스무딩 적용
+    // RMS를 실제 데시벨로 변환
     private fun calculateAndSmoothDb(effRms: Double): Double {
-        val ratio = (effRms / baselineRms!!).coerceAtLeast(1e-6)
-        val relDelta = 20.0 * log10(ratio) * if (ratio < 1) QUIET_SENSITIVITY else LOUD_SENSITIVITY
-        val relDb = baselineTargetSpl + relDelta
-        val absDb = 20.0 * log10(effRms.coerceAtLeast(1.0)) + absCalOffset
-        val rawDb = (relDb * 0.85 + absDb * 0.15).coerceIn(0.0, 90.0)
+        // 기준점 대비 비율 계산
+        val ratio = (effRms / baselineRms!!).coerceAtLeast(0.01)
+
+        // 데시벨 계산: 기준점(10dB) + 상대적 변화량
+        // log10(ratio) * 20을 사용하여 소음 강도에 비례한 데시벨 증가
+        val relativeDb = 20.0 * log10(ratio)
+
+        // 기준점을 10dB로 설정하고, 상대 변화량을 더함
+        // 스케일 팩터를 적용하여 실제 소음 레벨에 맞게 조정
+        val scaleFactor = 1.5 // 민감도 조정
+        val rawDb = BASE_DB + (relativeDb * scaleFactor)
+
+        // 실제 측정 가능한 범위로 제한 (5~85dB)
+        val clampedDb = rawDb.coerceIn(5.0, 85.0)
 
         // 급격한 변화를 부드럽게 처리
         smoothedDb = smoothedDb?.let { prev ->
-            val diff = rawDb - prev
+            val diff = clampedDb - prev
             when {
                 kotlin.math.abs(diff) < MIN_DELTA_THRESHOLD -> prev
                 diff > 0 -> prev + kotlin.math.min(diff, MAX_RISE_PER_TICK)
-                else -> kotlin.math.max(rawDb, prev - RELEASE_RATE_PER_TICK)
+                else -> kotlin.math.max(clampedDb, prev - RELEASE_RATE_PER_TICK)
             }
-        } ?: rawDb
+        } ?: clampedDb
 
-        return smoothedDb!!.coerceIn(0.0, 80.0)
+        return smoothedDb!!
     }
 
-    // 피크 데시벨 계산 (최대값 추적용)
-    private fun calculatePeakDb(peakAbs: Double): Double {
-        val ratio = (peakAbs / baselineRms!!).coerceAtLeast(1e-6)
-        val relDelta = 20.0 * log10(ratio) * if (ratio < 1) QUIET_SENSITIVITY else LOUD_SENSITIVITY
-        val relDb = baselineTargetSpl + relDelta
-        val absDb = 20.0 * log10(peakAbs.coerceAtLeast(1.0)) + absCalOffset
-        return (relDb * 0.85 + absDb * 0.15).coerceIn(0.0, 90.0)
-    }
 
     private suspend fun handleRecordingError(message: String) {
         withContext(Dispatchers.Main) {
@@ -345,10 +341,6 @@ class NoiseMeasurementFragment : Fragment() {
     private fun computeRms(buffer: ShortArray, read: Int) =
         sqrt(buffer.take(read).sumOf { it.toDouble() * it.toDouble() } / read)
 
-    // 피크 절대값 계산 (최대 음량 추적용)
-    private fun computePeakAbs(buffer: ShortArray, read: Int) =
-        buffer.take(read).maxOfOrNull { kotlin.math.abs(it.toInt()) }?.toDouble() ?: 0.0
-    
     private fun updateUI(currentDb: Double) {
         binding.tvCurrentDb.text = currentDb.toInt().toString()
         binding.circularGauge.setProgress(currentDb.toFloat(), animate = true)
@@ -370,12 +362,9 @@ class NoiseMeasurementFragment : Fragment() {
 
         // 캘리브레이션
         private const val CALIBRATION_FRAMES = 15
-        private const val QUIET_BASELINE_DB = 15.0
-        private const val NORMAL_BASELINE_DB = 25.0
+        private const val BASE_DB = 10.0 // 배경 소음 기준 데시벨
 
         // 스무딩
-        private const val QUIET_SENSITIVITY = 1.0
-        private const val LOUD_SENSITIVITY = 1.3
         private const val RELEASE_RATE_PER_TICK = 0.8
         private const val MAX_RISE_PER_TICK = 3.0
         private const val MIN_DELTA_THRESHOLD = 0.3
@@ -383,7 +372,6 @@ class NoiseMeasurementFragment : Fragment() {
 
         // 에러 핸들링
         private const val MAX_CONSECUTIVE_ERRORS = 50
-        private const val RECORDING_DELAY_MS = 100L
 
         fun newInstance() = NoiseMeasurementFragment()
     }
