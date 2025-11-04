@@ -27,59 +27,38 @@ import kotlin.coroutines.coroutineContext
 import kotlin.math.log10
 import kotlin.math.sqrt
 
-// 실시간 소음 측정 프래그먼트
 class NoiseMeasurementFragment : Fragment() {
-
     private var _binding: FragmentNoiseMeasurementBinding? = null
     private val binding get() = _binding!!
 
-    // 오디오 녹음
     private var audioRecord: AudioRecord? = null
     private var isRecording = false
     private var recordingJob: Job? = null
-    private var timerJob: Job? = null // 시간 업데이트용
-
-    // 측정 통계
+    private var timerJob: Job? = null
     private var maxDb = 0.0
     private var avgDb = 0.0
     private val dbList = mutableListOf<Double>()
     private var startTime = 0L
-
-    // 캘리브레이션 (초기 환경 소음 기준점 설정)
-    private var baselineRms: Double? = null
+    private var baselineRms: Double? = null // 캘리브레이션 기준점
     private var calibrationCount = 0
     private val calibrationRmsList = mutableListOf<Double>()
-
-    // 스무딩 (급격한 변화 평활화)
-    private var smoothedDb: Double? = null
-    private var rmsEma: Double? = null
+    private var smoothedDb: Double? = null // 스무딩된 데시벨
+    private var rmsEma: Double? = null // RMS 지수 이동 평균
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) {
-            startMeasurement()
-        } else {
-            Toast.makeText(requireContext(), "마이크 권한이 필요합니다", Toast.LENGTH_SHORT).show()
-        }
+        if (isGranted) startMeasurement()
+        else Toast.makeText(requireContext(), "마이크 권한이 필요합니다", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNoiseMeasurementBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUI()
-    }
-
-    // UI 초기 설정
-    private fun setupUI() {
         binding.btnBack.setOnClickListener {
             if (isRecording) stopMeasurement()
             parentFragmentManager.popBackStack()
@@ -90,17 +69,11 @@ class NoiseMeasurementFragment : Fragment() {
         updateControlButton(false)
     }
 
-    // 측정 상태에 따라 UI 업데이트
     private fun updateControlButton(recording: Boolean) {
         binding.btnControl.setImageResource(
-            if (recording) android.R.drawable.ic_media_pause
-            else android.R.drawable.ic_btn_speak_now
+            if (recording) android.R.drawable.ic_media_pause else android.R.drawable.ic_btn_speak_now
         )
-        binding.tvSubtitle.text = if (recording) {
-            "측정을 완료하려면 버튼을 누르세요"
-        } else {
-            "측정 버튼을 눌러 시작하세요"
-        }
+        binding.tvSubtitle.text = if (recording) "측정을 완료하려면 버튼을 누르세요" else "측정 버튼을 눌러 시작하세요"
         binding.statsContainer.visibility = if (recording) View.VISIBLE else View.INVISIBLE
 
         if (!recording) {
@@ -109,10 +82,8 @@ class NoiseMeasurementFragment : Fragment() {
         }
     }
 
-    // 마이크 권한 확인 후 측정 시작
     private fun checkPermissionAndStart() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             startMeasurement()
         } else {
             if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
@@ -122,19 +93,15 @@ class NoiseMeasurementFragment : Fragment() {
         }
     }
 
-    // AudioRecord 초기화 및 측정 시작
-    private fun startMeasurement() {
+    private fun startMeasurement() { // AudioRecord 초기화 및 측정 시작
         if (isRecording) return
-
         try {
             val bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)
             if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
                 Toast.makeText(requireContext(), "오디오 설정을 초기화할 수 없습니다", Toast.LENGTH_SHORT).show()
                 return
             }
-
             resetMeasurementState()
-
             audioRecord = createBestAudioRecord(bufferSize)
             if (audioRecord?.state != AudioRecord.STATE_INITIALIZED) {
                 Toast.makeText(requireContext(), "마이크를 초기화할 수 없습니다", Toast.LENGTH_SHORT).show()
@@ -142,17 +109,12 @@ class NoiseMeasurementFragment : Fragment() {
                 audioRecord = null
                 return
             }
-
             audioRecord?.startRecording()
             isRecording = true
             updateControlButton(true)
-
-            // 오디오 데이터 처리
             recordingJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 processAudioRecording(ShortArray(bufferSize))
             }
-
-            // 시간 업데이트
             startTimer()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -161,8 +123,7 @@ class NoiseMeasurementFragment : Fragment() {
         }
     }
 
-    // 측정 상태 초기화
-    private fun resetMeasurementState() {
+    private fun resetMeasurementState() { // 측정 상태 초기화
         maxDb = 0.0
         avgDb = 0.0
         dbList.clear()
@@ -174,21 +135,18 @@ class NoiseMeasurementFragment : Fragment() {
         rmsEma = null
     }
 
-    // 실시간 시간 업데이트
-    private fun startTimer() {
+    private fun startTimer() { // 실시간 시간 업데이트
         timerJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             while (isRecording) {
                 val elapsed = (System.currentTimeMillis() - startTime) / 1000
                 val minutes = elapsed / 60
                 val seconds = elapsed % 60
                 binding.tvDuration.text = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-                delay(1000) // 1초마다 업데이트
+                delay(1000)
             }
         }
     }
-
-    // 오디오 데이터 지속적으로 읽기
-    private suspend fun processAudioRecording(buffer: ShortArray) {
+    private suspend fun processAudioRecording(buffer: ShortArray) { // 오디오 데이터 지속적으로 읽기
         var consecutiveErrors = 0
         while (coroutineContext.isActive && isRecording) {
             try {
@@ -207,68 +165,42 @@ class NoiseMeasurementFragment : Fragment() {
                     break
                 }
             }
-            // 캘리브레이션 중에도 지연 없이 빠르게 진행
-            if (baselineRms != null) {
-                delay(50) // 측정 중에만 짧은 지연
-            }
+            if (baselineRms != null) delay(50) // 캘리브레이션 완료 후에만 지연
         }
     }
 
-    // 오디오 버퍼 분석 및 데시벨 계산
-    private suspend fun processAudioBuffer(buffer: ShortArray, read: Int) {
-        // RMS 값 계산 및 지수 이동 평균 적용
+    private suspend fun processAudioBuffer(buffer: ShortArray, read: Int) { // 오디오 버퍼 분석 및 데시벨 계산
         val rmsRaw = computeRms(buffer, read)
         rmsEma = rmsEma?.let { RMS_EMA_ALPHA * rmsRaw + (1 - RMS_EMA_ALPHA) * it } ?: rmsRaw
-
-        // 캘리브레이션 미완료 시 수행
         if (baselineRms == null) {
             performCalibration(rmsEma!!)
             return
         }
-
-        // 데시벨 계산 및 통계 업데이트
         val displayDb = calculateAndSmoothDb(rmsEma!!)
-
-        // 최대값은 현재 표시 데시벨로 추적 (피크 계산 제거)
         synchronized(dbList) {
             dbList.add(displayDb)
             if (displayDb > maxDb) maxDb = displayDb
             avgDb = dbList.average()
         }
-
         withContext(Dispatchers.Main) { updateUI(displayDb) }
     }
 
-    // 초기 환경 소음 기준점 설정
-    private fun performCalibration(effRms: Double) {
+    private fun performCalibration(effRms: Double) { // 초기 환경 소음 기준점 설정
         calibrationRmsList.add(effRms)
         if (++calibrationCount >= CALIBRATION_FRAMES) {
             calibrationRmsList.sort()
-            // 하위 25% 값을 기준점으로 설정 (배경 소음 레벨)
             val idx = (calibrationRmsList.size * 0.25).toInt().coerceIn(0, calibrationRmsList.lastIndex)
             baselineRms = calibrationRmsList[idx].coerceAtLeast(10.0)
         }
     }
 
-    // RMS를 실제 데시벨로 변환
-    private fun calculateAndSmoothDb(effRms: Double): Double {
-        // 기준점 대비 비율 계산
+    private fun calculateAndSmoothDb(effRms: Double): Double { // RMS를 실제 데시벨로 변환
         val ratio = (effRms / baselineRms!!).coerceAtLeast(0.01)
-
-        // 데시벨 계산: 기준점(10dB) + 상대적 변화량
-        // log10(ratio) * 20을 사용하여 소음 강도에 비례한 데시벨 증가
         val relativeDb = 20.0 * log10(ratio)
-
-        // 기준점을 10dB로 설정하고, 상대 변화량을 더함
-        // 스케일 팩터를 적용하여 실제 소음 레벨에 맞게 조정
         val scaleFactor = 1.5 // 민감도 조정
         val rawDb = BASE_DB + (relativeDb * scaleFactor)
-
-        // 실제 측정 가능한 범위로 제한 (5~85dB)
-        val clampedDb = rawDb.coerceIn(5.0, 85.0)
-
-        // 급격한 변화를 부드럽게 처리
-        smoothedDb = smoothedDb?.let { prev ->
+        val clampedDb = rawDb.coerceIn(5.0, 85.0) // 실제 측정 가능한 범위로 제한
+        smoothedDb = smoothedDb?.let { prev -> // 급격한 변화를 부드럽게 처리
             val diff = clampedDb - prev
             when {
                 kotlin.math.abs(diff) < MIN_DELTA_THRESHOLD -> prev
@@ -276,7 +208,6 @@ class NoiseMeasurementFragment : Fragment() {
                 else -> kotlin.math.max(clampedDb, prev - RELEASE_RATE_PER_TICK)
             }
         } ?: clampedDb
-
         return smoothedDb!!
     }
 
@@ -288,12 +219,9 @@ class NoiseMeasurementFragment : Fragment() {
         }
     }
 
-    // 가장 적합한 AudioRecord 생성 (UNPROCESSED > VOICE_RECOGNITION > MIC)
     @android.annotation.SuppressLint("MissingPermission")
-    private fun createBestAudioRecord(bufferSize: Int): AudioRecord? {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-            != PackageManager.PERMISSION_GRANTED) return null
-
+    private fun createBestAudioRecord(bufferSize: Int): AudioRecord? { // UNPROCESSED > VOICE_RECOGNITION > MIC 순으로 시도
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) return null
         listOf(
             MediaRecorder.AudioSource.UNPROCESSED,
             MediaRecorder.AudioSource.VOICE_RECOGNITION,
@@ -320,10 +248,8 @@ class NoiseMeasurementFragment : Fragment() {
         updateControlButton(false)
     }
 
-    // 측정 종료 후 결과 화면으로 이동
-    private fun stopMeasurementAndNavigate() {
+    private fun stopMeasurementAndNavigate() { // 측정 종료 후 결과 화면으로 이동
         stopMeasurement()
-
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, NoiseLogFormFragment.newInstance(
                 maxDb = maxDb,
@@ -333,12 +259,10 @@ class NoiseMeasurementFragment : Fragment() {
             ))
             .addToBackStack(null)
             .commit()
-
         Toast.makeText(requireContext(), "측정이 완료되었습니다", Toast.LENGTH_SHORT).show()
     }
 
-    // RMS(Root Mean Square) 계산 - 오디오 신호의 평균 크기
-    private fun computeRms(buffer: ShortArray, read: Int) =
+    private fun computeRms(buffer: ShortArray, read: Int) = // RMS(Root Mean Square) 계산
         sqrt(buffer.take(read).sumOf { it.toDouble() * it.toDouble() } / read)
 
     private fun updateUI(currentDb: Double) {
@@ -355,23 +279,16 @@ class NoiseMeasurementFragment : Fragment() {
     }
 
     companion object {
-        // 오디오 설정
-        private const val SAMPLE_RATE = 44100
-        private val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
-        private val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
-
-        // 캘리브레이션
-        private const val CALIBRATION_FRAMES = 15
+        private const val SAMPLE_RATE = 44100 // 샘플링 레이트
+        private val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO // 모노 채널
+        private val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT // 16비트 PCM
+        private const val CALIBRATION_FRAMES = 15 // 캘리브레이션 프레임 수
         private const val BASE_DB = 10.0 // 배경 소음 기준 데시벨
-
-        // 스무딩
-        private const val RELEASE_RATE_PER_TICK = 0.8
-        private const val MAX_RISE_PER_TICK = 3.0
-        private const val MIN_DELTA_THRESHOLD = 0.3
-        private const val RMS_EMA_ALPHA = 0.4
-
-        // 에러 핸들링
-        private const val MAX_CONSECUTIVE_ERRORS = 50
+        private const val RELEASE_RATE_PER_TICK = 0.8 // 데시벨 감소 속도
+        private const val MAX_RISE_PER_TICK = 3.0 // 데시벨 증가 최대값
+        private const val MIN_DELTA_THRESHOLD = 0.3 // 최소 변화 임계값
+        private const val RMS_EMA_ALPHA = 0.4 // RMS 지수 이동 평균 계수
+        private const val MAX_CONSECUTIVE_ERRORS = 50 // 최대 연속 에러 허용 횟수
 
         fun newInstance() = NoiseMeasurementFragment()
     }
