@@ -30,7 +30,6 @@ import kotlin.math.sqrt
 class NoiseMeasurementFragment : Fragment() {
     private var _binding: FragmentNoiseMeasurementBinding? = null
     private val binding get() = _binding!!
-
     private var audioRecord: AudioRecord? = null
     private var isRecording = false
     private var recordingJob: Job? = null
@@ -165,7 +164,7 @@ class NoiseMeasurementFragment : Fragment() {
                     break
                 }
             }
-            if (baselineRms != null) delay(50) // 캘리브레이션 완료 후에만 지연
+            delay(50) // 적절한 샘플링 간격 유지
         }
     }
 
