@@ -24,6 +24,8 @@ class NoiseLogFormFragment : Fragment() {
     private val viewModel: NoiseLogViewModel by activityViewModels()
 
     // 측정 데이터
+    private var logId: String? = null // 수정 모드일 때 로그 ID
+    private var isEditMode = false // 수정 모드 여부
     private var maxDb = 0.0
     private var avgDb = 0.0
     private var duration = 0L
@@ -35,10 +37,19 @@ class NoiseLogFormFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            logId = it.getString(ARG_LOG_ID)
+            isEditMode = logId != null
             maxDb = it.getDouble(ARG_MAX_DB, 0.0)
             avgDb = it.getDouble(ARG_AVG_DB, 0.0)
             duration = it.getLong(ARG_DURATION, 0)
             measuredAt = Date(it.getLong(ARG_MEASURED_AT, System.currentTimeMillis()))
+
+            // 수정 모드일 때 기존 데이터 불러오기
+            if (isEditMode) {
+                selectedNoiseType = it.getString(ARG_NOISE_TYPE)
+                val memo = it.getString(ARG_MEMO)
+                // onViewCreated에서 UI에 설정됨
+            }
         }
     }
 
@@ -56,6 +67,15 @@ class NoiseLogFormFragment : Fragment() {
         setupUI()
         setupNoiseTypeButtons()
         setupListeners()
+
+        // 수정 모드일 때 기존 데이터 표시
+        if (isEditMode) {
+            arguments?.let {
+                val memo = it.getString(ARG_MEMO)
+                binding.etMemo.setText(memo)
+                selectedNoiseType?.let { type -> selectNoiseType(type) }
+            }
+        }
     }
 
     private fun setupUI() {
@@ -174,6 +194,7 @@ class NoiseLogFormFragment : Fragment() {
 
     private fun saveNoiseLog() {
         val noiseLog = NoiseLog(
+            id = logId, // 수정 모드일 때 기존 ID 유지
             noiseType = selectedNoiseType!!,
             maxDecibel = maxDb,
             avgDecibel = avgDb,
@@ -182,17 +203,26 @@ class NoiseLogFormFragment : Fragment() {
             hasReport = false
         )
 
-        viewModel.saveLog(noiseLog)
+        if (isEditMode) {
+            viewModel.updateLog(noiseLog)
+            Toast.makeText(requireContext(), "소음 일기가 수정되었습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            viewModel.saveLog(noiseLog)
+            Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
+        }
 
         // 저장한 날짜를 선택하여 해당 날짜의 로그를 표시
         viewModel.selectDate(measuredAt)
 
-        Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
-
-        // 캘린더 화면으로 돌아가기 (FormFragment -> MeasurementFragment -> LogFragment)
-        // 백스택에서 2번 pop하여 NoiseLogFragment로 돌아감
-        parentFragmentManager.popBackStack()
-        parentFragmentManager.popBackStack()
+        // 캘린더 화면으로 돌아가기
+        if (isEditMode) {
+            // 수정 모드일 때는 바로 이전 화면(NoiseLogFragment)으로
+            parentFragmentManager.popBackStack()
+        } else {
+            // 신규 등록일 때는 2번 pop (FormFragment -> MeasurementFragment -> LogFragment)
+            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack()
+        }
     }
 
     override fun onDestroyView() {
@@ -201,11 +231,15 @@ class NoiseLogFormFragment : Fragment() {
     }
 
     companion object {
+        private const val ARG_LOG_ID = "log_id"
+        private const val ARG_NOISE_TYPE = "noise_type"
+        private const val ARG_MEMO = "memo"
         private const val ARG_MAX_DB = "max_db"
         private const val ARG_AVG_DB = "avg_db"
         private const val ARG_DURATION = "duration"
         private const val ARG_MEASURED_AT = "measured_at"
 
+        // 신규 등록 모드
         fun newInstance(maxDb: Double, avgDb: Double, duration: Long, measuredAt: Long) =
             NoiseLogFormFragment().apply {
                 arguments = Bundle().apply {
@@ -213,6 +247,20 @@ class NoiseLogFormFragment : Fragment() {
                     putDouble(ARG_AVG_DB, avgDb)
                     putLong(ARG_DURATION, duration)
                     putLong(ARG_MEASURED_AT, measuredAt)
+                }
+            }
+
+        // 수정 모드
+        fun newInstanceForEdit(log: NoiseLog) =
+            NoiseLogFormFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_LOG_ID, log.id)
+                    putString(ARG_NOISE_TYPE, log.noiseType)
+                    putString(ARG_MEMO, log.memo)
+                    putDouble(ARG_MAX_DB, log.maxDecibel)
+                    putDouble(ARG_AVG_DB, log.avgDecibel)
+                    putLong(ARG_DURATION, 0) // 수정 모드에서는 duration 사용 안함
+                    putLong(ARG_MEASURED_AT, log.measuredAt.time)
                 }
             }
     }

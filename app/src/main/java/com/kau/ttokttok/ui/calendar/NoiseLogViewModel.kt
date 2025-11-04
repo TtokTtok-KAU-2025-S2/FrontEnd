@@ -77,4 +77,14 @@ class NoiseLogViewModel(
             }
         }
     }
+
+    // 소음 일기 수정
+    fun updateLog(log: NoiseLog) {
+        viewModelScope.launch {
+            repository.updateNoiseLog(log).onSuccess {
+                loadAllLogs()
+                selectDate(_selectedDate.value)
+            }
+        }
+    }
 }

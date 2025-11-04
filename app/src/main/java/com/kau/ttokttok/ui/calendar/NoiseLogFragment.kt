@@ -109,7 +109,13 @@ class NoiseLogFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = NoiseLogAdapter(
             onDeleteClick = { log -> viewModel.deleteLog(log.id!!) },
-            onEditClick = { log -> /* TODO: 수정 화면으로 이동 */ },
+            onEditClick = { log ->
+                // 수정 화면으로 이동
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, NoiseLogFormFragment.newInstanceForEdit(log))
+                    .addToBackStack(null)
+                    .commit()
+            },
             onItemCheckChanged = { _, _ -> updateSelectionCount() }
         )
 
