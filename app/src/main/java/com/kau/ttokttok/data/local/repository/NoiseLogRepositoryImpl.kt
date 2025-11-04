@@ -57,13 +57,25 @@ class NoiseLogRepositoryImpl : NoiseLogRepository {
 
     override suspend fun getNoiseLogsByDate(date: Date): Result<List<NoiseLog>> {
         return try {
-            val calendar = Calendar.getInstance().apply { time = date }
+            val calendar = Calendar.getInstance().apply {
+                time = date
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
             val targetYear = calendar.get(Calendar.YEAR)
             val targetMonth = calendar.get(Calendar.MONTH)
             val targetDay = calendar.get(Calendar.DAY_OF_MONTH)
 
             val filtered = tempLogs.filter { log ->
-                val logCalendar = Calendar.getInstance().apply { time = log.measuredAt }
+                val logCalendar = Calendar.getInstance().apply {
+                    time = log.measuredAt
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
                 logCalendar.get(Calendar.YEAR) == targetYear &&
                 logCalendar.get(Calendar.MONTH) == targetMonth &&
                 logCalendar.get(Calendar.DAY_OF_MONTH) == targetDay

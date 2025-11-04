@@ -41,7 +41,13 @@ class NoiseLogFragment : Fragment() {
         observeViewModel()
 
         // 초기 로드 시 오늘 날짜를 선택
-        viewModel.selectDate(Date())
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+        viewModel.selectDate(today)
     }
 
     private fun setupRecyclerView() {
@@ -60,7 +66,13 @@ class NoiseLogFragment : Fragment() {
     private fun setupCalendar() {
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val calendar = Calendar.getInstance().apply {
-                set(year, month, dayOfMonth)
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
             }
             viewModel.selectDate(calendar.time)
         }
@@ -96,8 +108,10 @@ class NoiseLogFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.selectedLogs.collect { logs ->
-                adapter.submitList(logs)
-                updateSelectionCount()
+                adapter.submitList(logs) {
+                    // submitList가 완료된 후에 카운트를 업데이트
+                    updateSelectionCount()
+                }
             }
         }
 

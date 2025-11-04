@@ -220,11 +220,6 @@ class NoiseMeasurementFragment : Fragment() {
         return db.coerceIn(0.0, 120.0)
     }
 
-    companion object {
-        private const val MAX_PCM_16BIT_AMPLITUDE = 32768.0 // Maximum amplitude for 16-bit signed PCM audio
-        private const val DB_CALIBRATION_OFFSET = 90        // Calibration offset for microphone/environment
-        fun newInstance() = NoiseMeasurementFragment()
-    }
     private fun updateUI(currentDb: Double) {
         // 현재 데시벨 값
         binding.tvCurrentDb.text = currentDb.toInt().toString()
@@ -249,6 +244,9 @@ class NoiseMeasurementFragment : Fragment() {
     }
 
     companion object {
+        private const val MAX_PCM_16BIT_AMPLITUDE = 32768.0 // Maximum amplitude for 16-bit signed PCM audio
+        private const val DB_CALIBRATION_OFFSET = 90        // Calibration offset for microphone/environment
+
         fun newInstance() = NoiseMeasurementFragment()
     }
 }
