@@ -214,10 +214,17 @@ class NoiseMeasurementFragment : Fragment() {
     private fun calculateDecibels(buffer: ShortArray, read: Int): Double {
         val sum = buffer.take(read).sumOf { (it * it).toDouble() }
         val rms = sqrt(sum / read)
-        val db = 20 * log10(rms / 32768.0) + 90 // 기준값 조정
+        // 32768.0 is the maximum amplitude for a 16-bit signed PCM sample (audio data range: -32768 to 32767).
+        // 90 is a calibration offset to account for microphone sensitivity and environmental noise floor.
+        val db = 20 * log10(rms / MAX_PCM_16BIT_AMPLITUDE) + DB_CALIBRATION_OFFSET
         return db.coerceIn(0.0, 120.0)
     }
 
+    companion object {
+        private const val MAX_PCM_16BIT_AMPLITUDE = 32768.0 // Maximum amplitude for 16-bit signed PCM audio
+        private const val DB_CALIBRATION_OFFSET = 90        // Calibration offset for microphone/environment
+        fun newInstance() = NoiseMeasurementFragment()
+    }
     private fun updateUI(currentDb: Double) {
         // 현재 데시벨 값
         binding.tvCurrentDb.text = currentDb.toInt().toString()
