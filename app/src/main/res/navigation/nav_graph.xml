@@ -23,6 +23,24 @@
         />
 
     <fragment
+        android:id="@+id/noiseVoteFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.NoiseVoteFragment"
+        android:label="NoiseVote"
+        />
+
+    <fragment
+        android:id="@+id/preConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.PreConsiderationFragment"
+        android:label="PreConsideration"
+        />
+
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.CommunityFragment"
+        android:label="Community"
+        />
+
+    <fragment
         android:id="@+id/settingFragment"
         android:name="com.kau.ttokttok.ui.compose.setting.SettingFragment"
         android:label="Setting"
