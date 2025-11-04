@@ -3,8 +3,10 @@ package com.kau.ttokttok.domain.usecase
 import android.util.Patterns
 import com.kau.ttokttok._core.network.auth.TokenProvider
 import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.data.remote.dto.req.*
-import com.kau.ttokttok.data.remote.dto.res.*
+import com.kau.ttokttok.data.remote.dto.auth.req.LoginReq
+import com.kau.ttokttok.data.remote.dto.auth.req.RegisterReq
+import com.kau.ttokttok.data.remote.dto.auth.res.LoginRes
+import com.kau.ttokttok.data.remote.dto.auth.res.RegisterRes
 import com.kau.ttokttok.domain.repository.AuthRepository
 import javax.inject.Inject
 import javax.inject.Singleton

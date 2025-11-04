@@ -38,16 +38,13 @@ import androidx.compose.ui.unit.sp
 import com.kau.ttokttok.ui.component.common.background.StarField
 import kotlin.random.Random
 
+@Preview(showBackground = true)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     // 디자인만: 외부로 노출되는 콜백만 둔다 (VM 없음)
     onClickLogin: (email: String, password: String) -> Unit = { _, _ -> },
-    onClickSignup: () -> Unit = {},
-    onClickKaKao: () -> Unit = {},
-    onClickNaver: () -> Unit = {},
-    onClickFindId: () -> Unit = {},
-    onClickFindPassword: () -> Unit = {},
+    onClickRegister: () -> Unit = {}
 ) {
     val focus = LocalFocusManager.current
     val scroll = rememberScrollState()
@@ -151,7 +148,7 @@ fun LoginScreen(
                     )
 
                     Text(
-                        text = "이웃과 함께하는 조용한 생활",
+                        text = "아파트 소음 관리 서비스",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.8f),
                         textAlign = TextAlign.Center
@@ -170,7 +167,7 @@ fun LoginScreen(
                     onValueChange = { pw= it }
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(32.dp))
 
                 LoginButton(
                     onClick = {
@@ -178,49 +175,18 @@ fun LoginScreen(
                     }
                 )
 
-                FindLinks(
-                    onClickFindId = onClickFindId,
-                    onClickFindPassword = onClickFindPassword
-                )
-
-                Spacer(Modifier.height(24.dp))
-
-                DividerWithText(text = "간편 로그인")
-
-                Spacer(Modifier.height(16.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    KakaoButton(
-                        onClick = onClickKaKao,
-                        modifier = Modifier.weight(1f)
-                    )
-                    NaverButton(
-                        onClick = onClickNaver,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                DividerWithText(text = "또는")
-
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(32.dp))
 
                 SignupButton(
-                    onClick = { }
+                    onClick = onClickRegister
                 )
             }
-
-            BottomNotice()
         }
     }
 }
 
 @Composable
-private fun FrostedPanel(
+fun FrostedPanel(
     modifier: Modifier = Modifier,
     // rounded-3xl ≈ 24.dp
     corner: RoundedCornerShape = RoundedCornerShape(24.dp),
@@ -246,7 +212,7 @@ private fun FrostedPanel(
 }
 
 @Composable
-private fun EmailField(
+fun EmailField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -257,7 +223,7 @@ private fun EmailField(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = "이메일 또는 아이디",
+            text = "이메일",
             color = Color.White,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(bottom = 6.dp)
@@ -268,7 +234,7 @@ private fun EmailField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    "이메일 또는 아이디를 입력하세요",
+                    "example@gmail.com",
                     color = Color.White.copy(alpha = 0.6f) // placeholder:text-white/60
                 )
             },
@@ -404,146 +370,6 @@ fun LoginButton(
 }
 
 @Composable
-fun FindLinks(
-    onClickFindId: () -> Unit = {},
-    onClickFindPassword: () -> Unit = {}
-) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 24.dp) // mt-6 (6 * 4px = 24dp)
-    ) {
-        Text(
-            text = "아이디 찾기",
-            color = Color.White.copy(alpha = 0.8f), // text-white/80
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier
-                .clickable(onClick = onClickFindId)
-                .padding(horizontal = 8.dp)
-        )
-
-        Text(
-            text = "|",
-            color = Color.White.copy(alpha = 0.4f), // text-white/40
-            style = MaterialTheme.typography.bodySmall
-        )
-
-        Text(
-            text = "비밀번호 찾기",
-            color = Color.White.copy(alpha = 0.8f), // text-white/80
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier
-                .clickable(onClick = onClickFindPassword)
-                .padding(horizontal = 8.dp)
-        )
-    }
-}
-
-@Composable
-fun DividerWithText(
-    text: String = "간편 로그인"
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Divider(
-            modifier = Modifier.weight(1f),
-            color = Color.White.copy(alpha = 0.2f) // bg-white/20
-        )
-        Text(
-            text,
-            color = Color.White.copy(alpha = 0.6f), // text-white/60
-            style = MaterialTheme.typography.bodySmall
-        )
-        Divider(
-            modifier = Modifier.weight(1f),
-            color = Color.White.copy(alpha = 0.2f)
-        )
-    }
-}
-
-@Composable
-fun SocialButton(
-    text: String,
-    bgColor: Color,
-    borderColor: Color,
-    iconContent: @Composable () -> Unit,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier
-            .height(48.dp), // h-12
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = bgColor.copy(alpha = 0.2f),
-            contentColor = Color.White
-        ),
-        border = BorderStroke(1.dp, borderColor.copy(alpha = 0.3f))
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            iconContent()
-            Spacer(Modifier.width(12.dp))
-            Text(text)
-        }
-    }
-}
-
-@Composable
-fun KakaoButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    SocialButton(
-        text = "카카오",
-        bgColor = Color(0xFFFEE500),   // 카카오 노랑
-        borderColor = Color(0xFFFEE500),
-        onClick = onClick,
-        iconContent = {
-            Box(
-                modifier = Modifier
-                    .size(20.dp)
-                    .background(Color(0xFFFEE500), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("K", fontSize = 12.sp, color = Color.Black)
-            }
-        }
-    )
-}
-
-@Composable
-fun NaverButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    SocialButton(
-        text = "네이버",
-        bgColor = Color(0xFF03C75A),   // 네이버 초록
-        borderColor = Color(0xFF03C75A),
-        onClick = onClick,
-        iconContent = {
-            Box(
-                modifier = Modifier
-                    .size(20.dp)
-                    .background(Color(0xFF03C75A), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("N", fontSize = 12.sp, color = Color.White)
-            }
-        }
-    )
-}
-
-@Composable
 fun SignupButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -561,36 +387,5 @@ fun SignupButton(
         )
     ) {
         Text("회원가입 하기")
-    }
-}
-
-@Composable
-fun BottomNotice(
-    text: String = "처음 사용하시나요? 아파트 관리사무소에서 초대코드를 받아보세요",
-    modifier: Modifier = Modifier
-) {
-    var visible by remember { mutableStateOf(true) }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(animationSpec = tween(durationMillis = 800, delayMillis = 800)) // delay=0.8s
-    ) {
-        Text(
-            text = text,
-            color = Color.White.copy(alpha = 0.6f), // text-white/60
-            style = MaterialTheme.typography.bodySmall, // text-sm
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp) // mt-6
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewLogin() {
-    MaterialTheme {
-        LoginScreen()
     }
 }

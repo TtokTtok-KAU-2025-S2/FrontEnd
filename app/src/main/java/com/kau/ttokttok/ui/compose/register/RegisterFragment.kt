@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.compose.login
+package com.kau.ttokttok.ui.compose.register
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,13 +7,10 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import com.kau.ttokttok.ui.navigation.Destination
-import com.kau.ttokttok.ui.navigation.navigateTo
-
+import androidx.navigation.findNavController
 import com.kau.ttokttok.ui.navigation.onSuccessLogin
 
-class LoginFragment : Fragment() {
+class RegisterFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,10 +21,9 @@ class LoginFragment : Fragment() {
         )
 
         setContent {
-            LoginRoute(
+            RegisterRoute(
                 onSuccess = { findNavController().onSuccessLogin() },
-                onBack = { findNavController().popBackStack() },
-                onRegister = { findNavController().navigateTo(Destination.REGISTER) }
+                onBack = { findNavController().popBackStack() }
             )
         }
     }

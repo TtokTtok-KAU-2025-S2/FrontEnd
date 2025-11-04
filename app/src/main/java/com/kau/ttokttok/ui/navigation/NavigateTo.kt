@@ -62,6 +62,7 @@ fun NavController.navigateTo(
 
     when (dest) {
         Destination.LOGIN -> navigate(R.id.loginFragment, args, options)
+        Destination.REGISTER -> navigate(R.id.registerFragment, args, options)
         Destination.MAIN -> navigate(R.id.mainFragment, args, options)
         Destination.PRECONSIDERATION -> TODO()
         Destination.COMMUNITY -> TODO()

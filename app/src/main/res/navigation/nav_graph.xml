@@ -11,6 +11,12 @@
         />
 
     <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.kau.ttokttok.ui.compose.register.RegisterFragment"
+        android:label="Register"
+        />
+
+    <fragment
         android:id="@+id/mainFragment"
         android:name="com.kau.ttokttok.ui.compose.main.MainFragment"
         android:label="Main"
