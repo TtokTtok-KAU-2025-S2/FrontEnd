@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentNoiseLogFormBinding
@@ -121,7 +122,7 @@ class NoiseLogFormFragment : Fragment() {
     private fun setupListeners() {
         // 뒤로가기 버튼
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
 
         binding.btnGenerateAiDiary.setOnClickListener {
@@ -214,14 +215,14 @@ class NoiseLogFormFragment : Fragment() {
         // 저장한 날짜를 선택하여 해당 날짜의 로그를 표시
         viewModel.selectDate(measuredAt)
 
-        // 캘린더 화면으로 돌아가기
+        // 캘린더 화면으로 돌아가기 (Navigator 방식)
         if (isEditMode) {
             // 수정 모드일 때는 바로 이전 화면(NoiseLogFragment)으로
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         } else {
             // 신규 등록일 때는 2번 pop (FormFragment -> MeasurementFragment -> LogFragment)
-            parentFragmentManager.popBackStack()
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
+            findNavController().popBackStack()
         }
     }
 

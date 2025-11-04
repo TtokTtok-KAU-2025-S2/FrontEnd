@@ -14,8 +14,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentNoiseMeasurementBinding
+import com.kau.ttokttok.ui.navigation.Destination
+import com.kau.ttokttok.ui.navigation.navigateTo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -60,7 +63,7 @@ class NoiseMeasurementFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnBack.setOnClickListener {
             if (isRecording) stopMeasurement()
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
         binding.btnControl.setOnClickListener {
             if (isRecording) stopMeasurementAndNavigate() else checkPermissionAndStart()
@@ -249,15 +252,15 @@ class NoiseMeasurementFragment : Fragment() {
 
     private fun stopMeasurementAndNavigate() { // 측정 종료 후 결과 화면으로 이동
         stopMeasurement()
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.container, NoiseLogFormFragment.newInstance(
-                maxDb = maxDb,
-                avgDb = avgDb,
-                duration = (System.currentTimeMillis() - startTime) / 1000,
-                measuredAt = startTime
-            ))
-            .addToBackStack(null)
-            .commit()
+
+        val bundle = Bundle().apply {
+            putDouble("max_db", maxDb)
+            putDouble("avg_db", avgDb)
+            putLong("duration", (System.currentTimeMillis() - startTime) / 1000)
+            putLong("measured_at", startTime)
+        }
+
+        findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)
         Toast.makeText(requireContext(), "측정이 완료되었습니다", Toast.LENGTH_SHORT).show()
     }
 

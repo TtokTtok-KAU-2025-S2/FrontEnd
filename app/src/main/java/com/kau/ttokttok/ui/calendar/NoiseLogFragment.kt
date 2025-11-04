@@ -13,9 +13,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentMyProfileBinding
+import com.kau.ttokttok.ui.navigation.Destination
+import com.kau.ttokttok.ui.navigation.navigateTo
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -110,11 +113,16 @@ class NoiseLogFragment : Fragment() {
         adapter = NoiseLogAdapter(
             onDeleteClick = { log -> viewModel.deleteLog(log.id!!) },
             onEditClick = { log ->
-                // 수정 화면으로 이동
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, NoiseLogFormFragment.newInstanceForEdit(log))
-                    .addToBackStack(null)
-                    .commit()
+                // 수정 화면으로 이동 (Navigator 방식)
+                val bundle = Bundle().apply {
+                    putString("log_id", log.id)
+                    putString("noise_type", log.noiseType)
+                    putString("memo", log.memo)
+                    putDouble("max_db", log.maxDecibel)
+                    putDouble("avg_db", log.avgDecibel)
+                    putLong("measured_at", log.measuredAt.time)
+                }
+                findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)
             },
             onItemCheckChanged = { _, _ -> updateSelectionCount() }
         )
@@ -142,10 +150,8 @@ class NoiseLogFragment : Fragment() {
 
     private fun setupFab() {
         binding.fabAdd.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, NoiseMeasurementFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
+            // 측정 화면으로 이동 (Navigator 방식)
+            findNavController().navigateTo(Destination.NOISE_MEASUREMENT)
         }
     }
 

@@ -22,4 +22,23 @@
         android:label="Setting"
         />
 
+    <!-- 소음일기 관련 Fragment -->
+    <fragment
+        android:id="@+id/noiseLogFragment"
+        android:name="com.kau.ttokttok.ui.calendar.NoiseLogFragment"
+        android:label="Noise Log"
+        />
+
+    <fragment
+        android:id="@+id/noiseLogFormFragment"
+        android:name="com.kau.ttokttok.ui.calendar.NoiseLogFormFragment"
+        android:label="Noise Log Form"
+        />
+
+    <fragment
+        android:id="@+id/noiseMeasurementFragment"
+        android:name="com.kau.ttokttok.ui.calendar.NoiseMeasurementFragment"
+        android:label="Noise Measurement"
+        />
+
 </navigation>
