@@ -118,7 +118,7 @@ class NoiseLogFormFragment : Fragment() {
         // 모든 버튼 초기화 후 선택된 버튼만 강조
         noiseTypeButtonMap.forEach { (_, button) ->
             button.apply {
-                strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.black)
+                strokeColor = ContextCompat.getColorStateList(requireContext(), android.R.color.black)
                 strokeWidth = 1
             }
         }
