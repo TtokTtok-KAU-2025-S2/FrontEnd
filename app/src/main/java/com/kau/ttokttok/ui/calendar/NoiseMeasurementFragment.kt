@@ -70,6 +70,15 @@ class NoiseMeasurementFragment : Fragment() {
     }
 
     private fun setupUI() {
+        // 뒤로가기 버튼 클릭 리스너
+        binding.btnBack.setOnClickListener {
+            // 측정 중이면 중지하고 돌아가기
+            if (isRecording) {
+                stopMeasurement()
+            }
+            parentFragmentManager.popBackStack()
+        }
+
         // 측정 버튼 클릭 리스너
         binding.btnControl.setOnClickListener {
             if (isRecording) {
