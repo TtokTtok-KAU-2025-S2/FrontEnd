@@ -179,8 +179,14 @@ class NoiseLogFormFragment : Fragment() {
         return true
     }
 
+    // TODO: [백엔드 연동] 실제로는 AI 서버에 요청을 보내야 함
+    // TODO: [백엔드 연동] POST /api/ai/generate-diary
+    // TODO: [백엔드 연동] 요청 본문: { noiseType, maxDb, avgDb, duration, userMemo }
+    // TODO: [백엔드 연동] 응답: { generatedText: string }
     private fun generateAiDiary() {
         val memo = binding.etMemo.text.toString()
+        // TODO: [백엔드 연동] 로딩 인디케이터 표시
+        // TODO: [백엔드 연동] 아래는 임시 로직, 실제로는 AI API 응답을 사용
         val aiGeneratedDiary = buildString {
             append("[$selectedNoiseType] $memo\n\n")
             append("측정 시간: ${duration}초 동안 ")
@@ -191,6 +197,8 @@ class NoiseLogFormFragment : Fragment() {
 
         binding.etMemo.setText(aiGeneratedDiary)
         Toast.makeText(requireContext(), "AI 일기가 생성되었습니다", Toast.LENGTH_SHORT).show()
+        // TODO: [백엔드 연동] 로딩 인디케이터 숨김
+        // TODO: [백엔드 연동] AI 생성 실패 시 에러 처리
     }
 
     private fun saveNoiseLog() {
@@ -211,6 +219,9 @@ class NoiseLogFormFragment : Fragment() {
             viewModel.saveLog(noiseLog)
             Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
         }
+
+        // TODO: [백엔드 연동] 저장 성공 여부를 확인한 후 화면 전환
+        // TODO: [백엔드 연동] 저장 실패 시 사용자에게 재시도 옵션 제공
 
         // 저장한 날짜를 선택하여 해당 날짜의 로그를 표시
         viewModel.selectDate(measuredAt)

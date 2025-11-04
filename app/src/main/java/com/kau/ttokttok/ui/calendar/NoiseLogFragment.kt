@@ -164,12 +164,16 @@ class NoiseLogFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // TODO: [백엔드 연동] 실제로는 서버에 리포트 생성 요청을 보내야 함
+            // TODO: [백엔드 연동] POST /api/reports { noiseLogIds: ["id1", "id2", ...] }
+            // TODO: [백엔드 연동] 리포트 생성 후 PDF 다운로드 링크 받기
             selectedLogs.forEach { log ->
                 viewModel.toggleReportStatus(log)
             }
 
             adapter.clearSelection()
             Toast.makeText(requireContext(), "${selectedLogs.size}개의 리포트가 생성되었습니다", Toast.LENGTH_SHORT).show()
+            // TODO: [백엔드 연동] 생성된 리포트 보기 화면으로 이동 옵션 제공
         }
     }
 

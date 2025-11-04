@@ -253,11 +253,16 @@ class NoiseMeasurementFragment : Fragment() {
     private fun stopMeasurementAndNavigate() { // 측정 종료 후 결과 화면으로 이동
         stopMeasurement()
 
+        // TODO: [백엔드 연동] 측정 데이터를 서버에 임시 저장하거나 오디오 파일 업로드
+        // TODO: [백엔드 연동] POST /api/noise-measurements (측정 원시 데이터 저장)
+        // TODO: [백엔드 연동] 오디오 녹음 기능이 추가되면 파일 업로드 필요
         val bundle = Bundle().apply {
             putDouble("max_db", maxDb)
             putDouble("avg_db", avgDb)
             putLong("duration", (System.currentTimeMillis() - startTime) / 1000)
             putLong("measured_at", startTime)
+            // TODO: [백엔드 연동] 서버에서 받은 측정 ID 추가
+            // putString("measurement_id", measurementId)
         }
 
         findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)

@@ -12,6 +12,7 @@ import com.kau.ttokttok.domain.model.NoiseLog
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+// TODO: [백엔드 연동] 이미지나 첨부파일이 추가되는 경우 Glide/Coil로 이미지 로딩 필요
 class NoiseLogAdapter(
     private val onDeleteClick: (NoiseLog) -> Unit,
     private val onEditClick: (NoiseLog) -> Unit,
@@ -53,6 +54,7 @@ class NoiseLogAdapter(
         fun bind(log: NoiseLog) {
             binding.tvDate.text = dateFormat.format(log.measuredAt)
 
+            // TODO: [백엔드 연동] 서버의 리포트 생성 상태(hasReport)와 동기화
             // 리포트 생성 상태 표시
             binding.tvReportStatus.visibility = if (log.hasReport) {
                 binding.tvReportStatus.text = "📄 리포트 생성됨"
@@ -85,6 +87,7 @@ class NoiseLogAdapter(
             binding.cbSelect.setOnCheckedChangeListener(null)
 
             if (log.hasReport) {
+                // TODO: [백엔드 연동] 서버의 리포트 상태 확인 후 체크박스 활성화/비활성화
                 // 이미 리포트가 생성된 항목은 체크 표시하고 비활성화
                 binding.cbSelect.isChecked = true
                 binding.cbSelect.isEnabled = false
