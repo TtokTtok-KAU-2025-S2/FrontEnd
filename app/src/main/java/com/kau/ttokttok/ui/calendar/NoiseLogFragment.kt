@@ -1,9 +1,14 @@
 package com.kau.ttokttok.ui.calendar
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -13,7 +18,6 @@ import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentMyProfileBinding
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.util.Date
 
 class NoiseLogFragment : Fragment() {
 
@@ -22,6 +26,55 @@ class NoiseLogFragment : Fragment() {
 
     private var _binding: FragmentMyProfileBinding? = null
     private val binding get() = _binding!!
+
+    // FAB 애니메이션을 위한 Handler
+    private val handler = Handler(Looper.getMainLooper())
+    private val flipAnimationRunnable = object : Runnable {
+        override fun run() {
+            // 3D 동전 뒤집기 애니메이션
+            startFlipAnimation()
+
+            // 10초 후에 다시 실행
+            handler.postDelayed(this, 10000)
+        }
+    }
+
+    private fun startFlipAnimation() {
+        val fab = binding.fabAdd
+
+        // 3D 효과를 위한 카메라 거리 설정 (값이 클수록 원근감이 줄어듦)
+        val scale = resources.displayMetrics.density
+        fab.cameraDistance = 8000 * scale
+
+        // Y축을 기준으로 180도 회전 (첫 번째 반쪽)
+        val rotateOut = ObjectAnimator.ofFloat(fab, "rotationY", 0f, 90f).apply {
+            duration = 500
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+
+        // Y축을 기준으로 180도 회전 (두 번째 반쪽)
+        val rotateIn = ObjectAnimator.ofFloat(fab, "rotationY", -90f, 0f).apply {
+            duration = 500
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+
+        // 약간 위로 튀어오르는 효과
+        val jumpUp = ObjectAnimator.ofFloat(fab, "translationY", 0f, -30f).apply {
+            duration = 500
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+
+        val jumpDown = ObjectAnimator.ofFloat(fab, "translationY", -30f, 0f).apply {
+            duration = 500
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+
+        // 애니메이션 조합
+        val animatorSet = AnimatorSet()
+        animatorSet.play(rotateOut).with(jumpUp)
+        animatorSet.play(rotateIn).with(jumpDown).after(rotateOut)
+        animatorSet.start()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +101,9 @@ class NoiseLogFragment : Fragment() {
             set(Calendar.MILLISECOND, 0)
         }.time
         viewModel.selectDate(today)
+
+        // FAB 애니메이션 시작 (10초 후 첫 실행)
+        handler.postDelayed(flipAnimationRunnable, 10000)
     }
 
     private fun setupRecyclerView() {
@@ -158,6 +214,8 @@ class NoiseLogFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Handler 콜백 제거
+        handler.removeCallbacks(flipAnimationRunnable)
         _binding = null
     }
 }
