@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">똑똑</string>
+
+    <!-- 소음 일기 관련 문자열 -->
+    <string name="noise_diary_title">똑똑 소음 일기</string>
+    <string name="default_address">래미안 아파트 301동 1502호</string>
+    <string name="total_records">총 기록</string>
+    <string name="this_month">이번 달</string>
+    <string name="average_db">평균 dB</string>
+    <string name="select_date">📅 날짜 선택</string>
+    <string name="create_report">리포트 생성</string>
+    <string name="add_noise_record">추가</string>
+    <string name="record_count_format">%d건</string>
+    <string name="selected_count_format">%d개 선택됨</string>
 </resources>

@@ -9,6 +9,7 @@
 
     <!-- Material Design 기본 색상 (themes.xml에서 참조) -->
     <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_700">#FF6200EE</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
