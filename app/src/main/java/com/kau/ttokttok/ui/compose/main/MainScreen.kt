@@ -1,14 +1,8 @@
 package com.kau.ttokttok.ui.compose.main
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseInOut
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,12 +12,12 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,39 +26,41 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.kau.ttokttok.R
 import com.kau.ttokttok.ui.component.common.background.StarField
-import com.kau.ttokttok.ui.component.common.card.GlassCard
 import com.kau.ttokttok.ui.component.common.card.GlassCardClickable
 import com.kau.ttokttok.ui.navigation.Destination
 
@@ -74,8 +70,6 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     onNavigate: (Destination) -> Unit = {}
 ) {
-    // TODO: 디자인 디테일 한번 더 잡기
-
     val focus = LocalFocusManager.current
     val scroll = rememberScrollState()
 
@@ -124,13 +118,12 @@ fun MainScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            MonthlyNeighborCard()
+            GreetingHeader()
 
             Spacer(Modifier.height(32.dp))
 
-            // TODO: 섬 구현
-            NavigatorPreview(
-                onNavigate = { dest -> onNavigate(dest)}
+            MainSection(
+                onButtonClick = { dest -> onNavigate(dest) }
             )
 
             Spacer(Modifier.height(32.dp))
@@ -142,11 +135,6 @@ fun MainScreen(
             )
 
             Spacer(Modifier.height(32.dp))
-
-            // 나의 배려 현황
-            MyCareStatusCard(
-                onNavigate = { dest -> onNavigate(dest)}
-            )
         }
     }
 }
@@ -157,17 +145,6 @@ fun HomeHeader(
     onClickSetting: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "")
-    val boxShadowAnimation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 10f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = ""
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +156,6 @@ fun HomeHeader(
                     )
                 )
             )
-            .blur(0.2.dp)
             .border(1.dp, Color.White.copy(alpha = 0.1f))
             .zIndex(10f)
     ) {
@@ -206,7 +182,6 @@ fun HomeHeader(
                             .clip(RoundedCornerShape(12.dp))
                             .background(Color.White.copy(alpha = 0.1f))
                             .border(1.dp, Color.White.copy(alpha = 0.2f))
-                            .shadow(elevation = boxShadowAnimation.dp)
                             .padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -237,14 +212,15 @@ fun HomeHeader(
 
                 // 우측: 버튼 2개
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     IconButton(
                         onClick = onClickNotification,
                         modifier = Modifier
                             .size(36.dp)
-                            .border(1.dp, Color.White.copy(alpha = 0.1f))
-                            .background(Color.Transparent)
+                            .clip(CircleShape)
+                            .border(1.dp, Color.White.copy(alpha = 0.25f))
+                            .background(Color.White.copy(alpha = 0.1f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.Notifications,
@@ -258,8 +234,9 @@ fun HomeHeader(
                         onClick = onClickSetting,
                         modifier = Modifier
                             .size(36.dp)
-                            .border(1.dp, Color.White.copy(alpha = 0.1f))
-                            .background(Color.Transparent)
+                            .clip(CircleShape)
+                            .border(1.dp, Color.White.copy(alpha = 0.25f))
+                            .background(Color.White.copy(alpha = 0.1f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
@@ -275,182 +252,14 @@ fun HomeHeader(
 }
 
 @Composable
-fun MonthlyNeighborCard(
-    modifier: Modifier = Modifier,
-    month: String = "12월",
-    timeOfDay: String = "day" // "day", "sunset", "night"
-) {
-    // 등장 애니메이션
-    val enterTransition = remember { Animatable(20f) }
-    val alpha = remember { Animatable(0f) }
-
-    val offsetY = remember { Animatable(20f)}
-
-    LaunchedEffect(Unit) {
-        offsetY.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = 800, easing = LinearOutSlowInEasing)
-        )
-        alpha.animateTo(1f, animationSpec = tween(800))
-    }
-
-    // 회전 아이콘 애니메이션
-    val infiniteTransition = rememberInfiniteTransition(label = "")
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 10_000, easing = LinearEasing)
-        )
-    )
-
-    // 트로피 흔들림 애니메이션
-    val trophyRotation by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = EaseInOut),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = ""
-    )
-
-    val trophyScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = EaseInOut),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = ""
-    )
-
-    // 색상 테마
-    val (badgeColor, badgeTextColor, ringColor, fallbackBgColor, fallbackBorderColor) = when (timeOfDay) {
-        "day" -> listOf(Color(0xFF4CAF50).copy(alpha = 0.3f), Color(0xFF1B5E20), Color(0xFFB39DDB), Color(0xFF7E57C2), Color(0xFFB39DDB))
-        "sunset" -> listOf(Color(0xFFFF9800).copy(alpha = 0.3f), Color(0xFFE65100), Color(0xFF9575CD), Color(0xFF7E57C2), Color(0xFF9575CD))
-        else -> listOf(Color(0xFF2196F3).copy(alpha = 0.3f), Color(0xFF0D47A1), Color(0xFF7986CB), Color(0xFF3F51B5), Color(0xFF7986CB))
-    }
-
-    // 카드
-    GlassCard(
-        modifier = modifier
-            .graphicsLayer {
-                translationY = offsetY.value
-                this.alpha = alpha.value
-            }
-            .shadow(
-                8.dp,
-                RoundedCornerShape(16.dp),
-                ambientColor = Color.Black.copy(alpha = 0.25f),
-                spotColor = Color.Black.copy(alpha = 0.25f)
-            )
-            .fillMaxWidth()
-            .background(Color.White.copy(alpha = 0.1f))
-            .border(
-                1.dp,
-                Color.White.copy(alpha = 0.2f),
-                RoundedCornerShape(16.dp)
-            )
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Header
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .graphicsLayer { rotationZ = rotation }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = Color(0xFFFFD54F),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "이달의 배려이웃",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                // Badge
-                Box(
-                    modifier = Modifier
-                        .background(badgeColor, RoundedCornerShape(8.dp))
-                        .border(1.dp, badgeColor.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(text = month, color = badgeTextColor, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                }
-            }
-
-            // Content
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Avatar
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .border(2.dp, ringColor.copy(alpha = 0.6f), CircleShape)
-                        .clip(CircleShape)
-                        .background(fallbackBgColor.copy(alpha = 0.4f))
-                        .border(1.dp, fallbackBorderColor.copy(alpha = 0.6f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "김배",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("김배려 님", color = Color.White, fontWeight = FontWeight.Bold)
-                    Text(
-                        "102동 304호 • 배려점수 1,480점",
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 13.sp
-                    )
-                }
-
-                // Trophy 애니메이션
-                Box(
-                    modifier = Modifier
-                        .graphicsLayer {
-                            rotationZ = trophyRotation
-                            scaleX = trophyScale
-                            scaleY = trophyScale
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("🏆", fontSize = 32.sp)
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun QuickActionsGrid(
     onNavigate: (Destination) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // 1) 사전 양해
@@ -490,6 +299,255 @@ fun QuickActionsGrid(
         )
     }
 }
+
+@Composable
+fun GreetingHeader(
+    greeting: String = "하루",
+    modifier: Modifier = Modifier,
+    titleColor: Color = Color.White,
+    subtitleColor: Color = Color(0xFFE9D5FF), // Tailwind purple-200
+    badgeBackground: Color = Color.White.copy(alpha = 0.20f),
+    badgeBorder: Color = Color.White.copy(alpha = 0.15f),
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp), // mb-6
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp) // gap-4
+    ) {
+        // Badge (w-16 h-16 rounded-full bg-white/20)
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(CircleShape)
+                .background(badgeBackground)
+                .border(width = 1.dp, color = badgeBorder, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "👋", fontSize = 28.sp) // text-3xl
+        }
+
+        Column {
+            Text(
+                text = "배려하는 이웃님,",
+                color = titleColor,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.height(4.dp)) // mb-1 느낌
+            Text(
+                text = "좋은 $greeting 입니다!",
+                color = titleColor,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "평화로운 이웃과 함께하는 하루",
+                color = subtitleColor,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp) // mt-1
+            )
+        }
+    }
+}
+
+@Composable
+fun MainSection(
+    mainSlides: List<MainSlide> = listOf(
+        MainSlide(
+            image = "",
+            title = "소음 일기",
+            description = "캘린더에서 날짜를 선택하여\n 소음을 기록하세요",
+            buttonText = "일기 보기",
+            destination = Destination.CALENDAR
+        ),
+
+        MainSlide(
+            image = "",
+            title = "소음 현황판",
+            description = "이웃의 소음 리포트에\n 투표로 참여하세요",
+            buttonText = "현황 보기",
+            destination = Destination.NOISE_VOTE
+        ),
+
+        MainSlide(
+            image = "",
+            title = "월간 리포트",
+            description = "AI가 분석한 우리 아파트의\n 소음 트렌드를 확인하세요",
+            buttonText = "리포트 보기",
+            destination = Destination.MONTH_REPORT
+        )
+    ),
+    modifier: Modifier = Modifier,
+    onButtonClick: (Destination) -> Unit = {}
+) {
+    var currentSlide by remember { mutableStateOf(0) }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp) // px-6
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp) // space-y-6
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp)) // rounded-3xl
+                    .background(Color.White.copy(alpha = 0.10f)) // bg-white/10
+                    .padding(bottom = 16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White.copy(alpha = 0.10f))
+                ) {
+                    // ============================
+                    // 🔹 이미지 자리: 현재는 "검정 화면"으로 고정
+                    //    나중에 이미지가 필요하면 아래 Box를 Image/AsyncImage로 교체
+                    //    예)
+                    //    Image(
+                    //      painter = painterResource(id = R.drawable.your_image),
+                    //      contentDescription = mainSlides[currentSlide].title,
+                    //      modifier = Modifier.fillMaxSize(),
+                    //      contentScale = ContentScale.Crop
+                    //    )
+                    // ============================
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(192.dp) // h-48
+                            .background(Color.Black)
+                    ) {
+                        // Prev 버튼
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .align(Alignment.CenterStart)
+                                .offset(x = 8.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black.copy(alpha = 0.3f))
+                                .clickable {
+                                    currentSlide =
+                                        if (currentSlide == 0) mainSlides.size - 1 else currentSlide - 1
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_chevron_left),
+                                contentDescription = "Prev",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        // Next 버튼
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .align(Alignment.CenterEnd)
+                                .offset(x = (-8).dp)
+                                .clip(CircleShape)
+                                .background(Color.Black.copy(alpha = 0.3f))
+                                .clickable {
+                                    currentSlide =
+                                        if (currentSlide == mainSlides.size - 1) 0 else currentSlide + 1
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_chevron_right),
+                                contentDescription = "Next",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    // 텍스트 + 버튼
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = mainSlides[currentSlide].title,
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Text(
+                            text = mainSlides[currentSlide].description,
+                            color = Color(0xFFE9D5FF),
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 20.sp,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+
+                        Button(
+                            onClick = { onButtonClick(mainSlides[currentSlide].destination) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White.copy(alpha = 0.2f),
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_volume),
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .padding(end = 4.dp)
+                            )
+                            Text(text = mainSlides[currentSlide].buttonText)
+                        }
+                    }
+
+                    // 인디케이터
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        mainSlides.forEachIndexed { index, _ ->
+                            Box(
+                                modifier = Modifier
+                                    .height(8.dp)
+                                    .width(if (index == currentSlide) 24.dp else 8.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (index == currentSlide)
+                                            Color.White
+                                        else
+                                            Color.White.copy(alpha = 0.4f)
+                                    )
+                                    .padding(horizontal = 2.dp)
+                                    .clickable { currentSlide = index }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 데이터 모델
+data class MainSlide(
+    val image: String,          // 현재는 사용하지 않지만, 추후 이미지 복원 시 활용 가능
+    val title: String,
+    val description: String,
+    val buttonText: String,
+    val destination: Destination
+)
 
 @Composable
 private fun ActionCardItem(
@@ -544,7 +602,6 @@ private fun ActionCardItem(
                         ),
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .shadow(8.dp, RoundedCornerShape(12.dp), clip = false)
                     .align(Alignment.CenterHorizontally),
                 contentAlignment = Alignment.Center
             ) {
@@ -563,202 +620,6 @@ private fun ActionCardItem(
                 color = Color.White.copy(alpha = 0.7f),
                 fontSize = 12.sp
             )
-        }
-    }
-}
-
-@Composable
-fun MyCareStatusCard(
-    earnedBadgesCount: Int = 3,
-    onNavigate: (Destination) -> Unit
-) {
-    // 등장 애니메이션
-    val offsetY = remember { Animatable(50f) }
-    val fade = remember { Animatable(0f) }
-    LaunchedEffect(Unit) {
-        offsetY.animateTo(0f, tween(800, easing = LinearOutSlowInEasing))
-        fade.animateTo(1f, tween(800))
-    }
-
-    GlassCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .graphicsLayer {
-                translationY = offsetY.value
-                alpha = fade.value
-            },
-        padding = PaddingValues(16.dp)
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "나의 배려 현황",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-            )
-
-            // 3개 항목 그리드
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                CareStatusItem(
-                    value = "95",
-                    label = "신뢰지수",
-                    delay = 0.0, // TODO: 테스트 이후 바꾸기
-                    onClick = { onNavigate(Destination.TRUST_SCORE) },
-                    modifier = Modifier.weight(1f)
-                )
-
-                CareStatusItem(
-                    value = "1250",
-                    label = "배려포인트",
-                    delay = 0.0, // TODO: 테스트 이후 바꾸기
-                    onClick = { onNavigate(Destination.CARE_POINT) },
-                    modifier = Modifier.weight(1f)
-                )
-
-                CareStatusItem(
-                    value = "${earnedBadgesCount}개 획득",
-                    label = "배려 뱃지",
-                    delay = 0.0, // TODO: 테스트 이후 바꾸기
-                    isBadge = true,
-                    onClick = { onNavigate(Destination.BADGE) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun CareStatusItem(
-    value: String,
-    label: String,
-    delay: Double,
-    isBadge: Boolean = false,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    // Pulse 애니메이션
-    val infiniteTransition = rememberInfiniteTransition(label = "")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3000, easing = EaseInOut),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = ""
-    )
-
-    val press = remember { MutableInteractionSource() }
-    val pressed by press.collectIsPressedAsState()
-    val pressScale by animateFloatAsState(
-        if (pressed) 0.95f else 1f, label = "press-scale"
-    )
-
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.1f))
-            .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
-            .clickable(interactionSource = press, indication = null, onClick = onClick )
-            .graphicsLayer {
-                scaleX = scale * pressScale
-                scaleY = scale * pressScale
-            }
-            .padding(vertical = 12.dp, horizontal = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            if (isBadge) {
-                Icon(
-                    imageVector = Icons.Default.Shield,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .padding(bottom = 4.dp)
-                )
-                Text(value, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
-            } else {
-                Text(
-                    text = value,
-                    color = Color.White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
-            }
-        }
-    }
-}
-
-data class FloatingIslandStep(
-    val destination: Destination,
-    val title: String,
-    val screen: String
-)
-
-@Composable
-fun NavigatorPreview(
-    onNavigate: (Destination) -> Unit
-) {
-    val steps = listOf(
-        FloatingIslandStep(Destination.STEP1, "소음 캘린더", "step1"),
-        FloatingIslandStep(Destination.STEP2, "월간 소음 리포트", "step2"),
-        FloatingIslandStep(Destination.STEP3, "똑똑 공동 탐색", "step3")
-    )
-
-    FloatingIslandNavigator(
-        steps = steps,
-        onNavigate = onNavigate
-    )
-}
-
-@Composable
-fun FloatingIslandNavigator(
-    steps: List<FloatingIslandStep>,
-    onNavigate: (Destination) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        steps.forEach { step ->
-            GlassCardClickable(
-                onClick = { onNavigate(step.destination) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = step.title,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                        contentDescription = null,
-                        tint = Color.White.copy(alpha = 0.7f),
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
         }
     }
 }

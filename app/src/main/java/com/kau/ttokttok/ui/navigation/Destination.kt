@@ -5,14 +5,12 @@ enum class Destination(val fragmentName: String) {
     LOGIN("login"),
     REGISTER("register"),
     MAIN("main"),
+
+    CALENDAR("calendar"),
+    NOISE_VOTE("noiseVote"),
+    MONTH_REPORT("monthReport"),
     PRECONSIDERATION("preConsideration"),
     COMMUNITY("community"),
-    TRUST_SCORE("trustScore"),
-    CARE_POINT("carePoint"),
-    BADGE("badge"),
-    STEP1("step1"),
-    STEP2("step2"),
-    STEP3("step3"),
     SETTING("setting"),
     NOTIFICATION("notification")
 }
