@@ -184,7 +184,8 @@ class NoiseLogFormFragment : Fragment() {
         Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
 
         // 캘린더 화면으로 돌아가기
-        repeat(2) { parentFragmentManager.popBackStack() }
+        // Pop back to the CalendarFragment for robust navigation
+        parentFragmentManager.popBackStack("CalendarFragment", 0)
     }
 
     override fun onDestroyView() {
