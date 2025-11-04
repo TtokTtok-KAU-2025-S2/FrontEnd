@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.background.StarField
@@ -94,6 +96,55 @@ fun RegisterScreen(
                 .padding(vertical = 32.dp)
                 .padding(horizontal = 24.dp)
         ) {
+            // 로고/타이틀 영역
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // 애니메이션 들어가는 로고
+                Box(
+                    modifier = Modifier
+                        .size(64.dp) // w-16 h-16
+                        .clip(RoundedCornerShape(16.dp)) // rounded-2xl
+                        .background(Color.White.copy(alpha = 0.2f)) // bg-white/20
+                        .padding(12.dp), // 내부 여백
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp) // w-8 h-8
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp) // w-4 h-4
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color(0xFF2563EB)) // bg-blue-600
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = "똑똑",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                Text(
+                    text = "아파트 소음 관리 서비스",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
             EmailField(
                 value = email,
                 onValueChange = { email = it }
