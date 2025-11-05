@@ -41,6 +41,12 @@
         />
 
     <fragment
+        android:id="@+id/writingPreConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.writingpreconsideration.WritingPreConsiderationFragment"
+        android:label="writingPreConsideration"
+        />
+
+    <fragment
         android:id="@+id/communityFragment"
         android:name="com.kau.ttokttok.ui.compose.community.CommunityFragment"
         android:label="Community"
