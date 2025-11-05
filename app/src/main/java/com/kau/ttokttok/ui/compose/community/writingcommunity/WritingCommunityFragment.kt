@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.compose.community
+package com.kau.ttokttok.ui.compose.community.writingcommunity
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,10 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.kau.ttokttok.ui.navigation.Destination
-import com.kau.ttokttok.ui.navigation.navigateTo
 
-class CommunityFragment : Fragment() {
+class WritingCommunityFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,8 +20,8 @@ class CommunityFragment : Fragment() {
         )
 
         setContent {
-            CommunityRoute(
-                onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_COMMUNITY)}
+            WritingCommunityRoute(
+                onClickBack = { findNavController().popBackStack() }
             )
         }
     }

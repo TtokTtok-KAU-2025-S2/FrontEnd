@@ -11,6 +11,7 @@ enum class Destination(val fragmentName: String) {
     MONTH_REPORT("monthReport"),
     PRECONSIDERATION("preConsideration"),
     COMMUNITY("community"),
+    WRITING_COMMUNITY("writingCommunity"),
     SETTING("setting"),
     NOTIFICATION("notification")
 }

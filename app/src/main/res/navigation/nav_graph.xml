@@ -47,6 +47,12 @@
         />
 
     <fragment
+        android:id="@+id/writingCommunityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.writingcommunity.WritingCommunityFragment"
+        android:label="writingCommunity"
+        />
+
+    <fragment
         android:id="@+id/settingFragment"
         android:name="com.kau.ttokttok.ui.compose.setting.SettingFragment"
         android:label="Setting"

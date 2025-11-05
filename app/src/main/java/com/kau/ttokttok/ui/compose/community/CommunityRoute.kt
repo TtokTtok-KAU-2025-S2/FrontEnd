@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun CommunityRoute(
-
+    onClickCreatePost: () -> Unit
 ) {
-    CommunityScreen()
+    CommunityScreen(
+        onClickCreatePost = onClickCreatePost
+    )
 }
