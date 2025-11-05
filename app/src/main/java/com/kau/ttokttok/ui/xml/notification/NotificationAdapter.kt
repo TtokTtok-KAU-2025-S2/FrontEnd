@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.Notification
+package com.kau.ttokttok.ui.xml.notification
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.ItemNotificationBinding
 import com.kau.ttokttok.domain.model.NotificationItem
-
-// RecyclerView 어댑터
-// onItemClick: 알림 클릭 시 실행될 콜백 (읽음 처리용)
 
 class NotificationAdapter(
     private val onItemClick: (NotificationItem) -> Unit

@@ -1,6 +1,5 @@
-package com.kau.ttokttok.ui.Notification
+package com.kau.ttokttok.ui.xml.notification
 
-import com.kau.ttokttok.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +8,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kau.ttokttok.databinding.ActivityNotificationBinding
-import com.kau.ttokttok.ui.MainActivity
-
-// 알림 화면 - 앱 시작 시 보이는 메인 화면
-// 기능: 알림 목록 표시, 탭 전환(전체/읽지않음), 읽음/삭제 처리, 설정
+import com.kau.ttokttok.R
+import com.kau.ttokttok.databinding.FragmentNotificationBinding
 
 class NotificationFragment : Fragment() {
 
-    private var _binding: ActivityNotificationBinding? = null  // ViewBinding
+    private var _binding: FragmentNotificationBinding? = null  // ViewBinding
     private val binding get() = _binding!!  // null 체크 없이 안전하게 접근
 
     private val vm: NotificationViewModel by viewModels()  // ViewModel
@@ -29,7 +25,7 @@ class NotificationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ActivityNotificationBinding.inflate(inflater, container, false)
+        _binding = FragmentNotificationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -61,9 +57,6 @@ class NotificationFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.btnSettings.setOnClickListener {  // 설정 화면으로 전환
-            (requireActivity() as? MainActivity)?.show(NotificationSettingsFragment())
-        }
 
         binding.btnTabAll.setOnClickListener {  // "전체" 탭
             vm.selectTab(true)
