@@ -4,6 +4,7 @@ import com.kau.ttokttok.domain.model.NoiseLog
 import com.kau.ttokttok.domain.repository.NoiseLogRepository
 import java.util.Calendar
 import java.util.Date
+import javax.inject.Inject
 
 /**
  * 소음 일기 Repository 구현
@@ -20,7 +21,7 @@ import java.util.Date
  * 4. 에러 핸들링 (네트워크 오류, 인증 실패 등)
  * 5. 오프라인 대응 (Room DB와 동기화)
  */
-class NoiseLogRepositoryImpl : NoiseLogRepository {
+class NoiseLogRepositoryImpl @Inject constructor() : NoiseLogRepository {
 
     // TODO: [백엔드 연동] Retrofit API Service 인스턴스로 교체
     // private val apiService: NoiseLogApiService

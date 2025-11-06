@@ -19,14 +19,14 @@ import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentMyProfileBinding
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+@AndroidEntryPoint
 class NoiseLogFragment : Fragment() {
 
-    private val viewModel: NoiseLogViewModel by activityViewModels {
-        NoiseLogViewModel.provideFactory()
-    }
+    private val viewModel: NoiseLogViewModel by activityViewModels()
     private lateinit var adapter: NoiseLogAdapter
 
     private var _binding: FragmentMyProfileBinding? = null

@@ -13,18 +13,18 @@ import com.google.android.material.button.MaterialButton
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentNoiseLogFormBinding
 import com.kau.ttokttok.domain.model.NoiseLog
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@AndroidEntryPoint
 class NoiseLogFormFragment : Fragment() {
 
     private var _binding: FragmentNoiseLogFormBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NoiseLogViewModel by activityViewModels {
-        NoiseLogViewModel.provideFactory()
-    }
+    private val viewModel: NoiseLogViewModel by activityViewModels()
 
     // 측정 데이터
     private var logId: String? = null // 수정 모드일 때 로그 ID
