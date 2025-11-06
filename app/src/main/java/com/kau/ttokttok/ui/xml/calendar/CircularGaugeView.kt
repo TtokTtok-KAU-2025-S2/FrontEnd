@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.calendar
+package com.kau.ttokttok.ui.xml.calendar
 
 import android.animation.ValueAnimator
 import android.content.Context

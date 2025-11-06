@@ -1,6 +1,7 @@
-package com.kau.ttokttok.ui.calendar
+package com.kau.ttokttok.ui.xml.calendar
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.data.local.repository.NoiseLogRepositoryImpl
 import com.kau.ttokttok.domain.model.NoiseLog
@@ -106,6 +107,17 @@ class NoiseLogViewModel(
                 selectDate(_selectedDate.value)
             }.onFailure { error ->
                 // TODO: [백엔드 연동] 수정 실패 시 에러 처리
+            }
+        }
+    }
+
+    companion object {
+        fun provideFactory(
+            repository: NoiseLogRepository = NoiseLogRepositoryImpl()
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return NoiseLogViewModel(repository) as T
             }
         }
     }

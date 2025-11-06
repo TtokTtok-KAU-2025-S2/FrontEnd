@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.calendar
+package com.kau.ttokttok.ui.xml.calendar
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentNoiseMeasurementBinding
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo

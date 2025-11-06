@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.calendar
+package com.kau.ttokttok.ui.xml.calendar
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -149,3 +149,4 @@ class NoiseLogAdapter(
         }
     }
 }
+

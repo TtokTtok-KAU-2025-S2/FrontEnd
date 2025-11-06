@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.calendar
+package com.kau.ttokttok.ui.xml.calendar
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +22,9 @@ class NoiseLogFormFragment : Fragment() {
     private var _binding: FragmentNoiseLogFormBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NoiseLogViewModel by activityViewModels()
+    private val viewModel: NoiseLogViewModel by activityViewModels {
+        NoiseLogViewModel.provideFactory()
+    }
 
     // 측정 데이터
     private var logId: String? = null // 수정 모드일 때 로그 ID

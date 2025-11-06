@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.calendar
+package com.kau.ttokttok.ui.xml.calendar
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -24,7 +24,9 @@ import java.util.Calendar
 
 class NoiseLogFragment : Fragment() {
 
-    private val viewModel: NoiseLogViewModel by activityViewModels()
+    private val viewModel: NoiseLogViewModel by activityViewModels {
+        NoiseLogViewModel.provideFactory()
+    }
     private lateinit var adapter: NoiseLogAdapter
 
     private var _binding: FragmentMyProfileBinding? = null
