@@ -72,6 +72,7 @@ fun NavController.navigateTo(
         Destination.STEP2 -> TODO()
         Destination.STEP3 -> TODO()
         Destination.SETTING -> navigate(R.id.settingFragment, args, options)
+        Destination.NOTIFICATION -> navigate(R.id.notificationFragment, args, options)
         Destination.NOISE_LOG -> navigate(R.id.noiseLogFragment, args, options)
         Destination.NOISE_LOG_FORM -> navigate(R.id.noiseLogFormFragment, args, options)
         Destination.NOISE_MEASUREMENT -> navigate(R.id.noiseMeasurementFragment, args, options)

@@ -22,6 +22,12 @@
         android:label="Setting"
         />
 
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.kau.ttokttok.ui.xml.notification.NotificationFragment"
+        android:label="Notification"
+        />
+
     <!-- 소음일기 관련 Fragment -->
     <fragment
         android:id="@+id/noiseLogFragment"
