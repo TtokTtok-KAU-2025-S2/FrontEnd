@@ -252,9 +252,12 @@ class NoiseMeasurementFragment : Fragment() {
     private fun stopMeasurementAndNavigate() { // 측정 종료 후 결과 화면으로 이동
         stopMeasurement()
 
-        // TODO: [백엔드 연동] 측정 데이터를 서버에 임시 저장하거나 오디오 파일 업로드
-        // TODO: [백엔드 연동] POST /api/noise-measurements (측정 원시 데이터 저장)
-        // TODO: [백엔드 연동] 오디오 녹음 기능이 추가되면 파일 업로드 필요
+        // TODO: [백엔드 연동] 측정 원시 데이터를 서버에 임시 저장 (선택 사항)
+        // TODO: [백엔드 연동] POST /api/noise-measurements
+        // TODO: [백엔드 연동] 요청 본문: { maxDb, avgDb, duration, dbList, measuredAt }
+        // TODO: [백엔드 연동] 오디오 녹음 기능 추가 시 음성 파일 업로드 (Multipart)
+        // TODO: [백엔드 연동] 측정 ID를 받아서 NoiseLog 저장 시 참조
+
         val bundle = Bundle().apply {
             putDouble("max_db", maxDb)
             putDouble("avg_db", avgDb)
@@ -264,6 +267,8 @@ class NoiseMeasurementFragment : Fragment() {
             // putString("measurement_id", measurementId)
         }
 
+        // TODO: [백엔드 연동] Navigation 시 측정 데이터를 ViewModel로 관리하는 것도 고려
+        // TODO: [백엔드 연동] viewModel.setMeasurementData(maxDb, avgDb, duration, measuredAt)
         findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)
         Toast.makeText(requireContext(), "측정이 완료되었습니다", Toast.LENGTH_SHORT).show()
     }
@@ -295,7 +300,5 @@ class NoiseMeasurementFragment : Fragment() {
         private const val MIN_DELTA_THRESHOLD = 0.3 // 최소 변화 임계값
         private const val RMS_EMA_ALPHA = 0.4 // RMS 지수 이동 평균 계수
         private const val MAX_CONSECUTIVE_ERRORS = 50 // 최대 연속 에러 허용 횟수
-
-        fun newInstance() = NoiseMeasurementFragment()
     }
 }

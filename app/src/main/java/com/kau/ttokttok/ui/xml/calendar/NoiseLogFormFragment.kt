@@ -181,14 +181,24 @@ class NoiseLogFormFragment : Fragment() {
         return true
     }
 
-    // TODO: [백엔드 연동] 실제로는 AI 서버에 요청을 보내야 함
-    // TODO: [백엔드 연동] POST /api/ai/generate-diary
-    // TODO: [백엔드 연동] 요청 본문: { noiseType, maxDb, avgDb, duration, userMemo }
-    // TODO: [백엔드 연동] 응답: { generatedText: string }
+    // AI 일기 생성 - AI 서버에 요청하여 자동 일기 생성
     private fun generateAiDiary() {
         val memo = binding.etMemo.text.toString()
-        // TODO: [백엔드 연동] 로딩 인디케이터 표시
-        // TODO: [백엔드 연동] 아래는 임시 로직, 실제로는 AI API 응답을 사용
+
+        // TODO: [백엔드 연동] AI API 호출 (POST /api/ai/generate-diary)
+        // TODO: [백엔드 연동] 요청 본문: {
+        //   noiseType: selectedNoiseType,
+        //   maxDb: maxDb,
+        //   avgDb: avgDb,
+        //   duration: duration,
+        //   userMemo: memo,
+        //   timestamp: measuredAt
+        // }
+        // TODO: [백엔드 연동] 응답: { generatedText: string, confidence: number }
+        // TODO: [백엔드 연동] 로딩 상태 표시 (ProgressBar 또는 Shimmer 효과)
+        // TODO: [백엔드 연동] viewModel.generateAiDiary(...).collect { result -> ... }
+
+        // 임시 AI 일기 생성 로직 (실제로는 서버 응답 사용)
         val aiGeneratedDiary = buildString {
             append("[$selectedNoiseType] $memo\n\n")
             append("측정 시간: ${duration}초 동안 ")
@@ -199,13 +209,13 @@ class NoiseLogFormFragment : Fragment() {
 
         binding.etMemo.setText(aiGeneratedDiary)
         Toast.makeText(requireContext(), "AI 일기가 생성되었습니다", Toast.LENGTH_SHORT).show()
-        // TODO: [백엔드 연동] 로딩 인디케이터 숨김
-        // TODO: [백엔드 연동] AI 생성 실패 시 에러 처리
+        // TODO: [백엔드 연동] AI 생성 실패 시 에러 메시지 표시 및 재시도 옵션
+        // TODO: [백엔드 연동] 타임아웃(30초) 설정 및 처리
     }
 
     private fun saveNoiseLog() {
         val noiseLog = NoiseLog(
-            id = logId, // 수정 모드일 때 기존 ID 유지
+            id = logId, // 수정 모드일 때 기존 ID 유지, 신규일 때 null
             noiseType = selectedNoiseType!!,
             maxDecibel = maxDb,
             avgDecibel = avgDb,
@@ -214,26 +224,30 @@ class NoiseLogFormFragment : Fragment() {
             hasReport = false
         )
 
+        // TODO: [백엔드 연동] 저장 전 검증 (메모 최소 길이, 욕설 필터링 등)
+        // TODO: [백엔드 연동] ViewModel을 통해 Repository의 save/update 함수 호출
+        // TODO: [백엔드 연동] 성공/실패 여부를 StateFlow로 관찰하여 UI 업데이트
+
         if (isEditMode) {
             viewModel.updateLog(noiseLog)
             Toast.makeText(requireContext(), "소음 일기가 수정되었습니다", Toast.LENGTH_SHORT).show()
+            // TODO: [백엔드 연동] 수정 성공 응답 확인 후 화면 전환
         } else {
             viewModel.saveLog(noiseLog)
             Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
+            // TODO: [백엔드 연동] 저장 성공 응답에서 서버 생성 ID 받아서 사용
         }
 
-        // TODO: [백엔드 연동] 저장 성공 여부를 확인한 후 화면 전환
-        // TODO: [백엔드 연동] 저장 실패 시 사용자에게 재시도 옵션 제공
+        // TODO: [백엔드 연동] 저장 실패 시 재시도 다이얼로그 표시
+        // TODO: [백엔드 연동] 네트워크 오류 시 로컬에 임시 저장 후 나중에 동기화
 
         // 저장한 날짜를 선택하여 해당 날짜의 로그를 표시
         viewModel.selectDate(measuredAt)
 
-        // 캘린더 화면으로 돌아가기 (Navigator 방식)
+        // 캘린더 화면으로 돌아가기
         if (isEditMode) {
-            // 수정 모드일 때는 바로 이전 화면(NoiseLogFragment)으로
             findNavController().popBackStack()
         } else {
-            // 신규 등록일 때는 2번 pop (FormFragment -> MeasurementFragment -> LogFragment)
             findNavController().popBackStack()
             findNavController().popBackStack()
         }

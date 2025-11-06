@@ -12,7 +12,8 @@ import com.kau.ttokttok.domain.model.NoiseLog
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// TODO: [백엔드 연동] 이미지나 첨부파일이 추가되는 경우 Glide/Coil로 이미지 로딩 필요
+// TODO: [백엔드 연동] 향후 이미지/오디오 첨부 기능 추가 시 Glide/Coil 라이브러리 사용
+// TODO: [백엔드 연동] 이미지 URL: log.imageUrls?.let { urls -> loadImages(urls) }
 class NoiseLogAdapter(
     private val onDeleteClick: (NoiseLog) -> Unit,
     private val onEditClick: (NoiseLog) -> Unit,
@@ -54,8 +55,9 @@ class NoiseLogAdapter(
         fun bind(log: NoiseLog) {
             binding.tvDate.text = dateFormat.format(log.measuredAt)
 
-            // TODO: [백엔드 연동] 서버의 리포트 생성 상태(hasReport)와 동기화
-            // 리포트 생성 상태 표시
+            // TODO: [백엔드 연동] hasReport는 서버에서 관리하는 상태
+            // TODO: [백엔드 연동] 리포트 생성 후 서버가 NoiseLog.hasReport를 true로 업데이트
+            // TODO: [백엔드 연동] 리포트 ID도 함께 저장하여 리포트 상세 화면으로 이동 가능하게 구현
             binding.tvReportStatus.visibility = if (log.hasReport) {
                 binding.tvReportStatus.text = "📄 리포트 생성됨"
                 android.view.View.VISIBLE
@@ -87,12 +89,12 @@ class NoiseLogAdapter(
             binding.cbSelect.setOnCheckedChangeListener(null)
 
             if (log.hasReport) {
-                // TODO: [백엔드 연동] 서버의 리포트 상태 확인 후 체크박스 활성화/비활성화
-                // 이미 리포트가 생성된 항목은 체크 표시하고 비활성화
+                // TODO: [백엔드 연동] 리포트 생성 여부는 서버에서 관리
+                // TODO: [백엔드 연동] 이미 리포트 생성된 로그는 재생성 불가 (서버 정책)
                 binding.cbSelect.isChecked = true
                 binding.cbSelect.isEnabled = false
             } else {
-                // 아직 리포트 미생성 항목은 활성화
+                // TODO: [백엔드 연동] 선택된 로그들로 리포트 생성 (여러 로그를 하나의 리포트로)
                 binding.cbSelect.isEnabled = true
                 binding.cbSelect.isChecked = log.id in selectedItems
 
@@ -149,4 +151,3 @@ class NoiseLogAdapter(
         }
     }
 }
-
