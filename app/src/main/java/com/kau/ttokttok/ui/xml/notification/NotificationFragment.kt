@@ -7,16 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentNotificationBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NotificationFragment : Fragment() {
 
     private var _binding: FragmentNotificationBinding? = null  // ViewBinding
     private val binding get() = _binding!!  // null 체크 없이 안전하게 접근
 
-    private val vm: NotificationViewModel by viewModels()  // ViewModel
+    private val vm: NotificationViewModel by viewModels()  // Hilt가 자동으로 주입
     private lateinit var adapter: NotificationAdapter  // RecyclerView 어댑터
 
     // Fragment 뷰 생성 (레이아웃 inflate)
@@ -53,8 +56,9 @@ class NotificationFragment : Fragment() {
 
     // 모든 버튼 클릭 이벤트 설정
     private fun setupListeners() {
-        binding.btnBack.setOnClickListener {  // 뒤로가기
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+        // 네비게이션 패턴: UI 레이어에서 NavController 사용
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
         }
 
 

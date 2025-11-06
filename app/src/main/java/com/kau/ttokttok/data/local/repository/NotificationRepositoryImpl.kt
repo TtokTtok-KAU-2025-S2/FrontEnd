@@ -2,9 +2,12 @@ package com.kau.ttokttok.data.local.repository
 
 import com.kau.ttokttok.domain.model.NotificationItem
 import com.kau.ttokttok.domain.repository.NotificationRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // 알림 데이터 저장소 구현체 - Data Layer
-class NotificationRepositoryImpl : NotificationRepository {
+@Singleton
+class NotificationRepositoryImpl @Inject constructor() : NotificationRepository {
 
     // 테스트용 더미 데이터 (추후 서버에서 받아옴)
     private val notifications = mutableListOf(
