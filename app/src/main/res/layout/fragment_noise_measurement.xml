@@ -66,7 +66,7 @@
             android:background="@drawable/bg_circle_large" />
 
         <!-- 원형 게이지 -->
-        <com.kau.ttokttok.ui.calendar.CircularGaugeView
+        <com.kau.ttokttok.ui.xml.calendar.CircularGaugeView
             android:id="@+id/circularGauge"
             android:layout_width="300dp"
             android:layout_height="300dp"
