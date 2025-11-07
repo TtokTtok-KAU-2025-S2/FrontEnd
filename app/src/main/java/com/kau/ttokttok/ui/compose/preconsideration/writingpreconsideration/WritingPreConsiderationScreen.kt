@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kau.ttokttok.ui.component.common.header.WritePostHeader
+import com.kau.ttokttok.ui.component.common.header.WhiteHeader
 import com.kau.ttokttok.ui.compose.community.writingcommunity.PostBottomActions
 import com.kau.ttokttok.ui.compose.community.writingcommunity.PostContentField
 import com.kau.ttokttok.ui.compose.community.writingcommunity.PostTitleField
@@ -60,7 +60,7 @@ fun WritingPreConsiderationScreen(
             .background(White)
     ) {
         // 헤더
-        WritePostHeader(
+        WhiteHeader(
             onBack = onClickBack
         )
 

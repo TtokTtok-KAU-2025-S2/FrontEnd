@@ -24,7 +24,7 @@ private val White = Color.White
  * 📝 게시글 작성 헤더 (뒤로가기 + 타이틀)
  */
 @Composable
-fun WritePostHeader(
+fun WhiteHeader(
     title: String = "게시글 작성",
     onBack: () -> Unit = {}
 ) {

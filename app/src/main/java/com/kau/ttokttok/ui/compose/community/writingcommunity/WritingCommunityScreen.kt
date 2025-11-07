@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kau.ttokttok.ui.component.common.header.WritePostHeader
+import com.kau.ttokttok.ui.component.common.header.WhiteHeader
 
 private val Gray700 = Color(0xFF374151)
 private val Gray200 = Color(0xFFE5E7EB)
@@ -59,7 +59,7 @@ fun WritingCommunityScreen(
             .background(White)
     ) {
         // 헤더
-        WritePostHeader(
+        WhiteHeader(
             onBack = onClickBack
         )
 
