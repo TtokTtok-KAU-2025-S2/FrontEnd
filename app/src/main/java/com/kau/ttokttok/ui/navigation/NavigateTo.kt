@@ -68,11 +68,14 @@ fun NavController.navigateTo(
         Destination.TRUST_SCORE -> TODO()
         Destination.CARE_POINT -> TODO()
         Destination.BADGE -> TODO()
-        Destination.STEP1 -> TODO()
+        Destination.STEP1 -> navigate(R.id.noiseLogFragment, args, options)  // 소음 캘린더 → NOISE_LOG와 동일
         Destination.STEP2 -> TODO()
         Destination.STEP3 -> TODO()
         Destination.SETTING -> navigate(R.id.settingFragment, args, options)
-        Destination.NOTIFICATION -> TODO()
+        Destination.NOTIFICATION -> navigate(R.id.notificationFragment, args, options)
+        Destination.NOISE_LOG -> navigate(R.id.noiseLogFragment, args, options)
+        Destination.NOISE_LOG_FORM -> navigate(R.id.noiseLogFormFragment, args, options)
+        Destination.NOISE_MEASUREMENT -> navigate(R.id.noiseMeasurementFragment, args, options)
     }
 }
 

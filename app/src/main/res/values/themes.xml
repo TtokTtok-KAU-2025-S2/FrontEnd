@@ -1,16 +1,24 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Theme.Ttokttok" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Ttokttok" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">#1e40af</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">#1e40af</item>
+    </style>
+
+    <!-- Dark Calendar Theme -->
+    <style name="CalendarViewTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">#2563eb</item>
+        <item name="colorAccent">#2563eb</item>
+        <item name="android:textColorPrimary">#f1f5f9</item>
+        <item name="android:textColorSecondary">#94a3b8</item>
+        <item name="android:colorBackground">#1e293b</item>
     </style>
 </resources>
