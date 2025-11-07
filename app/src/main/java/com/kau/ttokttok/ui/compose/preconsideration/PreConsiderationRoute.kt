@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun PreConsiderationRoute(
-    onClickCreatePost: () -> Unit
+    onClickCreatePost: () -> Unit,
+    onClickPost: (Long) -> Unit
 ) {
     PreConsiderationScreen(
-        onClickCreatePost = onClickCreatePost
+        onClickCreatePost = onClickCreatePost,
+        onClickPost = onClickPost
     )
 }

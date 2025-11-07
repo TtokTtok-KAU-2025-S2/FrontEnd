@@ -23,7 +23,8 @@ class CommunityFragment : Fragment() {
 
         setContent {
             CommunityRoute(
-                onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_COMMUNITY)}
+                onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_COMMUNITY)},
+                onClickPost = { findNavController().navigateTo(Destination.COMMUNITY_DETAIL)}
             )
         }
     }

@@ -29,6 +29,12 @@
         />
 
     <fragment
+        android:id="@+id/noiseVoteDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.detail.NoiseVoteDetailFragment"
+        android:label="NoiseVoteDetail"
+        />
+
+    <fragment
         android:id="@+id/monthReportFragment"
         android:name="com.kau.ttokttok.ui.compose.monthreport.MonthReportFragment"
         android:label="MonthReport"
@@ -47,6 +53,12 @@
         />
 
     <fragment
+        android:id="@+id/preConsiderationDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailFragment"
+        android:label="PreConsiderationDetail"
+        />
+
+    <fragment
         android:id="@+id/communityFragment"
         android:name="com.kau.ttokttok.ui.compose.community.CommunityFragment"
         android:label="Community"
@@ -56,6 +68,12 @@
         android:id="@+id/writingCommunityFragment"
         android:name="com.kau.ttokttok.ui.compose.community.writingcommunity.WritingCommunityFragment"
         android:label="writingCommunity"
+        />
+
+    <fragment
+        android:id="@+id/communityDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.detail.CommunityDetailFragment"
+        android:label="CommunityDetail"
         />
 
     <fragment

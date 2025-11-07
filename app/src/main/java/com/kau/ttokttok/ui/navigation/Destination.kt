@@ -4,15 +4,24 @@ package com.kau.ttokttok.ui.navigation
 enum class Destination(val fragmentName: String) {
     LOGIN("login"),
     REGISTER("register"),
+
     MAIN("main"),
 
     CALENDAR("calendar"),
+
+
     NOISE_VOTE("noiseVote"),
+    NOISE_VOTE_DETAIL("noiseVoteDetail"),
+
     MONTH_REPORT("monthReport"),
+
     PRECONSIDERATION("preConsideration"),
     WRITING_PRECONSIDERATION("writingPreConsideration"),
+    PRECONSIDERATION_DETAIL("preConsiderationDetail"),
+
     COMMUNITY("community"),
     WRITING_COMMUNITY("writingCommunity"),
+    COMMUNITY_DETAIL("communityDetail"),
     SETTING("setting"),
     NOTIFICATION("notification")
 }

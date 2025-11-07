@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun NoiseVoteRoute(
-
+    onClickPost: (Long) -> Unit
 ) {
-    NoiseVoteScreen()
+    NoiseVoteScreen(
+        onClickPost = onClickPost
+    )
 }

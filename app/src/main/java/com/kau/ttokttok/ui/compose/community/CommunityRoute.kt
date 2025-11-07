@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun CommunityRoute(
-    onClickCreatePost: () -> Unit
+    onClickCreatePost: () -> Unit,
+    onClickPost: (Long) -> Unit
 ) {
     CommunityScreen(
-        onClickCreatePost = onClickCreatePost
+        onClickCreatePost = onClickCreatePost,
+        onClickPost = onClickPost
     )
 }

@@ -23,7 +23,8 @@ class PreConsiderationFragment : Fragment() {
 
         setContent {
             PreConsiderationRoute(
-                onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_PRECONSIDERATION)}
+                onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_PRECONSIDERATION)},
+                onClickPost = { findNavController().navigateTo(Destination.PRECONSIDERATION_DETAIL)}
             )
         }
     }
