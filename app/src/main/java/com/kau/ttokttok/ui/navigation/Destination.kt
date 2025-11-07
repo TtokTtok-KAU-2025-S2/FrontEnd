@@ -3,15 +3,22 @@ package com.kau.ttokttok.ui.navigation
 // Application 에서 이동이 필요한 Destination 모음
 enum class Destination(val fragmentName: String) {
     LOGIN("login"),
+    REGISTER("register"),
+
     MAIN("main"),
+
+    NOISE_VOTE("noiseVote"),
+    NOISE_VOTE_DETAIL("noiseVoteDetail"),
+
+    MONTH_REPORT("monthReport"),
+
     PRECONSIDERATION("preConsideration"),
+    WRITING_PRECONSIDERATION("writingPreConsideration"),
+    PRECONSIDERATION_DETAIL("preConsiderationDetail"),
+
     COMMUNITY("community"),
-    TRUST_SCORE("trustScore"),
-    CARE_POINT("carePoint"),
-    BADGE("badge"),
-    STEP1("step1"),
-    STEP2("step2"),
-    STEP3("step3"),
+    WRITING_COMMUNITY("writingCommunity"),
+    COMMUNITY_DETAIL("communityDetail"),
     SETTING("setting"),
     NOTIFICATION("notification"),
     NOISE_LOG("noiseLogFragment"),

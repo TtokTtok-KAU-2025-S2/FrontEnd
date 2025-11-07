@@ -11,6 +11,7 @@ import com.kau.ttokttok.ui.component.common.AppDialog
 @Composable
 fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
+    onRegister: () -> Unit,
     onSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -40,7 +41,7 @@ fun LoginRoute(
                 }
 
                 LoginEvent.NavigateSignup -> {
-                    // TODO: Navigator 추가하기
+                    onRegister()
                 }
             }
         }
@@ -58,27 +59,11 @@ fun LoginRoute(
     // 콜백 연결
     LoginScreen(
         onClickLogin = {
-            email, pw -> viewModel.onClickLogin(email, pw)
+            // TODO: 로그인 로직 다시 올바르게 만들기!
+            email, pw -> onSuccess()
+            // email, pw -> viewModel.onClickLogin(email, pw)
         },
 
-        onClickSignup = {
-            viewModel.onClickSignUp()
-        },
-
-        onClickKaKao = {
-            viewModel.onClickKaKao()
-        },
-
-        onClickNaver = {
-            viewModel.onClickNaver()
-        },
-
-        onClickFindId = {
-            viewModel.onClickFindId()
-        },
-
-        onClickFindPassword = {
-            viewModel.onClickFindPassword()
-        }
+        onClickRegister = onRegister
     )
 }

@@ -11,9 +11,69 @@
         />
 
     <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.kau.ttokttok.ui.compose.register.RegisterFragment"
+        android:label="Register"
+        />
+
+    <fragment
         android:id="@+id/mainFragment"
         android:name="com.kau.ttokttok.ui.compose.main.MainFragment"
         android:label="Main"
+        />
+
+    <fragment
+        android:id="@+id/noiseVoteFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.NoiseVoteFragment"
+        android:label="NoiseVote"
+        />
+
+    <fragment
+        android:id="@+id/noiseVoteDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.detail.NoiseVoteDetailFragment"
+        android:label="NoiseVoteDetail"
+        />
+
+    <fragment
+        android:id="@+id/monthReportFragment"
+        android:name="com.kau.ttokttok.ui.compose.monthreport.MonthReportFragment"
+        android:label="MonthReport"
+        />
+
+    <fragment
+        android:id="@+id/preConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.PreConsiderationFragment"
+        android:label="PreConsideration"
+        />
+
+    <fragment
+        android:id="@+id/writingPreConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.writingpreconsideration.WritingPreConsiderationFragment"
+        android:label="writingPreConsideration"
+        />
+
+    <fragment
+        android:id="@+id/preConsiderationDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailFragment"
+        android:label="PreConsiderationDetail"
+        />
+
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.CommunityFragment"
+        android:label="Community"
+        />
+
+    <fragment
+        android:id="@+id/writingCommunityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.writingcommunity.WritingCommunityFragment"
+        android:label="writingCommunity"
+        />
+
+    <fragment
+        android:id="@+id/communityDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.detail.CommunityDetailFragment"
+        android:label="CommunityDetail"
         />
 
     <fragment

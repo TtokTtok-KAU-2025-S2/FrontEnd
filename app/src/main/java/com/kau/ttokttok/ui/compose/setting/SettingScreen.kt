@@ -63,13 +63,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kau.ttokttok.domain.model.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(heightDp = 2000)
 @Composable
 fun SettingScreen(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    user: User = User("", "101동", "501호")
 ) {
     val scroll = rememberScrollState()
 
@@ -151,19 +153,8 @@ fun SettingScreen(
                     SettingCard(
                         content = {
                             ProfileCard(
-                                onEditClick = {}
-                            )
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    SettingCard(
-                        content = {
-                            ActivityHistorySection(
-                                onNoiseClick = {},
-                                onMessageClick = {},
-                                onPostClick = {}
+                                onEditClick = {},
+                                user = user
                             )
                         }
                     )
@@ -208,8 +199,6 @@ fun SettingScreen(
                             onPrivacyClick = {}
                         )
                     }
-
-
                 }
             }
         }
@@ -238,6 +227,7 @@ private fun SettingCard(content: @Composable ColumnScope.() -> Unit) {
 
 @Composable
 fun ProfileCard(
+    user: User,
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -304,32 +294,13 @@ fun ProfileCard(
                         )
                     )
                     Text(
-                        // TODO: Repository 연결 후 바꾸기
-                        text = "101동 501호",
+                        text = String.format("%s %s", user.buildingNumber, user.unitNumber),
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = Color(0xFF4B5563) // gray-600
                         )
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        AssistChip(
-                            onClick = {},
-                            label = {
-                                Text(
-                                    "신뢰지수 95",
-                                    color = Color(0xFF166534) // green-800
-                                )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = Color(0xFFD1FAE5) // green-100
-                            )
-                        )
-                    }
                 }
 
                 // Edit Button
@@ -345,52 +316,6 @@ fun ProfileCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("수정", fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = modifier
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(
-                                Color(0xFFF0FDF4), // green-50 근사
-                                Color(0xFFEFF6FF)  // blue-50 근사
-                            )
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "나의 이웃 신뢰지수",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = Color(0xFF374151), // gray-700
-                            fontSize = 13.sp
-                        )
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        androidx.compose.material3.Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "신뢰지수",
-                            tint = Color(0xFFF59E0B), // yellow-500
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Text(
-                            text = "95/100",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color(0xFF1F2937) // gray-800
-                            )
-                        )
-                    }
                 }
             }
         }
@@ -552,7 +477,7 @@ fun NotificationSettingsSection(
 
             // 2) 소음 확인 요청 알림
             SettingToggleRow(
-                title = "소음 확인 요청 알림",
+                title = "소음 확인",
                 subtitle = "이웃의 소음 문의 알림",
                 checked = notifications.noise,
                 onCheckedChange = { onToggle(NotificationType.Noise, it) }
@@ -560,7 +485,7 @@ fun NotificationSettingsSection(
 
             // 3) 관리사무소 공지사항
             SettingToggleRow(
-                title = "관리사무소 공지사항",
+                title = "공지사항",
                 subtitle = "중요 공지 알림",
                 checked = notifications.management,
                 onCheckedChange = { onToggle(NotificationType.Management, it) }

@@ -62,15 +62,23 @@ fun NavController.navigateTo(
 
     when (dest) {
         Destination.LOGIN -> navigate(R.id.loginFragment, args, options)
+        Destination.REGISTER -> navigate(R.id.registerFragment, args, options)
+
         Destination.MAIN -> navigate(R.id.mainFragment, args, options)
-        Destination.PRECONSIDERATION -> TODO()
-        Destination.COMMUNITY -> TODO()
-        Destination.TRUST_SCORE -> TODO()
-        Destination.CARE_POINT -> TODO()
-        Destination.BADGE -> TODO()
-        Destination.STEP1 -> navigate(R.id.noiseLogFragment, args, options)  // 소음 캘린더 → NOISE_LOG와 동일
-        Destination.STEP2 -> TODO()
-        Destination.STEP3 -> TODO()
+
+        Destination.PRECONSIDERATION -> navigate(R.id.preConsiderationFragment, args, options)
+        Destination.WRITING_PRECONSIDERATION -> navigate(R.id.writingPreConsiderationFragment, args, options)
+        Destination.PRECONSIDERATION_DETAIL -> navigate(R.id.preConsiderationDetailFragment, args, options)
+
+        Destination.NOISE_VOTE -> navigate(R.id.noiseVoteFragment, args, options)
+        Destination.NOISE_VOTE_DETAIL -> navigate(R.id.noiseVoteDetailFragment, args, options)
+
+        Destination.MONTH_REPORT -> navigate(R.id.monthReportFragment, args, options)
+
+        Destination.COMMUNITY -> navigate(R.id.communityFragment, args, options)
+        Destination.WRITING_COMMUNITY -> navigate(R.id.writingCommunityFragment, args, options)
+        Destination.COMMUNITY_DETAIL -> navigate(R.id.communityDetailFragment, args, options)
+
         Destination.SETTING -> navigate(R.id.settingFragment, args, options)
         Destination.NOTIFICATION -> navigate(R.id.notificationFragment, args, options)
         Destination.NOISE_LOG -> navigate(R.id.noiseLogFragment, args, options)

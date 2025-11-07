@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.kau.ttokttok.ui.navigation.Destination
+import com.kau.ttokttok.ui.navigation.navigateTo
 
 import com.kau.ttokttok.ui.navigation.onSuccessLogin
 
@@ -24,7 +26,8 @@ class LoginFragment : Fragment() {
         setContent {
             LoginRoute(
                 onSuccess = { findNavController().onSuccessLogin() },
-                onBack = { findNavController().popBackStack() }
+                onBack = { findNavController().popBackStack() },
+                onRegister = { findNavController().navigateTo(Destination.REGISTER) }
             )
         }
     }

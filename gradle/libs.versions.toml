@@ -26,6 +26,8 @@ androidxHilt = "1.2.0"   # hilt-navigation-compose, hilt-work 등
 javapoet = "1.13.0"
 
 navigation = "2.8.4"
+foundation = "1.9.4"
+media3Effect = "1.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,6 +80,8 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }
 
 javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-media3-effect = { group = "androidx.media3", name = "media3-effect", version.ref = "media3Effect" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
