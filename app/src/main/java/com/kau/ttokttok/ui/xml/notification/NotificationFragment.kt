@@ -1,6 +1,5 @@
-package com.kau.ttokttok.ui.Notification
+package com.kau.ttokttok.ui.xml.notification
 
-import com.kau.ttokttok.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kau.ttokttok.databinding.ActivityNotificationBinding
-import com.kau.ttokttok.ui.MainActivity
+import com.kau.ttokttok.R
+import com.kau.ttokttok.databinding.FragmentNotificationBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-// 알림 화면 - 앱 시작 시 보이는 메인 화면
-// 기능: 알림 목록 표시, 탭 전환(전체/읽지않음), 읽음/삭제 처리, 설정
-
+@AndroidEntryPoint
 class NotificationFragment : Fragment() {
 
-    private var _binding: ActivityNotificationBinding? = null  // ViewBinding
+    private var _binding: FragmentNotificationBinding? = null  // ViewBinding
     private val binding get() = _binding!!  // null 체크 없이 안전하게 접근
 
-    private val vm: NotificationViewModel by viewModels()  // ViewModel
+    private val vm: NotificationViewModel by viewModels()  // Hilt가 자동으로 주입
     private lateinit var adapter: NotificationAdapter  // RecyclerView 어댑터
 
     // Fragment 뷰 생성 (레이아웃 inflate)
@@ -29,7 +28,7 @@ class NotificationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ActivityNotificationBinding.inflate(inflater, container, false)
+        _binding = FragmentNotificationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -57,13 +56,11 @@ class NotificationFragment : Fragment() {
 
     // 모든 버튼 클릭 이벤트 설정
     private fun setupListeners() {
-        binding.btnBack.setOnClickListener {  // 뒤로가기
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+        // 네비게이션 패턴: UI 레이어에서 NavController 사용
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
         }
 
-        binding.btnSettings.setOnClickListener {  // 설정 화면으로 전환
-            (requireActivity() as? MainActivity)?.show(NotificationSettingsFragment())
-        }
 
         binding.btnTabAll.setOnClickListener {  // "전체" 탭
             vm.selectTab(true)
