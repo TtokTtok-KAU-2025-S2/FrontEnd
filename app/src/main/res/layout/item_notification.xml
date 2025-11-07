@@ -32,7 +32,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_bell"
-                android:tint="#FFFFFF"
+                app:tint="#FFFFFF"
                 tools:src="@drawable/ic_volume_up" />
 
         </androidx.cardview.widget.CardView>

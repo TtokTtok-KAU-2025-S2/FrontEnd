@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentNotificationBinding
+import com.kau.ttokttok.ui.xml.notification.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

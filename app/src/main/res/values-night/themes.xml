@@ -1,7 +1,0 @@
-<resources>
-    <!-- Base application theme. -->
-    <style name="Theme.Ttokttok" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">#1e40af</item>
-    </style>
-</resources>

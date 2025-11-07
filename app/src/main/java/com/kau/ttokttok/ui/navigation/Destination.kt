@@ -13,5 +13,8 @@ enum class Destination(val fragmentName: String) {
     STEP2("step2"),
     STEP3("step3"),
     SETTING("setting"),
-    NOTIFICATION("notification")
+    NOTIFICATION("notification"),
+    NOISE_LOG("noiseLogFragment"),
+    NOISE_LOG_FORM("noiseLogFormFragment"),
+    NOISE_MEASUREMENT("noiseMeasurementFragment")
 }

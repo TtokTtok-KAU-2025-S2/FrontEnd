@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 기본 색상 -->
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
 
-    <!-- Notification 탭 선택 배경색 -->
+    <!-- Primary 색상 -->
+    <color name="colorPrimary">#2563eb</color>
     <color name="tab_selected_bg">#2563eb</color>
+
+    <!-- AI 관련 색상 -->
+    <color name="ai_pink_light">#E91E63</color>
+    <color name="ai_purple">#CE93D8</color>
+
+    <!-- Material Design 기본 색상 -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_700">#FF6200EE</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- 소리 강도 배경색 -->
+    <color name="level_green_bg">#14532d</color>
+    <color name="level_yellow_bg">#713f12</color>
+    <color name="level_orange_bg">#7c2d12</color>
+    <color name="level_red_bg">#7f1d1d</color>
 </resources>
