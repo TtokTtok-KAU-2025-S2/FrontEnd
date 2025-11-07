@@ -3,7 +3,6 @@ package com.kau.ttokttok.di
 import com.kau.ttokttok.data.local.repository.NoiseLogRepositoryImpl
 import com.kau.ttokttok.data.local.repository.NotificationRepositoryImpl
 import com.kau.ttokttok.domain.repository.NoiseLogRepository
-import com.kau.ttokttok.data.local.repository.NotificationRepositoryImpl
 import com.kau.ttokttok.domain.repository.NotificationRepository
 import dagger.Binds
 import dagger.Module
