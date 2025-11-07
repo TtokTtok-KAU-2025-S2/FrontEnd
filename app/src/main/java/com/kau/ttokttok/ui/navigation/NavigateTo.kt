@@ -79,11 +79,11 @@ fun NavController.navigateTo(
         Destination.WRITING_COMMUNITY -> navigate(R.id.writingCommunityFragment, args, options)
         Destination.COMMUNITY_DETAIL -> navigate(R.id.communityDetailFragment, args, options)
 
-        Destination.CALENDAR -> TODO()
-
         Destination.SETTING -> navigate(R.id.settingFragment, args, options)
-
-        Destination.NOTIFICATION -> TODO()
+        Destination.NOTIFICATION -> navigate(R.id.notificationFragment, args, options)
+        Destination.NOISE_LOG -> navigate(R.id.noiseLogFragment, args, options)
+        Destination.NOISE_LOG_FORM -> navigate(R.id.noiseLogFormFragment, args, options)
+        Destination.NOISE_MEASUREMENT -> navigate(R.id.noiseMeasurementFragment, args, options)
     }
 }
 

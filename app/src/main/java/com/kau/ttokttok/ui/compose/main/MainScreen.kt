@@ -358,7 +358,7 @@ fun MainSection(
             title = "소음 일기",
             description = "캘린더에서 날짜를 선택하여\n 소음을 기록하세요",
             buttonText = "일기 보기",
-            destination = Destination.CALENDAR
+            destination = Destination.NOISE_LOG
         ),
 
         MainSlide(

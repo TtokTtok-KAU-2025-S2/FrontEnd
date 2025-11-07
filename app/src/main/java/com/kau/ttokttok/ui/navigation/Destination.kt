@@ -7,9 +7,6 @@ enum class Destination(val fragmentName: String) {
 
     MAIN("main"),
 
-    CALENDAR("calendar"),
-
-
     NOISE_VOTE("noiseVote"),
     NOISE_VOTE_DETAIL("noiseVoteDetail"),
 
@@ -23,5 +20,8 @@ enum class Destination(val fragmentName: String) {
     WRITING_COMMUNITY("writingCommunity"),
     COMMUNITY_DETAIL("communityDetail"),
     SETTING("setting"),
-    NOTIFICATION("notification")
+    NOTIFICATION("notification"),
+    NOISE_LOG("noiseLogFragment"),
+    NOISE_LOG_FORM("noiseLogFormFragment"),
+    NOISE_MEASUREMENT("noiseMeasurementFragment")
 }
