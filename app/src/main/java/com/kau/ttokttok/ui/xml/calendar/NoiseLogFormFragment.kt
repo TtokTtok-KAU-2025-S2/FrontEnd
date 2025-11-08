@@ -27,7 +27,7 @@ class NoiseLogFormFragment : Fragment() {
     private val viewModel: NoiseLogViewModel by activityViewModels()
 
     // 측정 데이터
-    private var logId: String? = null // 수정 모드일 때 로그 ID
+    private var logId: Long? = null // 수정 모드일 때 로그 ID (recordId)
     private var isEditMode = false // 수정 모드 여부
     private var maxDb = 0.0
     private var avgDb = 0.0
@@ -40,7 +40,7 @@ class NoiseLogFormFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            logId = it.getString(ARG_LOG_ID)
+            logId = it.getLong(ARG_LOG_ID, -1L).takeIf { id -> id != -1L }
             isEditMode = logId != null
             maxDb = it.getDouble(ARG_MAX_DB, 0.0)
             avgDb = it.getDouble(ARG_AVG_DB, 0.0)
@@ -158,12 +158,13 @@ class NoiseLogFormFragment : Fragment() {
     }
 
     private fun getSuggestedNoiseType(avgDb: Double): String = when {
-        avgDb >= 60.0 -> "망치질"
-        avgDb >= 50.0 -> "가구 끄는 소리"
-        avgDb >= 45.0 -> "아이들 뛰는 소리"
-        avgDb >= 40.0 -> "발걸음"
-        avgDb >= 35.0 -> "음악 소리"
-        else -> "청소기 소리"
+        avgDb >= 70.0 -> "망치질"           // 매우 시끄러움 (70dB 이상)
+        avgDb >= 60.0 -> "아이들 뛰는 소리"  // 시끄러움
+        avgDb >= 55.0 -> "가구 끄는 소리"    // 시끄러움
+        avgDb >= 50.0 -> "청소기 소리"       // 보통
+        avgDb >= 45.0 -> "음악 소리"         // 보통
+        avgDb >= 40.0 -> "발걸음"            // 보통
+        else -> "기타"                       // 조용함 (40dB 미만)
     }
 
     private fun validateInput(): Boolean {
@@ -181,24 +182,11 @@ class NoiseLogFormFragment : Fragment() {
         return true
     }
 
-    // AI 일기 생성 - AI 서버에 요청하여 자동 일기 생성
+    // AI 일기 생성 - 미구현 (서버 AI API 필요)
     private fun generateAiDiary() {
         val memo = binding.etMemo.text.toString()
 
-        // TODO: [백엔드 연동] AI API 호출 (POST /api/ai/generate-diary)
-        // TODO: [백엔드 연동] 요청 본문: {
-        //   noiseType: selectedNoiseType,
-        //   maxDb: maxDb,
-        //   avgDb: avgDb,
-        //   duration: duration,
-        //   userMemo: memo,
-        //   timestamp: measuredAt
-        // }
-        // TODO: [백엔드 연동] 응답: { generatedText: string, confidence: number }
-        // TODO: [백엔드 연동] 로딩 상태 표시 (ProgressBar 또는 Shimmer 효과)
-        // TODO: [백엔드 연동] viewModel.generateAiDiary(...).collect { result -> ... }
-
-        // 임시 AI 일기 생성 로직 (실제로는 서버 응답 사용)
+        // 임시 AI 일기 생성 로직 (실제로는 서버 AI API 사용)
         val aiGeneratedDiary = buildString {
             append("[$selectedNoiseType] $memo\n\n")
             append("측정 시간: ${duration}초 동안 ")
@@ -209,13 +197,11 @@ class NoiseLogFormFragment : Fragment() {
 
         binding.etMemo.setText(aiGeneratedDiary)
         Toast.makeText(requireContext(), "AI 일기가 생성되었습니다", Toast.LENGTH_SHORT).show()
-        // TODO: [백엔드 연동] AI 생성 실패 시 에러 메시지 표시 및 재시도 옵션
-        // TODO: [백엔드 연동] 타임아웃(30초) 설정 및 처리
     }
 
     private fun saveNoiseLog() {
         val noiseLog = NoiseLog(
-            id = logId, // 수정 모드일 때 기존 ID 유지, 신규일 때 null
+            id = logId?.toString(), // NoiseLog의 id는 String 타입
             noiseType = selectedNoiseType!!,
             maxDecibel = maxDb,
             avgDecibel = avgDb,
@@ -224,33 +210,23 @@ class NoiseLogFormFragment : Fragment() {
             hasReport = false
         )
 
-        // TODO: [백엔드 연동] 저장 전 검증 (메모 최소 길이, 욕설 필터링 등)
-        // TODO: [백엔드 연동] ViewModel을 통해 Repository의 save/update 함수 호출
-        // TODO: [백엔드 연동] 성공/실패 여부를 StateFlow로 관찰하여 UI 업데이트
-
         if (isEditMode) {
-            viewModel.updateLog(noiseLog)
-            Toast.makeText(requireContext(), "소음 일기가 수정되었습니다", Toast.LENGTH_SHORT).show()
-            // TODO: [백엔드 연동] 수정 성공 응답 확인 후 화면 전환
+            // API 연동: recordId와 noiseLog를 별도로 전달
+            logId?.let { recordId ->
+                viewModel.updateLogApi(recordId, noiseLog)
+                Toast.makeText(requireContext(), "소음 일기가 수정되었습니다", Toast.LENGTH_SHORT).show()
+            }
         } else {
             viewModel.saveLog(noiseLog)
             Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
-            // TODO: [백엔드 연동] 저장 성공 응답에서 서버 생성 ID 받아서 사용
         }
-
-        // TODO: [백엔드 연동] 저장 실패 시 재시도 다이얼로그 표시
-        // TODO: [백엔드 연동] 네트워크 오류 시 로컬에 임시 저장 후 나중에 동기화
 
         // 저장한 날짜를 선택하여 해당 날짜의 로그를 표시
         viewModel.selectDate(measuredAt)
 
-        // 캘린더 화면으로 돌아가기
-        if (isEditMode) {
-            findNavController().popBackStack()
-        } else {
-            findNavController().popBackStack()
-            findNavController().popBackStack()
-        }
+        // 캘린더 화면(NoiseLogFragment)으로 이동
+        // popBackStack 대신 명시적으로 NoiseLogFragment로 이동
+        findNavController().navigate(R.id.noiseLogFragment)
     }
 
     override fun onDestroyView() {
@@ -282,7 +258,8 @@ class NoiseLogFormFragment : Fragment() {
         fun newInstanceForEdit(log: NoiseLog) =
             NoiseLogFormFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_LOG_ID, log.id)
+                    // log.id를 Long으로 변환하여 전달
+                    log.id?.toLongOrNull()?.let { putLong(ARG_LOG_ID, it) }
                     putString(ARG_NOISE_TYPE, log.noiseType)
                     putString(ARG_MEMO, log.memo)
                     putDouble(ARG_MAX_DB, log.maxDecibel)

@@ -12,8 +12,12 @@ import com.kau.ttokttok.domain.model.NoiseLog
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// TODO: [백엔드 연동] 향후 이미지/오디오 첨부 기능 추가 시 Glide/Coil 라이브러리 사용
-// TODO: [백엔드 연동] 이미지 URL: log.imageUrls?.let { urls -> loadImages(urls) }
+/**
+ * 소음 일기 목록 어댑터
+ * - 일기 아이템 표시 및 선택 관리
+ * - 수정/삭제 메뉴 제공
+ * - 리포트 생성을 위한 체크박스 관리
+ */
 class NoiseLogAdapter(
     private val onDeleteClick: (NoiseLog) -> Unit,
     private val onEditClick: (NoiseLog) -> Unit,
@@ -55,9 +59,7 @@ class NoiseLogAdapter(
         fun bind(log: NoiseLog) {
             binding.tvDate.text = dateFormat.format(log.measuredAt)
 
-            // TODO: [백엔드 연동] hasReport는 서버에서 관리하는 상태
-            // TODO: [백엔드 연동] 리포트 생성 후 서버가 NoiseLog.hasReport를 true로 업데이트
-            // TODO: [백엔드 연동] 리포트 ID도 함께 저장하여 리포트 상세 화면으로 이동 가능하게 구현
+            // 리포트 생성 상태 표시
             binding.tvReportStatus.visibility = if (log.hasReport) {
                 binding.tvReportStatus.text = "📄 리포트 생성됨"
                 android.view.View.VISIBLE
@@ -89,12 +91,11 @@ class NoiseLogAdapter(
             binding.cbSelect.setOnCheckedChangeListener(null)
 
             if (log.hasReport) {
-                // TODO: [백엔드 연동] 리포트 생성 여부는 서버에서 관리
-                // TODO: [백엔드 연동] 이미 리포트 생성된 로그는 재생성 불가 (서버 정책)
+                // 이미 리포트 생성된 로그는 재선택 불가
                 binding.cbSelect.isChecked = true
                 binding.cbSelect.isEnabled = false
             } else {
-                // TODO: [백엔드 연동] 선택된 로그들로 리포트 생성 (여러 로그를 하나의 리포트로)
+                // 리포트 미생성 로그만 선택 가능
                 binding.cbSelect.isEnabled = true
                 binding.cbSelect.isChecked = log.id in selectedItems
 
@@ -134,9 +135,9 @@ class NoiseLogAdapter(
         }
 
         private fun getNoiseLevel(db: Double): Pair<String, Int> = when {
-            db >= 85.0 -> "매우 시끄러움" to R.drawable.bg_level_red
-            db >= 70.0 -> "시끄러움" to R.drawable.bg_level_orange
-            db >= 50.0 -> "보통" to R.drawable.bg_level_yellow
+            db >= 70.0 -> "매우 시끄러움" to R.drawable.bg_level_red
+            db >= 55.0 -> "시끄러움" to R.drawable.bg_level_orange
+            db >= 40.0 -> "보통" to R.drawable.bg_level_yellow
             else -> "조용함" to R.drawable.bg_level_green
         }
     }

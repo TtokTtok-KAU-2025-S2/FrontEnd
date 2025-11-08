@@ -117,6 +117,21 @@ class NoiseLogFragment : Fragment() {
         }.time
         viewModel.selectDate(today)
 
+        // TODO: 실제 userId는 로그인한 사용자의 ID로 교체해야 함
+        val userId = 3L // 테스트용 userId (API 명세서 예시)
+
+        // 캘린더 API 호출 - 현재 월의 데이터 로드
+        viewModel.loadCurrentMonthCalendar(userId)
+
+        // 총 소음 기록 수 API 호출
+        viewModel.loadTotalCount(userId)
+
+        // 이번 달 소음 기록 수 API 호출
+        viewModel.loadMonthlyCount(userId)
+
+        // 전체 평균 dB API 호출
+        viewModel.loadAverageDb(userId)
+
         // FAB 애니메이션 시작 (10초 후 첫 실행)
         handler.postDelayed(flipAnimationRunnable, 10000)
     }
@@ -157,6 +172,13 @@ class NoiseLogFragment : Fragment() {
      */
     private fun setupCalendar() {
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            // yyyy-MM-dd 형식으로 날짜 문자열 생성
+            val dateStr = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
+
+            // 새로운 API 호출: 날짜별 소음 기록 상세 조회
+            viewModel.loadNoiseRecordsByDate(dateStr)
+
+            // 선택된 날짜도 업데이트 (기존 로직 유지)
             val calendar = Calendar.getInstance().apply {
                 set(Calendar.YEAR, year)
                 set(Calendar.MONTH, month)
@@ -194,18 +216,13 @@ class NoiseLogFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // TODO: [백엔드 연동] Repository를 통해 서버에 리포트 생성 요청
-            // TODO: [백엔드 연동] POST /api/reports { noiseLogIds: ["id1", "id2", ...] }
-            // TODO: [백엔드 연동] 요청 예시: viewModel.createReport(selectedLogs.map { it.id })
-            // TODO: [백엔드 연동] 성공 시 리포트 ID와 PDF 다운로드 URL 응답 받음
-            // TODO: [백엔드 연동] 실패 시 에러 메시지와 재시도 옵션 제공
+            // 리포트 생성 API 미구현 - 임시로 로컬 상태만 변경
             selectedLogs.forEach { log ->
                 viewModel.toggleReportStatus(log)
             }
 
             adapter.clearSelection()
             Toast.makeText(requireContext(), "${selectedLogs.size}개의 리포트가 생성되었습니다", Toast.LENGTH_SHORT).show()
-            // TODO: [백엔드 연동] 리포트 생성 완료 후 리포트 목록 화면으로 이동 옵션 제공
         }
     }
 
@@ -224,13 +241,61 @@ class NoiseLogFragment : Fragment() {
             }
         }
 
-        // TODO: [백엔드 연동] 에러 상태 관찰 추가
-        // TODO: [백엔드 연동] viewModel.errorState.collect { error -> showError(error) }
-        // TODO: [백엔드 연동] 로딩 상태 관찰 추가
-        // TODO: [백엔드 연동] viewModel.isLoading.collect { isLoading -> showLoading(isLoading) }
+        // 에러 상태 관찰
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.noiseLogs.collect { logs ->
-                updateStats(logs)
+            viewModel.errorState.collect { error ->
+                error?.let {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    viewModel.clearError()
+                }
+            }
+        }
+
+        // 로딩 상태 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                // TODO: 프로그레스바 표시/숨김 처리
+                // binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
+
+        // 캘린더 데이터 관찰 - hasNoiseLog가 true인 날짜를 하이라이트
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.calendarData.collect { calendarMap ->
+                // TODO: CalendarView에 데이터 반영
+                // calendarMap의 각 날짜에 대해 hasNoiseLog가 true이면 파란색 표시
+                // 예: calendarView.markDates(calendarMap.filter { it.value }.keys)
+
+                // 디버그용 로그 (실제로는 CalendarView 커스터마이징 필요)
+                val datesWithLog = calendarMap.filter { it.value }.keys
+                if (datesWithLog.isNotEmpty()) {
+                    // 소음 일기가 있는 날짜 개수 표시
+                    android.util.Log.d("NoiseLogFragment", "소음 일기가 있는 날짜: ${datesWithLog.size}개")
+                }
+            }
+        }
+
+        // 총 소음 기록 수 관찰 (API)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.totalCount.collect { count ->
+                binding.tvTotalCount.text = "${count}건"
+                android.util.Log.d("NoiseLogFragment", "총 소음 기록 수: ${count}건")
+            }
+        }
+
+        // 이번 달 소음 기록 수 관찰 (API)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.monthlyCount.collect { count ->
+                binding.tvMonthCount.text = "${count}건"
+                android.util.Log.d("NoiseLogFragment", "이번 달 소음 기록 수: ${count}건")
+            }
+        }
+
+        // 평균 dB 관찰 (API)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.averageDb.collect { avgDb ->
+                binding.tvAvgDb.text = String.format("%.1f", avgDb)
+                android.util.Log.d("NoiseLogFragment", "평균 소음 레벨: ${String.format("%.2f", avgDb)} dB")
             }
         }
     }
@@ -248,35 +313,16 @@ class NoiseLogFragment : Fragment() {
         }
     }
 
-    /**
-     * 통계 정보 업데이트
-     * - 총 기록 수
-     * - 이번 달 기록 수
-     * - 평균 데시벨
-     */
-    private fun updateStats(logs: List<com.kau.ttokttok.domain.model.NoiseLog>) {
-        binding.tvTotalCount.text = "${logs.size}건"
-
-        val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
-        val monthCount = logs.count { log ->
-            val cal = Calendar.getInstance().apply { time = log.measuredAt }
-            cal.get(Calendar.MONTH) == thisMonth
-        }
-        binding.tvMonthCount.text = "${monthCount}건"
-
-        val avgDb = if (logs.isNotEmpty()) {
-            logs.map { it.avgDecibel }.average().toInt()
-        } else {
-            0
-        }
-        binding.tvAvgDb.text = "$avgDb"
-    }
-
     override fun onResume() {
         super.onResume()
         // 다른 화면에서 돌아올 때 데이터 새로고침 (일기 추가/수정 후)
-        viewModel.loadAllLogs()
         viewModel.selectDate(viewModel.selectedDate.value)
+
+        // API 통계 데이터도 새로고침
+        val userId = 3L // TODO: 실제 userId로 교체
+        viewModel.loadTotalCount(userId)
+        viewModel.loadMonthlyCount(userId)
+        viewModel.loadAverageDb(userId)
     }
 
     override fun onDestroyView() {

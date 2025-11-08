@@ -29,4 +29,68 @@ interface NoiseLogRepository {
     // TODO: [백엔드 연동] 서버에서 날짜 범위로 쿼리
     // 날짜별 일기 가져오기
     suspend fun getNoiseLogsByDate(date: Date): Result<List<NoiseLog>>
+
+    /**
+     * 캘린더 월별 데이터 조회
+     * @param userId 회원 고유 ID
+     * @param year 조회할 연도
+     * @param month 조회할 월
+     * @return 해당 월의 날짜별 소음 일기 존재 여부 Map (날짜 -> hasNoiseLog)
+     */
+    suspend fun getCalendarData(
+        userId: Long,
+        year: Int,
+        month: Int
+    ): Result<Map<String, Boolean>>
+
+    /**
+     * 날짜별 소음 기록 상세 조회
+     * @param date 조회할 날짜 (yyyy-MM-dd 형식)
+     * @return 해당 날짜의 소음 기록 목록 (생성 시간 순 정렬)
+     */
+    suspend fun getNoiseRecordsByDate(
+        date: String
+    ): Result<List<NoiseLog>>
+
+    /**
+     * 총 소음 기록 수 조회
+     * @param userId 조회할 사용자의 ID
+     * @return 사용자의 전체 소음 기록 개수
+     */
+    suspend fun getTotalCount(
+        userId: Long
+    ): Result<Int>
+
+    /**
+     * 이번 달 소음 기록 수 조회
+     * @param userId 조회할 사용자의 ID
+     * @param year 조회할 연도
+     * @param month 조회할 월
+     * @return 해당 월의 소음 기록 개수
+     */
+    suspend fun getMonthlyCount(
+        userId: Long,
+        year: Int,
+        month: Int
+    ): Result<Int>
+
+    /**
+     * 전체 소음 기록 평균 dB 조회
+     * @param userId 조회할 사용자의 ID
+     * @return 사용자의 전체 소음 기록 평균 dB
+     */
+    suspend fun getAverageDb(
+        userId: Long
+    ): Result<Double>
+
+    /**
+     * 소음 일기 수정 (API 연동)
+     * @param recordId 수정할 소음 기록의 고유 ID
+     * @param noiseLog 수정할 소음 일기 데이터
+     * @return 수정된 소음 일기
+     */
+    suspend fun updateNoiseRecordApi(
+        recordId: Long,
+        noiseLog: NoiseLog
+    ): Result<NoiseLog>
 }

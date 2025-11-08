@@ -2,6 +2,7 @@ package com.kau.ttokttok._core.network.di
 
 import android.content.Context
 import com.kau.ttokttok.data.remote.api.AuthApiService
+import com.kau.ttokttok.data.remote.api.NoiseApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -22,7 +23,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL = "http://43.202.51.96/"
 
     // ───────────────────────────────
     // 1️⃣ 기본 로깅 인터셉터
@@ -140,4 +141,13 @@ object NetworkModule {
     fun provideAuthApiService(
         @Named("noAuthRetrofit") retrofit: Retrofit
     ): AuthApiService = retrofit.create(AuthApiService::class.java)
+
+    // ───────────────────────────────
+    // 8️⃣ API 서비스 제공 (auth용 - 소음 일기)
+    // ───────────────────────────────
+    @Provides
+    @Singleton
+    fun provideNoiseApiService(
+        @Named("authRetrofit") retrofit: Retrofit
+    ): NoiseApiService = retrofit.create(NoiseApiService::class.java)
 }
