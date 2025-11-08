@@ -77,5 +77,4 @@ class AuthUseCase @Inject constructor(
         val specialChars = setOf('!', '@', '#', '$', '%', '^', '&', '*', '-', '_', '+', '=', '?')
         require(password.any { it in specialChars }) { "비밀번호에는 특수문자가 하나 이상 포함되어야 합니다." }
     }
-
 }

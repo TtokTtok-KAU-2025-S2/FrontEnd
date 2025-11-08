@@ -46,7 +46,6 @@ import com.kau.ttokttok.ui.compose.login.PasswordField
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     onClickRegister: (String, String, String, String) -> Unit = { _, _, _, _ -> },
-    onBack: () -> Unit = { }
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }

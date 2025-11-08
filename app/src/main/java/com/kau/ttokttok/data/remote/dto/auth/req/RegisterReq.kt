@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 
 data class RegisterReq(
     // TODO: BE연동
-    val aptId: Long = 1L,
+    val aptId: Long = 101L,
     val email: String,
     val password: String,
     @Json(name = "dong")
