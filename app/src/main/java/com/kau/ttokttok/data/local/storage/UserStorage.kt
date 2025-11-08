@@ -2,7 +2,7 @@ package com.kau.ttokttok.data.local.storage
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -17,16 +17,16 @@ class UserStorage @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private object Keys {
-        val BUILDING_NUMBER = stringPreferencesKey("building_number")
-        val UNIT_NUMBER = stringPreferencesKey("unit_number")
+        val BUILDING_NUMBER = intPreferencesKey("building_number")
+        val UNIT_NUMBER = intPreferencesKey("unit_number")
     }
 
-    val buildingNumber: Flow<String?> = context.userDataStore.data.map { it[Keys.BUILDING_NUMBER] }
-    val unitNumber: Flow<String?> = context.userDataStore.data.map { it[Keys.UNIT_NUMBER] }
+    val buildingNumber: Flow<Int?> = context.userDataStore.data.map { it[Keys.BUILDING_NUMBER] }
+    val unitNumber: Flow<Int?> = context.userDataStore.data.map { it[Keys.UNIT_NUMBER] }
 
-    suspend fun getBuildingNumber(): String? = context.userDataStore.data.first()[Keys.BUILDING_NUMBER]
+    suspend fun getBuildingNumber(): Int? = context.userDataStore.data.first()[Keys.BUILDING_NUMBER]
 
-    suspend fun setBuildingNumber(buildingNumber: String) {
+    suspend fun setBuildingNumber(buildingNumber: Int) {
         context.userDataStore.edit { prefs ->
             prefs[Keys.BUILDING_NUMBER] = buildingNumber
         }
@@ -38,9 +38,9 @@ class UserStorage @Inject constructor(
         }
     }
 
-    suspend fun getUnitNumber(): String? = context.userDataStore.data.first()[Keys.UNIT_NUMBER]
+    suspend fun getUnitNumber(): Int? = context.userDataStore.data.first()[Keys.UNIT_NUMBER]
 
-    suspend fun setUnitNumber(unitNumber: String) {
+    suspend fun setUnitNumber(unitNumber: Int) {
         context.userDataStore.edit { prefs ->
             prefs[Keys.UNIT_NUMBER] = unitNumber
         }

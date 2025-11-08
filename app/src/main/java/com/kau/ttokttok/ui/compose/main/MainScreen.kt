@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kau.ttokttok.R
+import com.kau.ttokttok._core.network.auth.UserProvider
 import com.kau.ttokttok.ui.component.common.background.StarField
 import com.kau.ttokttok.ui.component.common.card.GlassCardClickable
 import com.kau.ttokttok.ui.navigation.Destination
@@ -68,7 +71,9 @@ import com.kau.ttokttok.ui.navigation.Destination
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    onNavigate: (Destination) -> Unit = {}
+    onNavigate: (Destination) -> Unit = {},
+    buildingNumber: Int = 101,
+    unitNumber: Int = 101,
 ) {
     val focus = LocalFocusManager.current
     val scroll = rememberScrollState()
@@ -86,6 +91,7 @@ fun MainScreen(
                     end = Offset.Infinite
                 )
             )
+            .statusBarsPadding()
     ) {
         StarField(
             modifier = Modifier
@@ -96,7 +102,7 @@ fun MainScreen(
         // 페이드 보카시
         Box(
             Modifier
-                .matchParentSize()
+                .fillMaxSize()
                 .background(
                     Brush.radialGradient(
                         colors = listOf(Color.White.copy(alpha = 0.08f), Color.Transparent),
@@ -114,6 +120,8 @@ fun MainScreen(
             HomeHeader(
                 onClickNotification = { onNavigate(Destination.NOTIFICATION) },
                 onClickSetting = { onNavigate(Destination.SETTING) },
+                buildingNumber = buildingNumber,
+                unitNumber = unitNumber
             )
 
             Spacer(Modifier.height(32.dp))
@@ -141,12 +149,14 @@ fun MainScreen(
 
 @Composable
 fun HomeHeader(
+    modifier: Modifier = Modifier,
     onClickNotification: () -> Unit,
     onClickSetting: () -> Unit,
-    modifier: Modifier = Modifier
+    buildingNumber: Int,
+    unitNumber: Int
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
@@ -160,13 +170,14 @@ fun HomeHeader(
             .zIndex(10f)
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
                 .padding(horizontal = 16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -202,8 +213,7 @@ fun HomeHeader(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            // TODO: Repository 연결 후 바꾸기
-                            text = "101동 501호",
+                            text = String.format("%s동 %s호", buildingNumber, unitNumber),
                             color = Color.White.copy(alpha = 0.7f),
                             fontSize = 14.sp
                         )
@@ -266,7 +276,7 @@ fun QuickActionsGrid(
         ActionCardItem(
             title = "사전 양해",
             subtitle = "미리 알려드리기",
-            delayMs = 0, // TODO: 테스트 이후 바꾸기
+            delayMs = 1000,
             gradient = listOf(Color(0xFFF472B6), Color(0xFFF43F5E)), // from-pink-400 to-rose-500
             icon = {
                 Icon(
@@ -284,7 +294,7 @@ fun QuickActionsGrid(
         ActionCardItem(
             title = "게시판",
             subtitle = "이웃과 소통하기",
-            delayMs = 0, // TODO: 테스트 이후 바꾸기
+            delayMs = 1000,
             gradient = listOf(Color(0xFF60A5FA), Color(0xFF22D3EE)), // from-blue-400 to-cyan-500
             icon = {
                 Icon(
@@ -302,8 +312,8 @@ fun QuickActionsGrid(
 
 @Composable
 fun GreetingHeader(
-    greeting: String = "하루",
     modifier: Modifier = Modifier,
+    greeting: String = "하루",
     titleColor: Color = Color.White,
     subtitleColor: Color = Color(0xFFE9D5FF), // Tailwind purple-200
     badgeBackground: Color = Color.White.copy(alpha = 0.20f),
@@ -318,7 +328,7 @@ fun GreetingHeader(
     ) {
         // Badge (w-16 h-16 rounded-full bg-white/20)
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .size(64.dp)
                 .clip(CircleShape)
                 .background(badgeBackground)
@@ -352,6 +362,7 @@ fun GreetingHeader(
 
 @Composable
 fun MainSection(
+    modifier: Modifier = Modifier,
     mainSlides: List<MainSlide> = listOf(
         MainSlide(
             image = "",
@@ -377,10 +388,9 @@ fun MainSection(
             destination = Destination.MONTH_REPORT
         )
     ),
-    modifier: Modifier = Modifier,
     onButtonClick: (Destination) -> Unit = {}
 ) {
-    var currentSlide by remember { mutableStateOf(0) }
+    var currentSlide by remember { mutableIntStateOf(0) }
 
     Box(
         modifier = modifier

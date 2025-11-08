@@ -22,8 +22,7 @@ class MainFragment : Fragment() {
 
         setContent {
             MainRoute(
-                onNavigate = { dest -> findNavController().navigateTo(dest)},
-                onBack = { findNavController().popBackStack()}
+                onNavigate = { dest -> findNavController().navigateTo(dest)}
             )
         }
     }
