@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.compose.preconsideration.writingpreconsideration
+package com.kau.ttokttok.ui.compose.preconsideration.writing
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -27,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
-import com.kau.ttokttok.ui.compose.community.writingcommunity.PostBottomActions
-import com.kau.ttokttok.ui.compose.community.writingcommunity.PostContentField
-import com.kau.ttokttok.ui.compose.community.writingcommunity.PostTitleField
+import com.kau.ttokttok.ui.compose.community.writing.PostBottomActions
+import com.kau.ttokttok.ui.compose.community.writing.PostContentField
+import com.kau.ttokttok.ui.compose.community.writing.PostTitleField
 import java.time.LocalDate
 import java.time.LocalDateTime
 

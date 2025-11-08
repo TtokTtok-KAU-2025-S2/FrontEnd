@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.compose.community.writingcommunity
+package com.kau.ttokttok.ui.compose.community.writing
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

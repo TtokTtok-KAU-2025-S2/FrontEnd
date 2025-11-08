@@ -1,4 +1,4 @@
-package com.kau.ttokttok.ui.compose.community.writingcommunity
+package com.kau.ttokttok.ui.compose.preconsideration.writing
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 
-class WritingCommunityFragment : Fragment() {
+class WritingPreConsiderationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -20,7 +20,7 @@ class WritingCommunityFragment : Fragment() {
         )
 
         setContent {
-            WritingCommunityRoute(
+            WritingPreConsiderationScreen(
                 onClickBack = { findNavController().popBackStack() }
             )
         }

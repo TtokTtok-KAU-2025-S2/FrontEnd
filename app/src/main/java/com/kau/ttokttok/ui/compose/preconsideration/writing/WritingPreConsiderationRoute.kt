@@ -1,12 +1,12 @@
-package com.kau.ttokttok.ui.compose.community.writingcommunity
+package com.kau.ttokttok.ui.compose.preconsideration.writing
 
 import androidx.compose.runtime.Composable
 
 @Composable
-fun WritingCommunityRoute(
+fun WritingPreConsiderationRoute(
     onClickBack: () -> Unit
 ) {
-    WritingCommunityScreen(
+    WritingPreConsiderationScreen(
         onClickBack = onClickBack
     )
 }
