@@ -36,14 +36,19 @@ class AuthUseCase @Inject constructor(
     suspend fun register(
         email: String,
         password: String,
-        buildingNumber: String,
-        unitNumber: String
+        buildingNumber: Int,
+        unitNumber: Int
     ): NetworkResult<RegisterRes> {
         validateEmail(email)
         validatePassword(password)
 
         val result = repository.register(
-            RegisterReq(email, password, buildingNumber, unitNumber)
+            RegisterReq(
+                email = email,
+                password = password,
+                buildingNumber = buildingNumber,
+                unitNumber = unitNumber
+            )
         )
 
         if (result is NetworkResult.Success) {

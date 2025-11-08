@@ -1,9 +1,14 @@
 package com.kau.ttokttok.data.remote.dto.auth.req
 
-// TODO: 로그인/회원가입 페이지_팀원들과 회의 후 교체
+import com.squareup.moshi.Json
+
 data class RegisterReq(
+    // TODO: BE연동
+    val aptId: Long = 1L,
     val email: String,
     val password: String,
-    val buildingNumber: String,
-    val unitNumber: String
+    @Json(name = "dong")
+    val buildingNumber: Int,
+    @Json(name = "hosu")
+    val unitNumber: Int
 )
