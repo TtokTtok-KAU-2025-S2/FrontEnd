@@ -46,7 +46,7 @@ private val Blue600 = Color(0xFF2563EB)
 @Composable
 fun WritingCommunityScreen(
     modifier: Modifier = Modifier,
-    onClickCreate: (String, String, String) -> Unit = { _, _, _ -> },
+    onClickCreate: (String, String) -> Unit = { _, _ -> },
     onClickBack: () -> Unit = { },
 ) {
 
