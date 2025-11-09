@@ -8,6 +8,7 @@ import com.kau.ttokttok.data.remote.dto.community.res.GetPostsRes
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface CommunityApiService {
     @POST("api/notice")
@@ -18,5 +19,7 @@ interface CommunityApiService {
     suspend fun getPosts(): ApiResponse<GetPostsRes>
 
     @GET("api/notice/{id}")
-    suspend fun getPostDetail(): ApiResponse<GetPostDetailRes>
+    suspend fun getPostDetail(
+        @Path("id") id: Long
+    ): ApiResponse<GetPostDetailRes>
 }
