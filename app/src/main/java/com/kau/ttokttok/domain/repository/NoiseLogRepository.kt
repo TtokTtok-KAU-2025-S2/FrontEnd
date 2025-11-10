@@ -84,6 +84,27 @@ interface NoiseLogRepository {
     ): Result<Double>
 
     /**
+     * 소음 일기 등록 (API 연동)
+     * @param occuredAt 소음 발생 시간 (ISO 8601 형식)
+     * @param duration 측정 소요 시간(녹음 duration)
+     * @param dbHigh 최대 데시벨
+     * @param dbAvg 평균 데시벨
+     * @param category 소음 카테고리 (FOOTSTEPS, HAMMERING, FURNITURE, MUSIC, UNKNOWN)
+     * @param grade 소음 등급 (QUIET, NORMAL, LOUD)
+     * @param description 소음일기 내용
+     * @return 생성된 소음 일기
+     */
+    suspend fun createNoiseRecordApi(
+        occuredAt: String,
+        duration: Int,
+        dbHigh: Double,
+        dbAvg: Double,
+        category: String,
+        grade: String,
+        description: String?
+    ): Result<NoiseLog>
+
+    /**
      * 소음 일기 수정 (API 연동)
      * @param recordId 수정할 소음 기록의 고유 ID
      * @param noiseLog 수정할 소음 일기 데이터
@@ -93,4 +114,22 @@ interface NoiseLogRepository {
         recordId: Long,
         noiseLog: NoiseLog
     ): Result<NoiseLog>
+
+    /**
+     * 소음 일기 삭제 (API 연동 - Hard Delete)
+     * @param recordId 삭제할 소음 기록의 고유 ID
+     * @return 삭제된 소음 기록 ID
+     */
+    suspend fun deleteNoiseRecordApi(
+        recordId: Long
+    ): Result<Long>
+
+    /**
+     * 소음 기록 1개 데이터를 '소음현황' 페이지로 전송 (API 연동)
+     * @param recordId 전송할 소음 기록의 고유 ID
+     * @return 전송된 소음 기록 ID
+     */
+    suspend fun sendNoiseRecordApi(
+        recordId: Long
+    ): Result<Long>
 }

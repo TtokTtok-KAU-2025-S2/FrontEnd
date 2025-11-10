@@ -2,16 +2,22 @@ package com.kau.ttokttok.data.remote.api
 
 import com.kau.ttokttok.data.remote.dto.AverageDbResponse
 import com.kau.ttokttok.data.remote.dto.CalendarResponse
+import com.kau.ttokttok.data.remote.dto.CreateNoiseRecordRequest
+import com.kau.ttokttok.data.remote.dto.CreateNoiseRecordResponse
+import com.kau.ttokttok.data.remote.dto.DeleteNoiseRecordResponse
 import com.kau.ttokttok.data.remote.dto.MonthlyCountResponse
 import com.kau.ttokttok.data.remote.dto.NoiseRecordsByDateResponse
+import com.kau.ttokttok.data.remote.dto.SendNoiseRecordResponse
 import com.kau.ttokttok.data.remote.dto.TotalCountResponse
 import com.kau.ttokttok.data.remote.dto.UpdateNoiseRecordRequest
 import com.kau.ttokttok.data.remote.dto.UpdateNoiseRecordResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -99,6 +105,20 @@ interface NoiseApiService {
     ): Response<AverageDbResponse>
 
     /**
+     * 소음 일기 등록
+     * POST /noise/records
+     *
+     * @param request 소음 기록 생성 데이터
+     * @param authorization JWT 토큰 ("Bearer {token}")
+     * @return 생성된 소음 기록 정보
+     */
+    @POST("noise/records")
+    suspend fun createNoiseRecord(
+        @Body request: CreateNoiseRecordRequest,
+        @Header("Authorization") authorization: String
+    ): Response<CreateNoiseRecordResponse>
+
+    /**
      * 소음 일기 수정
      * PATCH /noise/records/{recordId}
      *
@@ -113,4 +133,32 @@ interface NoiseApiService {
         @Body request: UpdateNoiseRecordRequest,
         @Header("Authorization") authorization: String
     ): Response<UpdateNoiseRecordResponse>
+
+    /**
+     * 소음 일기 삭제 (Hard Delete)
+     * DELETE /noise/records/{recordId}
+     *
+     * @param recordId 삭제할 소음 기록의 고유 ID
+     * @param authorization JWT 토큰 ("Bearer {token}")
+     * @return 삭제된 소음 기록 ID
+     */
+    @DELETE("noise/records/{recordId}")
+    suspend fun deleteNoiseRecord(
+        @Path("recordId") recordId: Long,
+        @Header("Authorization") authorization: String
+    ): Response<DeleteNoiseRecordResponse>
+
+    /**
+     * 소음 기록 1개 데이터를 '소음현황' 페이지로 전송
+     * POST /noise/records/{recordId}/send
+     *
+     * @param recordId 전송할 소음 기록의 고유 ID
+     * @param authorization JWT 토큰 ("Bearer {token}")
+     * @return 전송된 소음 기록 ID
+     */
+    @POST("noise/records/{recordId}/send")
+    suspend fun sendNoiseRecord(
+        @Path("recordId") recordId: Long,
+        @Header("Authorization") authorization: String
+    ): Response<SendNoiseRecordResponse>
 }

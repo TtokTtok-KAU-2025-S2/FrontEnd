@@ -261,6 +261,61 @@ class NoiseLogRepositoryImpl @Inject constructor(
         }
     }
 
+    // [백엔드 API 연동] 소음 일기 등록
+    override suspend fun createNoiseRecordApi(
+        occuredAt: String,
+        duration: Int,
+        dbHigh: Double,
+        dbAvg: Double,
+        category: String,
+        grade: String,
+        description: String?
+    ): Result<NoiseLog> {
+        return try {
+            val token = tokenProvider.getTokenOrNull() ?: return Result.failure(Exception("인증 토큰이 없습니다"))
+
+            // API 요청 DTO 생성
+            val request = com.kau.ttokttok.data.remote.dto.CreateNoiseRecordRequest(
+                occuredAt = occuredAt,
+                duration = duration,
+                dbHigh = dbHigh,
+                dbAvg = dbAvg,
+                category = category,
+                grade = grade,
+                description = description
+            )
+
+            val response = noiseApiService.createNoiseRecord(
+                request = request,
+                authorization = "Bearer $token"
+            )
+
+            if (response.isSuccessful && response.body() != null) {
+                val createResponse = response.body()!!
+
+                if (createResponse.isSuccess) {
+                    // API 응답을 NoiseLog 도메인 모델로 변환
+                    val createdLog = NoiseLog(
+                        id = createResponse.result.id.toString(),
+                        noiseType = createResponse.result.category,
+                        maxDecibel = createResponse.result.dbHigh,
+                        avgDecibel = createResponse.result.dbAvg,
+                        memo = createResponse.result.description ?: "",
+                        measuredAt = parseDateTimeFromApi(createResponse.result.occuredAt),
+                        hasReport = false
+                    )
+                    Result.success(createdLog)
+                } else {
+                    Result.failure(Exception(createResponse.message))
+                }
+            } else {
+                Result.failure(Exception("서버 응답 오류: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // [백엔드 API 연동] 소음 일기 수정
     override suspend fun updateNoiseRecordApi(recordId: Long, noiseLog: NoiseLog): Result<NoiseLog> {
         return try {
@@ -324,6 +379,32 @@ class NoiseLogRepositoryImpl @Inject constructor(
         }
     }
 
+    // [백엔드 API 연동] 소음 일기 삭제 (Hard Delete)
+    override suspend fun deleteNoiseRecordApi(recordId: Long): Result<Long> {
+        return try {
+            val token = tokenProvider.getTokenOrNull() ?: return Result.failure(Exception("인증 토큰이 없습니다"))
+
+            val response = noiseApiService.deleteNoiseRecord(
+                recordId = recordId,
+                authorization = "Bearer $token"
+            )
+
+            if (response.isSuccessful && response.body() != null) {
+                val deleteResponse = response.body()!!
+
+                if (deleteResponse.isSuccess) {
+                    Result.success(deleteResponse.result.recordId)
+                } else {
+                    Result.failure(Exception(deleteResponse.message))
+                }
+            } else {
+                Result.failure(Exception("서버 응답 오류: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // dB 값을 NoiseGrade로 변환
     private fun convertToNoiseGrade(dbHigh: Double): String {
         return when {
@@ -331,6 +412,32 @@ class NoiseLogRepositoryImpl @Inject constructor(
             dbHigh >= 60 -> "LOUD"
             dbHigh >= 40 -> "NORMAL"
             else -> "QUIET"
+        }
+    }
+
+    // [백엔드 API 연동] 소음 기록 1개 데이터를 '소음현황' 페이지로 전송
+    override suspend fun sendNoiseRecordApi(recordId: Long): Result<Long> {
+        return try {
+            val token = tokenProvider.getTokenOrNull() ?: return Result.failure(Exception("인증 토큰이 없습니다"))
+
+            val response = noiseApiService.sendNoiseRecord(
+                recordId = recordId,
+                authorization = "Bearer $token"
+            )
+
+            if (response.isSuccessful && response.body() != null) {
+                val sendResponse = response.body()!!
+
+                if (sendResponse.isSuccess) {
+                    Result.success(sendResponse.result)
+                } else {
+                    Result.failure(Exception(sendResponse.message))
+                }
+            } else {
+                Result.failure(Exception("서버 응답 오류: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

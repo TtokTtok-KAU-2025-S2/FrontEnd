@@ -156,6 +156,92 @@ data class AverageDbResult(
 )
 
 /**
+ * 소음 일기 등록 API 요청 모델
+ * POST /noise/records
+ */
+@JsonClass(generateAdapter = true)
+data class CreateNoiseRecordRequest(
+    @Json(name = "occuredAt")
+    val occuredAt: String, // "2025-11-09T11:32:57.272Z" 형식
+    @Json(name = "duration")
+    val duration: Int, // 측정 소요 시간(녹음 duration)
+    @Json(name = "dbHigh")
+    val dbHigh: Double, // 최대 데시벨
+    @Json(name = "dbAvg")
+    val dbAvg: Double, // 평균 데시벨
+    @Json(name = "category")
+    val category: String, // FOOTSTEPS, HAMMERING, FURNITURE, MUSIC, UNKNOWN
+    @Json(name = "grade")
+    val grade: String, // QUIET, NORMAL, LOUD
+    @Json(name = "description")
+    val description: String? // 소음일기 내용
+)
+
+/**
+ * 소음 일기 등록 API 응답 모델
+ * POST /noise/records
+ */
+@JsonClass(generateAdapter = true)
+data class CreateNoiseRecordResponse(
+    @Json(name = "result")
+    val result: CreateNoiseRecordResult,
+    @Json(name = "code")
+    val code: String,
+    @Json(name = "message")
+    val message: String,
+    @Json(name = "isSuccess")
+    val isSuccess: Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class CreateNoiseRecordResult(
+    @Json(name = "id")
+    val id: Long,
+    @Json(name = "userId")
+    val userId: Long,
+    @Json(name = "duration")
+    val duration: Int,
+    @Json(name = "dbHigh")
+    val dbHigh: Double,
+    @Json(name = "dbAvg")
+    val dbAvg: Double,
+    @Json(name = "category")
+    val category: String,
+    @Json(name = "grade")
+    val grade: String,
+    @Json(name = "description")
+    val description: String?,
+    @Json(name = "summary")
+    val summary: String?,
+    @Json(name = "occuredAt")
+    val occuredAt: String,
+    @Json(name = "updateAt")
+    val updateAt: String
+)
+
+/**
+ * 소음 일기 삭제 API 응답 모델
+ * DELETE /noise/records/{recordId}
+ */
+@JsonClass(generateAdapter = true)
+data class DeleteNoiseRecordResponse(
+    @Json(name = "result")
+    val result: DeleteNoiseRecordResult,
+    @Json(name = "code")
+    val code: String,
+    @Json(name = "message")
+    val message: String,
+    @Json(name = "isSuccess")
+    val isSuccess: Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class DeleteNoiseRecordResult(
+    @Json(name = "recordId")
+    val recordId: Long
+)
+
+/**
  * 소음 일기 수정 API 요청 모델
  * PATCH /noise/records/{recordId}
  */
@@ -210,3 +296,20 @@ data class UpdateNoiseRecordResult(
     @Json(name = "updatedAt")
     val updatedAt: String
 )
+
+/**
+ * 소음 기록 전송 API 응답 모델
+ * POST /noise/records/{recordId}/send
+ */
+@JsonClass(generateAdapter = true)
+data class SendNoiseRecordResponse(
+    @Json(name = "result")
+    val result: Long, // 전송된 소음 기록의 ID
+    @Json(name = "code")
+    val code: String,
+    @Json(name = "message")
+    val message: String,
+    @Json(name = "isSuccess")
+    val isSuccess: Boolean
+)
+

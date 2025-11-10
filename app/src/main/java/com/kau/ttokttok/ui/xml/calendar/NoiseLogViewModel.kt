@@ -259,6 +259,51 @@ class NoiseLogViewModel @Inject constructor(
     }
 
     /**
+     * 소음 일기 등록 (API 연동) - 백엔드 API 호출
+     * @param occuredAt 소음 발생 시간 (ISO 8601 형식)
+     * @param duration 측정 소요 시간(녹음 duration)
+     * @param dbHigh 최대 데시벨
+     * @param dbAvg 평균 데시벨
+     * @param category 소음 카테고리 (FOOTSTEPS, HAMMERING, FURNITURE, MUSIC, UNKNOWN)
+     * @param grade 소음 등급 (QUIET, NORMAL, LOUD)
+     * @param description 소음일기 내용
+     */
+    fun createNoiseRecordApi(
+        occuredAt: String,
+        duration: Int,
+        dbHigh: Double,
+        dbAvg: Double,
+        category: String,
+        grade: String,
+        description: String?
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorState.value = null
+
+            repository.createNoiseRecordApi(
+                occuredAt = occuredAt,
+                duration = duration,
+                dbHigh = dbHigh,
+                dbAvg = dbAvg,
+                category = category,
+                grade = grade,
+                description = description
+            )
+                .onSuccess { createdLog ->
+                    _errorState.value = null
+                    // 등록 성공 시 현재 날짜의 데이터만 새로고침
+                    selectDate(_selectedDate.value)
+                }
+                .onFailure { error ->
+                    _errorState.value = "소음 일기 등록 실패: ${error.message}"
+                }
+
+            _isLoading.value = false
+        }
+    }
+
+    /**
      * 소음 일기 수정 (API 연동) - 백엔드 API 호출
      * @param recordId 수정할 소음 기록의 고유 ID
      * @param log 수정할 소음 일기 데이터
@@ -276,6 +321,29 @@ class NoiseLogViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _errorState.value = "소음 일기 수정 실패: ${error.message}"
+                }
+
+            _isLoading.value = false
+        }
+    }
+
+    /**
+     * 소음 일기 삭제 (API 연동 - Hard Delete) - 백엔드 API 호출
+     * @param recordId 삭제할 소음 기록의 고유 ID
+     */
+    fun deleteNoiseRecordApi(recordId: Long) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorState.value = null
+
+            repository.deleteNoiseRecordApi(recordId)
+                .onSuccess { deletedRecordId ->
+                    _errorState.value = null
+                    // 삭제 성공 시 현재 날짜의 데이터만 새로고침
+                    selectDate(_selectedDate.value)
+                }
+                .onFailure { error ->
+                    _errorState.value = "소음 일기 삭제 실패: ${error.message}"
                 }
 
             _isLoading.value = false

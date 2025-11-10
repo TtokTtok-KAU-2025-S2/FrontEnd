@@ -144,7 +144,14 @@ class NoiseLogFragment : Fragment() {
      */
     private fun setupRecyclerView() {
         adapter = NoiseLogAdapter(
-            onDeleteClick = { log -> viewModel.deleteLog(log.id!!) },
+            onDeleteClick = { log ->
+                // API를 통한 삭제 (recordId를 Long으로 변환)
+                log.id?.toLongOrNull()?.let { recordId ->
+                    viewModel.deleteNoiseRecordApi(recordId)
+                } ?: run {
+                    Toast.makeText(requireContext(), "잘못된 기록 ID입니다", Toast.LENGTH_SHORT).show()
+                }
+            },
             onEditClick = { log ->
                 // 수정 화면으로 이동 (Navigator 방식)
                 val bundle = Bundle().apply {

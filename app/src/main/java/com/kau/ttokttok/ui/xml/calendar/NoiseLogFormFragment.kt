@@ -217,7 +217,31 @@ class NoiseLogFormFragment : Fragment() {
                 Toast.makeText(requireContext(), "소음 일기가 수정되었습니다", Toast.LENGTH_SHORT).show()
             }
         } else {
-            viewModel.saveLog(noiseLog)
+            // 신규 등록: 실제 API 호출
+            val occuredAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).apply {
+                timeZone = java.util.TimeZone.getTimeZone("UTC")
+            }.format(measuredAt)
+
+            // 소음 카테고리 매핑 (한글 -> 영문)
+            val category = mapNoiseTypeToCategory(selectedNoiseType!!)
+
+            // 소음 등급 결정
+            val grade = when {
+                maxDb >= 80 -> "LOUD"
+                maxDb >= 60 -> "NORMAL"
+                else -> "QUIET"
+            }
+
+            // API 호출
+            viewModel.createNoiseRecordApi(
+                occuredAt = occuredAt,
+                duration = duration.toInt(),
+                dbHigh = maxDb,
+                dbAvg = avgDb,
+                category = category,
+                grade = grade,
+                description = binding.etMemo.text.toString()
+            )
             Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
         }
 
@@ -227,6 +251,17 @@ class NoiseLogFormFragment : Fragment() {
         // 캘린더 화면(NoiseLogFragment)으로 이동
         // popBackStack 대신 명시적으로 NoiseLogFragment로 이동
         findNavController().navigate(R.id.noiseLogFragment)
+    }
+
+    /**
+     * 한글 소음 타입을 API 카테고리로 매핑
+     */
+    private fun mapNoiseTypeToCategory(noiseType: String): String = when (noiseType) {
+        "발걸음", "아이들 뛰는 소리" -> "FOOTSTEPS"
+        "망치질" -> "HAMMERING"
+        "가구 끄는 소리" -> "FURNITURE"
+        "음악 소리" -> "MUSIC"
+        else -> "UNKNOWN"
     }
 
     override fun onDestroyView() {
