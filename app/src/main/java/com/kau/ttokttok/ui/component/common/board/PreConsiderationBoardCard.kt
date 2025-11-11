@@ -23,15 +23,14 @@ private val Orange500 = Color(0xFFF97316) // border-l-orange-500
 
 @Composable
 fun PreConsiderationBoardCard(
-    id: Long,
     title: String,
     authorLocation: String,
-    onClick: (Long) -> Unit
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(id) },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Slate800),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(0.5.dp, Slate700),

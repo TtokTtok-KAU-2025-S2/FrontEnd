@@ -55,8 +55,13 @@
     <fragment
         android:id="@+id/preConsiderationDetailFragment"
         android:name="com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailFragment"
-        android:label="PreConsiderationDetail"
-        />
+        android:label="PreConsiderationDetail">
+
+        <argument
+            android:name="preConsiderationId"
+            app:argType="long"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/communityFragment"

@@ -43,8 +43,11 @@ fun PreConsiderationDetailScreen(
 
         // 이 화면의 다른 상세(제목/내용 등)
         BoardDetailContent(
+            buildingNumber = uiState.buildingNumber,
+            unitNumber = uiState.unitNumber,
             title = uiState.title,
-            content = uiState.content
+            content = uiState.content,
+            createdAt = uiState.createdAt
         )
 
         // 🔸 읽기 전용 사전 양해 카드 (항상 표시)
@@ -113,7 +116,7 @@ private fun DisplayRow(
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = if (value.isBlank()) "-" else value,
+            text = if (value.isBlank()) "~" else value,
             color = Gray900,
             fontSize = 14.sp,
             modifier = Modifier.padding(top = 4.dp)

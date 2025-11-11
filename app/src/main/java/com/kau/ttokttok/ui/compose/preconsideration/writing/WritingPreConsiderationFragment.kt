@@ -20,7 +20,7 @@ class WritingPreConsiderationFragment : Fragment() {
         )
 
         setContent {
-            WritingPreConsiderationScreen(
+            WritingPreConsiderationRoute(
                 onClickBack = { findNavController().popBackStack() }
             )
         }

@@ -56,10 +56,9 @@ fun PreConsiderationScreen(
                 key = { it.id }
             ) { post ->
                 PreConsiderationBoardCard(
-                    id = post.id,
                     title = post.title,
                     authorLocation = post.authorLocation,
-                    onClick = onClickPost
+                    onClick = { onClickPost(post.id) }
                 )
             }
         }

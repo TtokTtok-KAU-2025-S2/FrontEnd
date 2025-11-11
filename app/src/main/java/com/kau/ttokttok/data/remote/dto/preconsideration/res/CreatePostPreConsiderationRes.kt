@@ -10,6 +10,6 @@ data class CreatePostPreConsiderationRes(
     val eventDate: String,
     val eventTime: String,
     val eventReason: String,
-    val createdAt: LocalDateTime,
-    val modifiedAt: LocalDateTime
+    val createdAt: String,
+    val modifiedAt: String
 )

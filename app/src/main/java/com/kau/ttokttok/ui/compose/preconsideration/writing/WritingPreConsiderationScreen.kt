@@ -45,7 +45,7 @@ private val Orange900 = Color(0xFF7C2D12) // text-orange-900
 @Composable
 fun WritingPreConsiderationScreen(
     modifier: Modifier = Modifier,
-    onClickCreate: (String, String, LocalDate, LocalDateTime, LocalDateTime, String) -> Unit = {_, _, _, _, _, _ -> },
+    onClickCreate: (String, String, String, String, String) -> Unit = {_, _, _, _, _ -> },
     onClickBack: () -> Unit = { }
 ) {
     var title by remember { mutableStateOf("")}
@@ -93,8 +93,10 @@ fun WritingPreConsiderationScreen(
         Spacer(Modifier.height(32.dp))
 
         PostBottomActions(
-            enabled = title.isNotBlank() && content.isNotBlank(),
-            onSubmit = { }
+            enabled = title.isNotBlank() && content.isNotBlank() && noticeDate.isNotBlank() && noticeTime.isNotBlank() && noticeReason.isNotBlank(),
+            onSubmit = {
+                onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+            }
         )
     }
 }
@@ -134,7 +136,7 @@ fun AdvanceNoticeSection(
                 label = "예정일",
                 value = noticeDate,
                 onValueChange = onNoticeDateChange,
-                placeholder = "예: 2025-11-06",
+                placeholder = "예: 2025.11.06",
                 // ⬇️ DatePicker를 붙이고 싶다면 여기서 readOnly + trailingIcon으로 Dialog 열기 처리
                 readOnly = false
             )
@@ -144,7 +146,7 @@ fun AdvanceNoticeSection(
                 label = "시간",
                 value = noticeTime,
                 onValueChange = onNoticeTimeChange,
-                placeholder = "예: 10:00 - 17:00"
+                placeholder = "예: 10:00 ~ 17:00"
             )
 
             // 사유

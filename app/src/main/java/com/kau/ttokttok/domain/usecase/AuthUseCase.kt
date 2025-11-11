@@ -19,8 +19,6 @@ class AuthUseCase @Inject constructor(
     private val userProvider: UserProvider
 ) {
     suspend fun login(email: String, password: String): NetworkResult<LoginRes> {
-        validateEmail(email)
-        validatePassword(password)
 
         val result = repository.login(LoginReq(email, password))
 
@@ -49,8 +47,6 @@ class AuthUseCase @Inject constructor(
         buildingNumber: Int,
         unitNumber: Int
     ): NetworkResult<RegisterRes> {
-        validateEmail(email)
-        validatePassword(password)
 
         val result = repository.register(
             RegisterReq(
@@ -70,21 +66,5 @@ class AuthUseCase @Inject constructor(
         }
 
         return result
-    }
-
-    private fun validateEmail(email: String) {
-        require(email.isNotBlank()) {"이메일을 입력하세요."}
-        require(Patterns.EMAIL_ADDRESS.matcher(email).matches()) {"올바른 이메일 형식이 아닙니다."}
-    }
-
-    private fun validatePassword(password: String) {
-        require(password.isNotBlank()) {"비밀번호를 입력하세요."}
-
-        require(password.length >= 8) {"비밀번호는 8자 이상입니다."}
-        require(password.first().isUpperCase()) {"비밀번호는 대문자로 시작해야 합니다."}
-        require(password.any { it.isDigit() }) {"비밀번호에는 숫자가 하나 이상 포함되어야 합니다."}
-
-        val specialChars = setOf('!', '@', '#', '$', '%', '^', '&', '*', '-', '_', '+', '=', '?')
-        require(password.any { it in specialChars }) { "비밀번호에는 특수문자가 하나 이상 포함되어야 합니다." }
     }
 }

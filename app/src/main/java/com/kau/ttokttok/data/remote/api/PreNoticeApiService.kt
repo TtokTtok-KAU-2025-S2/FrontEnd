@@ -6,15 +6,17 @@ import com.kau.ttokttok.data.remote.dto.preconsideration.res.*
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface PreNoticeApiService {
+    @Headers("No-Auth: false")
     @GET("api/prenotices")
     suspend fun getPosts(): ApiResponse<GetPostsPreConsiderationRes>
 
-    @GET("api/prenotice/{preNoticeId}")
+    @GET("api/prenotices/{preNoticeId}")
     suspend fun getPostDetail(
         @Path("preNoticeId") id: Long
     ): ApiResponse<GetPostDetailPreConsiderationRes>

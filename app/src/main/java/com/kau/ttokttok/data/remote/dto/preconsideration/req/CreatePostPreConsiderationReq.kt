@@ -5,5 +5,5 @@ data class CreatePostPreConsiderationReq(
     val content: String,
     val eventDate: String,
     val eventTime: String,
-    val eventReaspon: String
+    val eventReason: String
 )
