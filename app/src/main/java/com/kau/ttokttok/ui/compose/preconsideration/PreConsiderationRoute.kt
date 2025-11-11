@@ -15,7 +15,9 @@ fun PreConsiderationRoute(
 
     PreConsiderationScreen(
         onClickCreatePost = onClickCreatePost,
-        onClickPost = onClickPost,
+        onClickPost = {
+            id -> onClickPost(id)
+        },
         posts = posts
     )
 }

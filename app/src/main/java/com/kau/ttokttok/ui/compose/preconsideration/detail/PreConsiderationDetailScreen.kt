@@ -28,9 +28,8 @@ private val Gray50Bg  = Color(0xFFF9FAFB)
 @Composable
 fun PreConsiderationDetailScreen(
     modifier: Modifier = Modifier,
-    onClickBack: () -> Unit = { },
-    title: String = "제목 NULL",
-    content: String = "내용 NULL"
+    uiState: PreConsiderationDetailUiState,
+    onClickBack: () -> Unit = { }
 ) {
     Column(
         modifier = modifier
@@ -44,15 +43,15 @@ fun PreConsiderationDetailScreen(
 
         // 이 화면의 다른 상세(제목/내용 등)
         BoardDetailContent(
-            title = title,
-            content = content
+            title = uiState.title,
+            content = uiState.content
         )
 
         // 🔸 읽기 전용 사전 양해 카드 (항상 표시)
         AdvanceNoticeDisplayCard(
-            noticeDate = "2025-11-06",
-            noticeTime = "10:00 - 17:00",
-            noticeReason = "인테리어 공사",
+            noticeDate = uiState.noticeDate,
+            noticeTime = uiState.noticeTime,
+            noticeReason = uiState.noticeReason,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         )
