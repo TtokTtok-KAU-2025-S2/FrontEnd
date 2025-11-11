@@ -8,25 +8,25 @@ import javax.inject.Singleton
 class UserProvider @Inject constructor(
     private val userStorage: UserStorage
 ){
-    @Volatile private var cachedBuildingNumber: String? = null
-    @Volatile private var cachedUnitNumber: String? = null
+    @Volatile private var cachedBuildingNumber: Int? = null
+    @Volatile private var cachedUnitNumber: Int? = null
 
     suspend fun init() {
         cachedBuildingNumber = userStorage.getBuildingNumber()
         cachedUnitNumber = userStorage.getUnitNumber()
     }
 
-    fun getBuildingNumberOrNull(): String? = cachedBuildingNumber
+    fun getBuildingNumberOrNull(): Int? = cachedBuildingNumber
 
-    suspend fun setBuildingNumber(buildingNumber: String) {
+    suspend fun setBuildingNumber(buildingNumber: Int) {
         userStorage.setBuildingNumber(buildingNumber)
 
         cachedBuildingNumber = buildingNumber
     }
 
-    fun getUnitNumberOrNull(): String? = cachedUnitNumber
+    fun getUnitNumberOrNull(): Int? = cachedUnitNumber
 
-    suspend fun setUnitNumber(unitNumber: String) {
+    suspend fun setUnitNumber(unitNumber: Int) {
         userStorage.setUnitNumber(unitNumber)
 
         cachedUnitNumber = unitNumber

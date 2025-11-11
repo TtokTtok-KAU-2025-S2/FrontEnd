@@ -37,7 +37,7 @@ fun CommunityDetailScreen(
     modifier: Modifier = Modifier,
     onClickBack: () -> Unit = {},
     title: String = "제목 NULL",
-    content: String = "내용 NULL"
+    content: String = "내용 NULL",
 ) {
     Column(
         modifier = modifier
@@ -59,9 +59,11 @@ fun CommunityDetailScreen(
 @Composable
 fun BoardDetailContent(
     modifier: Modifier = Modifier,
-    buildingNumber: Int = 300,
+    buildingNumber: Int = 0,
+    unitNumber: Int = 0,
     title: String = "제목",
-    content: String = "내용"
+    content: String = "내용",
+    createdAt: String = "시간 NULL"
 ) {
     Column(
         modifier = modifier
@@ -88,12 +90,12 @@ fun BoardDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${buildingNumber}동 주민",
+                        text = "${buildingNumber}동 ${unitNumber}호 주민",
                         color = Gray500,
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "10월 28일 23:30",
+                        text = "${createdAt}",
                         color = Gray400,
                         fontSize = 11.sp
                     )

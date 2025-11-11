@@ -31,8 +31,13 @@
     <fragment
         android:id="@+id/noiseVoteDetailFragment"
         android:name="com.kau.ttokttok.ui.compose.noisevote.detail.NoiseVoteDetailFragment"
-        android:label="NoiseVoteDetail"
-        />
+        android:label="NoiseVoteDetail">
+
+        <argument
+            android:name="noiseVoteId"
+            app:argType="long"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/monthReportFragment"
@@ -48,15 +53,20 @@
 
     <fragment
         android:id="@+id/writingPreConsiderationFragment"
-        android:name="com.kau.ttokttok.ui.compose.preconsideration.writingpreconsideration.WritingPreConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.writing.WritingPreConsiderationFragment"
         android:label="writingPreConsideration"
         />
 
     <fragment
         android:id="@+id/preConsiderationDetailFragment"
         android:name="com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailFragment"
-        android:label="PreConsiderationDetail"
-        />
+        android:label="PreConsiderationDetail">
+
+        <argument
+            android:name="preConsiderationId"
+            app:argType="long"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/communityFragment"
@@ -66,7 +76,7 @@
 
     <fragment
         android:id="@+id/writingCommunityFragment"
-        android:name="com.kau.ttokttok.ui.compose.community.writingcommunity.WritingCommunityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.writing.WritingCommunityFragment"
         android:label="writingCommunity"
         />
 

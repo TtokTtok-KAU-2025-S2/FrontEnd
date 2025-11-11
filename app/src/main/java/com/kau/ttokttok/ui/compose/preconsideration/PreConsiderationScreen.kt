@@ -25,27 +25,9 @@ data class PreConsiderationPost(
 fun PreConsiderationScreen(
     modifier: Modifier = Modifier,
     onClickCreatePost: () -> Unit = { },
-    onClickPost: (Long) -> Unit = { }
+    onClickPost: (Long) -> Unit = { },
+    posts: List<PreConsiderationPost> = emptyList()
 ) {
-    // ✅ 예시 데이터 2~3개
-    val samplePosts = listOf(
-        PreConsiderationPost(
-            id = 1L,
-            title = "11/20(수) 오전 9~12시 가구 이동 예정",
-            authorLocation = "302동"
-        ),
-        PreConsiderationPost(
-            id = 2L,
-            title = "욕실 공사 안내 (타일 시공, 소음 예상)",
-            authorLocation = "101동"
-        ),
-        PreConsiderationPost(
-            id = 3L,
-            title = "아이 생일파티로 점심 시간대 소음 양해 부탁...",
-            authorLocation = "303동"
-        )
-    )
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -70,14 +52,13 @@ fun PreConsiderationScreen(
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             items(
-                items = samplePosts,
+                items = posts,
                 key = { it.id }
             ) { post ->
                 PreConsiderationBoardCard(
-                    id = post.id,
                     title = post.title,
                     authorLocation = post.authorLocation,
-                    onClick = onClickPost
+                    onClick = { onClickPost(post.id) }
                 )
             }
         }

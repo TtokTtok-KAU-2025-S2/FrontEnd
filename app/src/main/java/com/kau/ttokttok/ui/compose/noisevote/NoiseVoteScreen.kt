@@ -30,28 +30,11 @@ data class NoiseReport(
 @Composable
 fun NoiseVoteScreen(
     modifier: Modifier = Modifier,
-    onClickPost: (Long) -> Unit = { }
+    onClickPost: (Long) -> Unit = { },
+    posts: List<NoiseReport> = emptyList()
 ) {
-    val sampleReports = listOf(
-        NoiseReport(
-            id = 1,
-            authorLocation = "302동",
-            summary = "어젯밤 10시경 지속적인 진동 소음이 발생했습니다."
-        ),
-        NoiseReport(
-            id = 2,
-            authorLocation = "101동",
-            summary = "아이들이 뛰어다니는 소리가 하루 종일 들렸습니다."
-        ),
-        NoiseReport(
-            id = 3,
-            authorLocation = "505동",
-            summary = "가구 이동 소리가 반복적으로 발생했습니다."
-        )
-    )
-
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Slate900)
             .padding(bottom = 64.dp)
@@ -64,20 +47,19 @@ fun NoiseVoteScreen(
         Spacer(Modifier.height(32.dp))
 
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(
-                items = sampleReports,
+                items = posts,
                 key = { it.id }
             ) { report ->
                 NoiseVoteBoardCard(
-                    id = report.id,
                     authorLocation = report.authorLocation,
                     title = report.summary,
-                    onClick = onClickPost
+                    onClick = { onClickPost(report.id) }
                 )
             }
         }

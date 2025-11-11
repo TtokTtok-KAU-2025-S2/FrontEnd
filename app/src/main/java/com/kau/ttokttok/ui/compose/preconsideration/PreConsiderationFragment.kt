@@ -24,7 +24,15 @@ class PreConsiderationFragment : Fragment() {
         setContent {
             PreConsiderationRoute(
                 onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_PRECONSIDERATION)},
-                onClickPost = { findNavController().navigateTo(Destination.PRECONSIDERATION_DETAIL)}
+                onClickPost = { id ->
+                    val args = Bundle().apply {
+                        putLong("preConsiderationId", id)
+                    }
+
+                    findNavController().navigateTo(
+                    dest = Destination.PRECONSIDERATION_DETAIL,
+                    args = args
+                ) }
             )
         }
     }

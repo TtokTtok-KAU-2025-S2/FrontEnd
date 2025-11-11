@@ -28,9 +28,8 @@ private val Gray50Bg  = Color(0xFFF9FAFB)
 @Composable
 fun PreConsiderationDetailScreen(
     modifier: Modifier = Modifier,
-    onClickBack: () -> Unit = { },
-    title: String = "제목 NULL",
-    content: String = "내용 NULL"
+    uiState: PreConsiderationDetailUiState,
+    onClickBack: () -> Unit = { }
 ) {
     Column(
         modifier = modifier
@@ -44,15 +43,18 @@ fun PreConsiderationDetailScreen(
 
         // 이 화면의 다른 상세(제목/내용 등)
         BoardDetailContent(
-            title = title,
-            content = content
+            buildingNumber = uiState.buildingNumber,
+            unitNumber = uiState.unitNumber,
+            title = uiState.title,
+            content = uiState.content,
+            createdAt = uiState.createdAt
         )
 
         // 🔸 읽기 전용 사전 양해 카드 (항상 표시)
         AdvanceNoticeDisplayCard(
-            noticeDate = "2025-11-06",
-            noticeTime = "10:00 - 17:00",
-            noticeReason = "인테리어 공사",
+            noticeDate = uiState.noticeDate,
+            noticeTime = uiState.noticeTime,
+            noticeReason = uiState.noticeReason,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         )
@@ -114,7 +116,7 @@ private fun DisplayRow(
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = if (value.isBlank()) "-" else value,
+            text = if (value.isBlank()) "~" else value,
             color = Gray900,
             fontSize = 14.sp,
             modifier = Modifier.padding(top = 4.dp)

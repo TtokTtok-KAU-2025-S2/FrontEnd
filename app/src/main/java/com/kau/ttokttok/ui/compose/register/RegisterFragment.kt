@@ -22,8 +22,7 @@ class RegisterFragment : Fragment() {
 
         setContent {
             RegisterRoute(
-                onSuccess = { findNavController().onSuccessLogin() },
-                onBack = { findNavController().popBackStack() }
+                onSuccess = { findNavController().onSuccessLogin() }
             )
         }
     }

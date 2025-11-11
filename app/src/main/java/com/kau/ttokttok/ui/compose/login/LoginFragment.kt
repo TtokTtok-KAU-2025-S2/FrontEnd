@@ -26,7 +26,6 @@ class LoginFragment : Fragment() {
         setContent {
             LoginRoute(
                 onSuccess = { findNavController().onSuccessLogin() },
-                onBack = { findNavController().popBackStack() },
                 onRegister = { findNavController().navigateTo(Destination.REGISTER) }
             )
         }

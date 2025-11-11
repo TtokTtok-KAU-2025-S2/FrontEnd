@@ -1,0 +1,15 @@
+package com.kau.ttokttok.data.remote.dto.preconsideration.res
+
+import java.time.LocalDateTime
+
+data class CreatePostPreConsiderationRes(
+    val preNoticeId: Long,
+    val authorDong: Int,
+    val title: String,
+    val content: String,
+    val eventDate: String,
+    val eventTime: String,
+    val eventReason: String,
+    val createdAt: String,
+    val modifiedAt: String
+)

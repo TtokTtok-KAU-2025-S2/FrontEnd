@@ -11,8 +11,7 @@ import com.kau.ttokttok.ui.component.common.AppDialog
 @Composable
 fun RegisterRoute(
     viewModel: RegisterViewModel = hiltViewModel(),
-    onSuccess: () -> Unit = { },
-    onBack: () -> Unit = { },
+    onSuccess: () -> Unit = { }
 ) {
     val snackBar = remember { SnackbarHostState() }
 
@@ -52,10 +51,6 @@ fun RegisterRoute(
         onClickRegister = {
             email, password, buildingNumber, unitNumber ->
             viewModel.onClickRegister(email, password, buildingNumber,unitNumber)
-        },
-
-        onBack = {
-            onBack
         }
     )
 }

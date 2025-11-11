@@ -1,13 +1,18 @@
 package com.kau.ttokttok._core.network.di
 
-import android.content.Context
+import com.kau.ttokttok._core.network.auth.TokenProvider
 import com.kau.ttokttok.data.remote.api.AuthApiService
+import com.kau.ttokttok.data.remote.api.CommunityApiService
+import com.kau.ttokttok.data.remote.api.NoiseCalendarApiService
+import com.kau.ttokttok.data.remote.api.NoiseRecordApiService
+import com.kau.ttokttok.data.remote.api.NoiseStatusBoardApiService
+import com.kau.ttokttok.data.remote.api.PreNoticeApiService
+import com.kau.ttokttok.data.remote.api.ReportApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -15,14 +20,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL = "http://Ttokttok-dev-env.eba-dp3skxgf.ap-northeast-2.elasticbeanstalk.com/"
 
     // ───────────────────────────────
     // 1️⃣ 기본 로깅 인터셉터
@@ -34,60 +38,40 @@ object NetworkModule {
     }
 
     // ───────────────────────────────
-    // 2️⃣ NoAuth 헤더 인터셉터 (로그인/회원가입용)
+    // 헤더 인터셉터
     // ───────────────────────────────
     @Provides
     @Singleton
-    @Named("noAuthInterceptor")
-    fun provideNoAuthHeaderInterceptor(
-        @ApplicationContext context: Context
-    ): Interceptor = Interceptor { chain ->
-        val builder = chain.request().newBuilder()
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Accept", "application/json")
-        chain.proceed(builder.build())
-    }
-
-    // ───────────────────────────────
-    // 3️⃣ Auth 헤더 인터셉터 (JWT 필요 API)
-    // ───────────────────────────────
-    @Provides
-    @Singleton
-    @Named("authInterceptor")
     fun provideAuthHeaderInterceptor(
-        @ApplicationContext context: Context,
-        // TODO: TokenProvider 주입받아서 Authorization 헤더 추가 예정
+        tokenProvider: TokenProvider
     ): Interceptor = Interceptor { chain ->
-        val builder = chain.request().newBuilder()
-            .addHeader("Content-Type", "application/json")
+        val req = chain.request()
+
+        val noAuth = req.header("No-Auth")?.equals("true", ignoreCase = true) == true
+
+        val requestBuilder = req.newBuilder()
+            .removeHeader("No-Auth")
             .addHeader("Accept", "application/json")
-        // builder.addHeader("Authorization", "Bearer ${tokenProvider.tokenOrNull()}")
-        chain.proceed(builder.build())
+
+        if (req.body != null) {
+            requestBuilder.addHeader("Content-Type", "application/json")
+        }
+
+        if (!noAuth) {
+            requestBuilder.addHeader("Authorization", String.format("Bearer %s", tokenProvider.getTokenOrNull()))
+        }
+
+        chain.proceed(requestBuilder.build())
     }
 
     // ───────────────────────────────
-    // 4️⃣ OkHttpClient 분리
+    // OkHttpClient 분리
     // ───────────────────────────────
     @Provides
     @Singleton
-    @Named("noAuthClient")
-    fun provideNoAuthOkHttpClient(
-        logging: HttpLoggingInterceptor,
-        @Named("noAuthInterceptor") headerInterceptor: Interceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(headerInterceptor)
-        .addInterceptor(logging)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
-        .writeTimeout(20, TimeUnit.SECONDS)
-        .build()
-
-    @Provides
-    @Singleton
-    @Named("authClient")
     fun provideAuthOkHttpClient(
         logging: HttpLoggingInterceptor,
-        @Named("authInterceptor") headerInterceptor: Interceptor
+        headerInterceptor: Interceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(headerInterceptor)
         .addInterceptor(logging)
@@ -110,21 +94,8 @@ object NetworkModule {
     // ───────────────────────────────
     @Provides
     @Singleton
-    @Named("noAuthRetrofit")
-    fun provideNoAuthRetrofit(
-        @Named("noAuthClient") client: OkHttpClient,
-        moshi: Moshi
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .build()
-
-    @Provides
-    @Singleton
-    @Named("authRetrofit")
     fun provideAuthRetrofit(
-        @Named("authClient") client: OkHttpClient,
+        client: OkHttpClient,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -138,6 +109,42 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthApiService(
-        @Named("noAuthRetrofit") retrofit: Retrofit
+        retrofit: Retrofit
     ): AuthApiService = retrofit.create(AuthApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCommunityApiService(
+        retrofit: Retrofit
+    ): CommunityApiService = retrofit.create(CommunityApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNoiseCalendarApiService(
+        retrofit: Retrofit
+    ): NoiseCalendarApiService = retrofit.create(NoiseCalendarApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNoiseRecordApiService(
+        retrofit: Retrofit
+    ): NoiseRecordApiService = retrofit.create(NoiseRecordApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNoiseStatusBoardApiService(
+        retrofit: Retrofit
+    ): NoiseStatusBoardApiService = retrofit.create(NoiseStatusBoardApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePreNoticeApiService(
+        retrofit: Retrofit
+    ): PreNoticeApiService = retrofit.create(PreNoticeApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideReportApiService(
+        retrofit: Retrofit
+    ): ReportApiService = retrofit.create(ReportApiService::class.java)
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok.domain.usecase.AuthUseCase
-import com.kau.ttokttok.ui.compose.login.LoginEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +44,12 @@ class RegisterViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
             try {
-                when (val r = authUseCase.register(email, password, buildingNumber, unitNumber)) {
+                // 동/호수 입력 검증 및 파싱
+                val parsedBuildingNumber = parseBuildingNumber(buildingNumber)
+                val parsedUnitNumber = parseUnitNumber(unitNumber)
+
+                // BE 연결
+                when (val r = authUseCase.register(email, password, parsedBuildingNumber, parsedUnitNumber)) {
                     is NetworkResult.Success -> {
 
                         emit(RegisterEvent.NavigateHome)
@@ -71,5 +75,39 @@ class RegisterViewModel @Inject constructor(
 
     private fun emit(event: RegisterEvent) {
         _events.tryEmit(event)
+    }
+
+    private fun parseBuildingNumber(buildingNumber: String) : Int {
+        val trimmed = buildingNumber.trim()
+
+        // "000동" 형태만 허용 (숫자 + '동')
+        val match = Regex("^(\\d{1,4})동$").find(trimmed)
+            ?: throw IllegalArgumentException("동 번호는 숫자 뒤에 '동'이 붙은 형식이어야 합니다. 예: 101동")
+
+        val parsedBuildingNumber = match.groupValues[1].toIntOrNull()
+            ?: throw IllegalArgumentException("올바른 동 번호를 입력해주세요.")
+
+        if (parsedBuildingNumber <= 0) {
+            throw IllegalArgumentException("동 번호는 1 이상이어야 합니다.")
+        }
+
+        return parsedBuildingNumber
+    }
+
+    private fun parseUnitNumber(unitNumber: String) : Int {
+        val trimmed = unitNumber.trim()
+
+        // "000호" 형태만 허용 (숫자 + '호')
+        val match = Regex("^(\\d{1,4})호$").find(trimmed)
+            ?: throw IllegalArgumentException("호 번호는 숫자 뒤에 '호'가 붙은 형식이어야 합니다. 예: 202호")
+
+        val parsedUnitNumber = match.groupValues[1].toIntOrNull()
+            ?: throw IllegalArgumentException("올바른 호 번호를 입력해주세요.")
+
+        if (parsedUnitNumber <= 0) {
+            throw IllegalArgumentException("호 번호는 1 이상이어야 합니다.")
+        }
+
+        return parsedUnitNumber
     }
 }

@@ -71,7 +71,7 @@ import com.kau.ttokttok.domain.model.User
 fun SettingScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    user: User = User("", "101동", "501호")
+    user: User = User("", 101, 501)
 ) {
     val scroll = rememberScrollState()
 
@@ -173,7 +173,7 @@ fun SettingScreen(
 
                         NotificationSettingsSection(
                             notifications = notifications,
-                            onToggle = { _, _ -> } // 클릭해도 아무 일 안 하게
+                            onToggle = { _, _ -> }
                         )
                     }
 
@@ -294,7 +294,7 @@ fun ProfileCard(
                         )
                     )
                     Text(
-                        text = String.format("%s %s", user.buildingNumber, user.unitNumber),
+                        text = String.format("%s동 %s호", user.buildingNumber, user.unitNumber),
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = Color(0xFF4B5563) // gray-600
                         )

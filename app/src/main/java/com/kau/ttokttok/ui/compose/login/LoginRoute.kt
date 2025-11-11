@@ -13,7 +13,6 @@ fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
     onRegister: () -> Unit,
     onSuccess: () -> Unit,
-    onBack: () -> Unit
 ) {
     // val uiState by viewModel.uiState.collectAsState()
     val snackbar = remember { SnackbarHostState() }
@@ -59,9 +58,7 @@ fun LoginRoute(
     // 콜백 연결
     LoginScreen(
         onClickLogin = {
-            // TODO: 로그인 로직 다시 올바르게 만들기!
-            email, pw -> onSuccess()
-            // email, pw -> viewModel.onClickLogin(email, pw)
+            email, pw -> viewModel.onClickLogin(email, pw)
         },
 
         onClickRegister = onRegister

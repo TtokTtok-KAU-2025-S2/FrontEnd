@@ -29,19 +29,15 @@ private val Gray100 = Color(0xFFF3F4F6)
 @Composable
 fun NoiseVoteBoardCard(
     modifier: Modifier = Modifier,
-    id: Long,
     authorLocation: String,
     title: String,
-    onClick: (Long) -> Unit
-
+    onClick: () -> Unit
 ) {
-    val total = 48
-    val progress: Float = 48.0f / 100.0f
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick(id) },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Slate800),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(0.5.dp, Slate700),
@@ -71,29 +67,6 @@ fun NoiseVoteBoardCard(
                 lineHeight = 20.sp,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            // 진행바 헤더
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("주민 투표 현황", color = Gray700, fontSize = 12.sp)
-                Text("${total}명 참여", color = Gray500, fontSize = 12.sp)
-            }
-            Spacer(Modifier.height(6.dp))
-
-            // 진행바 (표시용)
-            LinearProgressIndicator(
-                progress = { progress },
-                trackColor = Slate700.copy(alpha = 0.35f),
-                color = Blue600,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp),
             )
         }
     }
