@@ -24,7 +24,13 @@ class NoiseVoteFragment : Fragment() {
 
         setContent {
             NoiseVoteRoute(
-                onClickPost = { findNavController().navigateTo(Destination.NOISE_VOTE_DETAIL)}
+                onClickPost = { id ->
+                    val args = Bundle().apply {
+                        putLong("noiseVoteId", id)
+                    }
+
+                    findNavController().navigateTo(Destination.NOISE_VOTE_DETAIL, args = args)
+                }
             )
         }
     }

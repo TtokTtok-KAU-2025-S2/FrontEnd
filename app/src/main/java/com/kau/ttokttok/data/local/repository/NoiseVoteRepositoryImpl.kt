@@ -13,14 +13,14 @@ import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostDetailNoiseBoardRe
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostsNoiseBoardRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.ModifyCommentRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.PostCommentRes
-import com.kau.ttokttok.domain.repository.NoiseBoardRepository
+import com.kau.ttokttok.domain.repository.NoiseVoteRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NoiseBoardRepositoryImpl @Inject constructor(
+class NoiseVoteRepositoryImpl @Inject constructor(
     private val api: NoiseStatusBoardApiService
-): NoiseBoardRepository {
+): NoiseVoteRepository {
     override suspend fun getPosts(): NetworkResult<GetPostsNoiseBoardRes> =
         safeApiCall { api.getPosts() }
 

@@ -21,7 +21,7 @@ class NoiseVoteDetailFragment : Fragment() {
         )
 
         setContent {
-            CommunityDetailRoute(
+            NoiseVoteDetailRoute(
                 onClickBack = { findNavController().popBackStack() }
             )
         }

@@ -31,8 +31,13 @@
     <fragment
         android:id="@+id/noiseVoteDetailFragment"
         android:name="com.kau.ttokttok.ui.compose.noisevote.detail.NoiseVoteDetailFragment"
-        android:label="NoiseVoteDetail"
-        />
+        android:label="NoiseVoteDetail">
+
+        <argument
+            android:name="noiseVoteId"
+            app:argType="long"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/monthReportFragment"

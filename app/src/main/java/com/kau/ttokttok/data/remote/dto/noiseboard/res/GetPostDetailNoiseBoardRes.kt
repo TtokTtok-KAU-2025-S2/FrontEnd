@@ -5,8 +5,7 @@ import java.time.LocalDateTime
 data class GetPostDetailNoiseBoardRes(
     val reportId: Long,
     val authorDong: Int,
-    val reportedAt: LocalDateTime,
-    // TODO: 추후 Enum으로 변경하기
+    val reportedAt: String,
     val category: String,
     val summary: String,
     val voteCounts: VoteCount,
@@ -24,6 +23,6 @@ data class Comment(
     val commentId: Long,
     val authorDong: Int,
     val content: String,
-    val createdAt: LocalDateTime,
+    val createdAt: String,
     val isMyComment: Boolean
 )

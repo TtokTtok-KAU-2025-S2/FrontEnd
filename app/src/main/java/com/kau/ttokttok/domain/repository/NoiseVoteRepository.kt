@@ -12,7 +12,7 @@ import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostsNoiseBoardRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.ModifyCommentRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.PostCommentRes
 
-interface NoiseBoardRepository {
+interface NoiseVoteRepository {
     suspend fun getPosts(): NetworkResult<GetPostsNoiseBoardRes>
     suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailNoiseBoardRes>
     suspend fun firstVote(

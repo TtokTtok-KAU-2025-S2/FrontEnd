@@ -7,7 +7,7 @@ data class GetPostsNoiseBoardRes(
 
     val listSize: Int,
     val totalPage: Int,
-    val totalElement: Int,
+    val totalElements: Int,
     val isFirst: Boolean,
     val isLast: Boolean
 )
@@ -15,8 +15,7 @@ data class GetPostsNoiseBoardRes(
 data class NoiseBoard(
     val reportId: Long,
     val authorDong: Int,
-    val reportedAt: LocalDateTime,
-    // TODO: 추후 Enum으로 변경하기
+    val reportedAt: String,
     val category: String,
     val summary: String
 )
