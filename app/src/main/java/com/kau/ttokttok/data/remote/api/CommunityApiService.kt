@@ -15,11 +15,11 @@ interface CommunityApiService {
     suspend fun createPost(@Body req: CreatePostCommunityReq): ApiResponse<CreatePostCommunityRes>
 
     // TODO: 아래 메소드들은 BE 준비중
-    @GET("api/notice")
-    suspend fun getPosts(): ApiResponse<GetPostsRes>
-
-    @GET("api/notice/{id}")
-    suspend fun getPostDetail(
-        @Path("id") id: Long
-    ): ApiResponse<GetPostDetailRes>
+//    @GET("api/notice")
+//    suspend fun getPosts(): ApiResponse<GetPostsRes>
+//
+//    @GET("api/notice/{id}")
+//    suspend fun getPostDetail(
+//        @Path("id") id: Long
+//    ): ApiResponse<GetPostDetailRes>
 }

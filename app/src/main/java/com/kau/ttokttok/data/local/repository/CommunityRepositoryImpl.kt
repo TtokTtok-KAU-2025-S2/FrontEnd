@@ -18,9 +18,9 @@ class CommunityRepositoryImpl @Inject constructor(
     override suspend fun createPost(req: CreatePostCommunityReq): NetworkResult<CreatePostCommunityRes> =
         safeApiCall { api.createPost(req) }
 
-    override suspend fun getPosts(): NetworkResult<GetPostsRes> =
-        safeApiCall { api.getPosts() }
-
-    override suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailRes> =
-        safeApiCall { api.getPostDetail(id) }
+//    override suspend fun getPosts(): NetworkResult<GetPostsRes> =
+//        safeApiCall { api.getPosts() }
+//
+//    override suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailRes> =
+//        safeApiCall { api.getPostDetail(id) }
 }

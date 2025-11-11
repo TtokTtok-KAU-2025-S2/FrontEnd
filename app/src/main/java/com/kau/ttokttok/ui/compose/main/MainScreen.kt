@@ -72,8 +72,8 @@ import com.kau.ttokttok.ui.navigation.Destination
 fun MainScreen(
     modifier: Modifier = Modifier,
     onNavigate: (Destination) -> Unit = {},
-    buildingNumber: Int = 101,
-    unitNumber: Int = 101,
+    buildingNumber: Int = 0,
+    unitNumber: Int = 0,
 ) {
     val focus = LocalFocusManager.current
     val scroll = rememberScrollState()

@@ -8,6 +8,6 @@ import com.kau.ttokttok.data.remote.dto.community.res.GetPostsRes
 
 interface CommunityRepository {
     suspend fun createPost(req: CreatePostCommunityReq) : NetworkResult<CreatePostCommunityRes>
-    suspend fun getPosts(): NetworkResult<GetPostsRes>
-    suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailRes>
+//    suspend fun getPosts(): NetworkResult<GetPostsRes>
+//    suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailRes>
 }

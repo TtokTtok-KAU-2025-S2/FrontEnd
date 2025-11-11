@@ -9,7 +9,7 @@ fun SettingRoute(
     onBack: () -> Unit = {}
 ) {
     SettingScreen(
-        user = User("", 101, 501),
+        user = User("", 101, 101),
         onBack = onBack
     )
 }

@@ -2,6 +2,7 @@ package com.kau.ttokttok.domain.usecase
 
 import android.util.Patterns
 import com.kau.ttokttok._core.network.auth.TokenProvider
+import com.kau.ttokttok._core.network.auth.UserProvider
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok.data.remote.dto.auth.req.LoginReq
 import com.kau.ttokttok.data.remote.dto.auth.req.RegisterReq
@@ -14,7 +15,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthUseCase @Inject constructor(
     private val repository: AuthRepository,
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
+    private val userProvider: UserProvider
 ) {
     suspend fun login(email: String, password: String): NetworkResult<LoginRes> {
         validateEmail(email)
@@ -27,6 +29,14 @@ class AuthUseCase @Inject constructor(
                 jwt = result.data.accessToken
                 // TODO: Refresh Token 구현 시
                 // refreshToken = result.data.refreshToken
+            )
+
+            userProvider.setBuildingNumber(
+                buildingNumber = result.data.userDetailDto.buildingNumber
+            )
+
+            userProvider.setUnitNumber(
+                unitNumber = result.data.userDetailDto.unitNumber
             )
         }
 

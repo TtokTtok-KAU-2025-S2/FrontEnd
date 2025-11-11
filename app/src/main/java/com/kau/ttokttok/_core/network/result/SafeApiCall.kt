@@ -9,10 +9,13 @@ suspend inline fun <T> safeApiCall(
         val res = call()
 
         if (res.isSuccess && res.result != null) {
-            NetworkResult.Success(res.result)
+            return NetworkResult.Success(res.result)
         }
 
-        NetworkResult.Error(code = res.code, message = res.message)
+        NetworkResult.Error(
+            code = res.code,
+            message = res.message
+        )
 
     } catch (e: Exception) {
         NetworkResult.Error(message = e.message, exception = e)
