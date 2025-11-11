@@ -58,11 +58,7 @@ class AuthUseCase @Inject constructor(
         )
 
         if (result is NetworkResult.Success) {
-            tokenProvider.update(
-                jwt = result.data.accessToken
-                // TODO: Refresh Token 구현 시
-                // refreshToken = result.data.refreshToken
-            )
+
         }
 
         return result
