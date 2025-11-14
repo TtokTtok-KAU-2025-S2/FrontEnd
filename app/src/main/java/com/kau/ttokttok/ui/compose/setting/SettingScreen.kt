@@ -24,20 +24,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,8 +65,9 @@ import com.kau.ttokttok.domain.model.User
 @Composable
 fun SettingScreen(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {},
-    user: User = User("", 101, 501)
+    uiState: SettingUiState = SettingUiState(),
+    onEvent: (SettingUiAction) -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     val scroll = rememberScrollState()
 
@@ -150,35 +146,28 @@ fun SettingScreen(
                         .fillMaxWidth()
                         .widthIn(max = 512.dp)
                 ) {
+                    // TODO: viewModel 연결
                     SettingCard(
                         content = {
                             ProfileCard(
                                 onEditClick = {},
-                                user = user
+                                user = uiState.user ?: User("", 0, 0)
                             )
                         }
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // TODO: 로직 작성 후 변경
                     SettingCard {
-                        // 미리보기용 더미 데이터
-                        val notifications = NotificationsState(
-                            push = true,
-                            noise = false,
-                            management = true,
-                            community = false
-                        )
-
                         NotificationSettingsSection(
-                            notifications = notifications,
-                            onToggle = { _, _ -> }
+                            uiState = uiState,
+                            onEvent = onEvent
                         )
                     }
 
                     Spacer(Modifier.height(32.dp))
 
+                    // TODO: viewModel 연결
                     SettingCard {
                         AccountManagementSection(
                             onChangeNickname = {},
@@ -191,6 +180,7 @@ fun SettingScreen(
 
                     Spacer(Modifier.height(32.dp))
 
+                    // TODO: viewModel 연결
                     SettingCard {
                         AppInfoSection(
                             appVersion = "v1.0.0",
@@ -322,120 +312,12 @@ fun ProfileCard(
     }
 }
 
-@Composable
-fun ActivityHistorySection(
-    onNoiseClick: () -> Unit,
-    onMessageClick: () -> Unit,
-    onPostClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Header
-        Text(
-            text = "나의 활동 내역",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-        )
 
-        // 활동 항목들
-        ActivityItem(
-            title = "내가 작성한 소음 기록",
-            subtitle = "이번 달 3건",
-            leadingIcon = Icons.Filled.Description,
-            onClick = onNoiseClick
-        )
-        ActivityItem(
-            title = "내가 작성한 양해 메시지",
-            subtitle = "이번 달 2건",
-            leadingIcon = Icons.AutoMirrored.Filled.Message,
-            onClick = onMessageClick
-        )
-        ActivityItem(
-            title = "내가 쓴 게시글 / 댓글",
-            subtitle = "게시글 1건, 댓글 5건",
-            leadingIcon = Icons.Filled.Description,
-            onClick = onPostClick
-        )
-    }
-}
-
-@Composable
-private fun ActivityItem(
-    title: String,
-    subtitle: String,
-    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
-) {
-    TextButton(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-        colors = ButtonDefaults.textButtonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.Unspecified
-        )
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Icon(
-                    imageVector = leadingIcon,
-                    contentDescription = null,
-                    tint = Color(0xFF4B5563), // gray-600
-                    modifier = Modifier.size(20.dp)
-                )
-                Column {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = Color(0xFF1F2937), // gray-800
-                            fontWeight = FontWeight.Medium
-                        )
-                    )
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = Color(0xFF6B7280) // gray-500
-                        )
-                    )
-                }
-            }
-            Icon(
-                imageVector = Icons.Filled.ChevronRight,
-                contentDescription = null,
-                tint = Color(0xFF9CA3AF), // gray-400
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-// TODO: 로직 생성 후 옮기기
-data class NotificationsState(
-    val push: Boolean,
-    val noise: Boolean,
-    val management: Boolean,
-    val community: Boolean
-)
-
-enum class NotificationType { Push, Noise, Management, Community }
-
+// TODO: 각 event 채우기!
 @Composable
 fun NotificationSettingsSection(
-    notifications: NotificationsState,
-    onToggle: (type: NotificationType, enabled: Boolean) -> Unit,
+    uiState: SettingUiState,
+    onEvent: (SettingUiAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -468,8 +350,10 @@ fun NotificationSettingsSection(
             SettingToggleRow(
                 title = "푸시 알림",
                 subtitle = "전체 알림 받기",
-                checked = notifications.push,
-                onCheckedChange = { onToggle(NotificationType.Push, it) }
+                checked = uiState.canNotifyAll,
+                onCheckedChange = {
+                    onEvent
+                }
             )
 
             // Separator (원본에서 첫 항목 뒤에만 구분선)
@@ -479,24 +363,30 @@ fun NotificationSettingsSection(
             SettingToggleRow(
                 title = "소음 확인",
                 subtitle = "이웃의 소음 문의 알림",
-                checked = notifications.noise,
-                onCheckedChange = { onToggle(NotificationType.Noise, it) }
+                checked = uiState.canNotifyNoiseVote,
+                onCheckedChange = {
+                    onEvent
+                }
             )
 
-            // 3) 관리사무소 공지사항
+            // 3) 공지 사항
             SettingToggleRow(
-                title = "공지사항",
-                subtitle = "중요 공지 알림",
-                checked = notifications.management,
-                onCheckedChange = { onToggle(NotificationType.Management, it) }
+                title = "사전 양해 알림",
+                subtitle = "주민들의 사전 양해",
+                checked = uiState.canNotifyPreConsideration,
+                onCheckedChange = {
+                    onEvent
+                }
             )
 
-            // 4) 자유게시판 알림
+            // 4) 사전 양해
             SettingToggleRow(
-                title = "자유게시판 알림",
+                title = "공지사항 알림",
                 subtitle = "새 글 및 댓글 알림",
-                checked = notifications.community,
-                onCheckedChange = { onToggle(NotificationType.Community, it) }
+                checked = uiState.canNotifyPreConsideration,
+                onCheckedChange = {
+                    onEvent
+                }
             )
         }
     }
