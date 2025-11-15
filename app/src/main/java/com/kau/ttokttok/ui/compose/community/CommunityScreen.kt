@@ -18,8 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kau.ttokttok._core.util.DateUtils
+import com.kau.ttokttok._core.util.DateUtils.formatDateTime
 import com.kau.ttokttok.ui.component.common.board.CommunityBoardCard
 import com.kau.ttokttok.ui.component.common.header.BoardHeader
+import java.time.LocalDateTime
 
 private val Slate900 = Color(0xFF0F172A) // bg-slate-900
 private val Blue700  = Color(0xFF1D4ED8) // hover:bg-blue-700

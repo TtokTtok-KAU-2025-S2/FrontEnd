@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kau.ttokttok._core.util.DateUtils.formatDateTime
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 private val Slate800 = Color(0xFF1E293B)
 private val Slate700 = Color(0xFF334155)
@@ -35,12 +35,6 @@ fun CommunityBoardCard(
     createdAt: LocalDateTime,
     onClick: (Long) -> Unit
 ) {
-    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-    fun LocalDateTime.formatDate(): String {
-        return this.format(dateFormatter)
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,7 +71,7 @@ fun CommunityBoardCard(
                         )
 
                         Text(
-                            text = createdAt.toString(),
+                            text = createdAt.formatDateTime(),
                             color = Gray400,
                             fontSize = 12.sp
                         )
