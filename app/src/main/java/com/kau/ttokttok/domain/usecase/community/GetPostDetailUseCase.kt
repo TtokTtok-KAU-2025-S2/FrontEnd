@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 class GetPostDetailUseCase(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<CommunityBoardDetail> = runBlocking {
+    suspend operator fun invoke(id: Long): Result<CommunityBoardDetail> = runCatching {
         repository.getPostDetail(id)
     }
 }

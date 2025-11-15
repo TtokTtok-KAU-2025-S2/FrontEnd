@@ -7,6 +7,6 @@ class LoadPostsUseCase(
     private val repository: CommunityRepository
 ) {
     suspend operator fun invoke(): Result<List<CommunityBoard>> = runCatching {
-        return repository.getPosts()
+        repository.getPosts()
     }
 }
