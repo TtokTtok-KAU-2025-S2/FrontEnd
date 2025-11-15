@@ -88,7 +88,9 @@ fun WritingCommunityScreen(
 
         PostBottomActions(
             enabled = title.isNotBlank() && content.isNotBlank(),
-            onSubmit = { }
+            onSubmit = {
+                onClickCreate
+            }
         )
     }
 }

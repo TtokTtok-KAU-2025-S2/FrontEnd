@@ -2,6 +2,7 @@ package com.kau.ttokttok._core.domain
 
 import com.kau.ttokttok.data.local.repository.CommunityRepositoryImpl
 import com.kau.ttokttok.domain.repository.CommunityRepository
+import com.kau.ttokttok.domain.usecase.community.CreatePostUseCase
 import com.kau.ttokttok.domain.usecase.community.GetPostDetailUseCase
 import com.kau.ttokttok.domain.usecase.community.LoadPostsUseCase
 import dagger.Module
@@ -15,6 +16,13 @@ class DomainModule {
 
 
     // 공지 사항
+    @Provides
+    fun provideCreatePostUseCase(
+        repository: CommunityRepositoryImpl
+    ): CreatePostUseCase {
+        return CreatePostUseCase(repository)
+    }
+
     @Provides
     fun providesGetPostDetailUseCase(
         repository: CommunityRepositoryImpl

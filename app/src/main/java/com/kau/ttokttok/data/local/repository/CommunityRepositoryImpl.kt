@@ -16,8 +16,24 @@ import javax.inject.Singleton
 class CommunityRepositoryImpl @Inject constructor(
     private val api: CommunityApiService
 ) : CommunityRepository {
-    override suspend fun createPost(req: CreatePostCommunityReq): NetworkResult<CreatePostCommunityRes> =
-        safeApiCall { api.createPost(req) }
+    override suspend fun createPost(title: String, content: String): Result<String> {
+        val req = CreatePostCommunityReq(
+            title = title,
+            content = content,
+            imageUrl = ""
+        )
+
+        return when (val response = safeApiCall { api.createPost(req) }) {
+            is NetworkResult.Success -> {
+                // TODO: 백엔드 구현 후 연결하기
+                Result.success(response.data.title)
+            }
+
+            is NetworkResult.Error -> {
+                Result.failure(Throwable(response.message))
+            }
+        }
+    }
 
     override suspend fun getPosts(): Result<List<CommunityBoard>> {
         return when (val response = safeApiCall { api.getPosts() }) {
