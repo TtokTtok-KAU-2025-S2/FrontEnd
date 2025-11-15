@@ -7,11 +7,6 @@ import javax.inject.Singleton
 class CommunityUseCase @Inject constructor(
     // private val repository: CommunityRepository
 ) {
-    suspend fun loadPosts() {
-        // val result = repository.loadPosts(req)
-        // return result
-    }
-
     suspend fun loadPostDetail() {
         // val result = repository.loadPostDetail(req)
         // return result

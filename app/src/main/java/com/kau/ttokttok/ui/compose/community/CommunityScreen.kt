@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,36 +24,17 @@ import com.kau.ttokttok.ui.component.common.header.BoardHeader
 private val Slate900 = Color(0xFF0F172A) // bg-slate-900
 private val Blue700  = Color(0xFF1D4ED8) // hover:bg-blue-700
 
-data class CommunityPost(
-    val id: Long,
-    val title: String,
-    val authorLocation: String,
-)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun CommunityScreen(
     modifier: Modifier = Modifier,
+    uiState: CommunityUiState = CommunityUiState(),
     onClickCreatePost: () -> Unit = { },
-    onClickPost: (Long) -> Unit = { }
+    onClickPost: (Long) -> Unit = { },
+    onRefresh: () -> Unit = {}
 ) {
-    val samplePosts = listOf(
-        CommunityPost(
-            id = 1,
-            title = "층간소음 관련 안내드립니다",
-            authorLocation = "302동"
-        ),
-        CommunityPost(
-            id = 2,
-            title = "주말 엘리베이터 점검 공지",
-            authorLocation = "101동",
-        ),
-        CommunityPost(
-            id = 3,
-            title = "쓰레기 배출 시간 꼭 지켜주세요",
-            authorLocation = "303동",
-        )
-    )
+    val pullToRefreshState = rememberPullToRefreshState()
 
     Column(
         modifier = modifier
@@ -67,23 +51,32 @@ fun CommunityScreen(
 
         Spacer(Modifier.height(32.dp))
 
-        LazyColumn(
+        PullToRefreshBox(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(bottom = 80.dp)
+                .fillMaxSize(),
+            state = pullToRefreshState,
+            isRefreshing = uiState.isLoading,
+            onRefresh = onRefresh
         ) {
-            items(
-                items = samplePosts,
-                key = { post -> post.id }
-            ) { post ->
-                CommunityBoardCard(
-                    id = post.id,
-                    title = post.title,
-                    authorLocation = post.authorLocation,
-                    onClick = onClickPost
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(bottom = 80.dp)
+            ) {
+                items(
+                    items = uiState.posts,
+                    key = { post -> post.id }
+                ) { post ->
+                    CommunityBoardCard(
+                        id = post.id,
+                        title = post.title,
+                        authorLocation = post.buildingNumber,
+                        createdAt = post.createdAt,
+                        onClick = onClickPost
+                    )
+                }
             }
         }
     }

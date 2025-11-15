@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private val Slate800 = Color(0xFF1E293B)
 private val Slate700 = Color(0xFF334155)
@@ -30,8 +32,15 @@ fun CommunityBoardCard(
     id: Long,
     title: String,
     authorLocation: String,
+    createdAt: LocalDateTime,
     onClick: (Long) -> Unit
 ) {
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    fun LocalDateTime.formatDate(): String {
+        return this.format(dateFormatter)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -63,6 +72,12 @@ fun CommunityBoardCard(
                     ) {
                         Text(
                             text = "${authorLocation} 주민",
+                            color = Gray400,
+                            fontSize = 12.sp
+                        )
+
+                        Text(
+                            text = createdAt.toString(),
                             color = Gray400,
                             fontSize = 12.sp
                         )
