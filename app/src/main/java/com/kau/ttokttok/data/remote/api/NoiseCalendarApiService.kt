@@ -7,15 +7,18 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface NoiseCalendarApiService {
-    // TODO: 아래 메소드들은 BE 준비중
+    // 월간 캘린더: year, month 기준 조회
     @GET("noise/records/calendar")
     suspend fun getMonthCalendar(
         @Query("year") year: Int,
         @Query("month") month: Int
     ): ApiResponse<GetMonthlyNoiseCalendarRes>
 
-    @GET("noise/records/calendar")
+    // 일자별 소음 일기 조회: 변경된 명세에 따라 year, month, day 쿼리 사용
+    @GET("noise/records/calendar/details")
     suspend fun getDailyCalendar(
-        @Query("date") date: String
+        @Query("year") year: Int,
+        @Query("month") month: Int,
+        @Query("day") day: Int
     ): ApiResponse<GetDailyCalendarRes>
 }

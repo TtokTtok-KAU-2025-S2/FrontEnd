@@ -22,5 +22,6 @@ data class DailyCalendarRecord(
     val grade: String,
     val dbHigh: Int,
     val dbAvg: Int,
-    val summary: String?
+    val summary: String?,
+    val description: String?  // 등록 시 서버가 description으로 보낼 수 있으므로 추가
 )

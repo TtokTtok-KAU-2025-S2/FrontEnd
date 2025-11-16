@@ -15,14 +15,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.util.Calendar
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentMyProfileBinding
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import java.util.Calendar
 
 /**
  * 소음 일기 캘린더 화면
@@ -119,11 +119,8 @@ class NoiseLogFragment : Fragment() {
         }.time
         viewModel.selectDate(today)
 
-        // 초기 월간 캘린더 데이터 로드
-        viewModel.fetchMonthlyCalendar(
-            year = todayCal.get(Calendar.YEAR),
-            month = todayCal.get(Calendar.MONTH) + 1
-        )
+        // 월간 캘린더 데이터 로드는 ViewModel.init과 onResume에서 처리하므로 여기서는 생략
+        // viewModel.fetchMonthlyCalendar(...)
 
         // FAB 애니메이션 시작 (10초 후 첫 실행)
         handler.postDelayed(flipAnimationRunnable, 10000)
@@ -208,7 +205,7 @@ class NoiseLogFragment : Fragment() {
             viewModel.createReport(ids)
 
             adapter.clearSelection()
-            Toast.makeText(requireContext(), "${selectedLogs.size}개의 리포트 요청을 전송했습니다", Toast.LENGTH_SHORT).show()
+            // 성공/실패 메시지는 ViewModel의 uiMessage Flow를 통해 표시됨
         }
     }
 
@@ -265,6 +262,16 @@ class NoiseLogFragment : Fragment() {
                 // TODO: CalendarView 커스텀 시, datesWithNoise 정보를 활용해 해당 날짜에 파란 네모 표시 등 적용
             }
         }
+
+        // ViewModel에서 설정한 uiMessage를 Toast로 표시
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiMessage.collectLatest { message ->
+                if (message != null) {
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    viewModel.consumeUiMessage()
+                }
+            }
+        }
     }
 
     /**
@@ -298,11 +305,12 @@ class NoiseLogFragment : Fragment() {
         viewModel.fetchMonthlyNoiseRecordCount()
         viewModel.fetchAverageNoiseDb()
 
-        val currentCal = Calendar.getInstance()
-        viewModel.fetchMonthlyCalendar(
-            year = currentCal.get(Calendar.YEAR),
-            month = currentCal.get(Calendar.MONTH) + 1
-        )
+        // 월간 캘린더는 ViewModel.refreshHeaderCounters()에서 이미 호출되므로 별도 호출 생략
+        // val currentCal = Calendar.getInstance()
+        // viewModel.fetchMonthlyCalendar(
+        //     year = currentCal.get(Calendar.YEAR),
+        //     month = currentCal.get(Calendar.MONTH) + 1
+        // )
 
         viewModel.selectDate(viewModel.selectedDate.value)
     }

@@ -206,6 +206,7 @@ class NoiseLogFormFragment : Fragment() {
             avgDecibel = avgDb,
             memo = binding.etMemo.text.toString(),
             measuredAt = measuredAt,
+            duration = duration, // 측정 화면에서 전달된 duration(초)
             hasReport = false
         )
 
@@ -215,7 +216,6 @@ class NoiseLogFormFragment : Fragment() {
         } else {
             viewModel.saveLog(noiseLog)
             Toast.makeText(requireContext(), "소음 일기가 저장되었습니다", Toast.LENGTH_SHORT).show()
-
         }
         // 저장한 날짜를 선택하여 해당 날짜의 로그를 표시
         viewModel.selectDate(measuredAt)

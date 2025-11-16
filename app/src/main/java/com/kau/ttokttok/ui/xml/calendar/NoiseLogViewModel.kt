@@ -26,6 +26,7 @@ import javax.inject.Inject
 import com.kau.ttokttok.data.remote.dto.noisecalendar.res.GetDailyCalendarRes
 import com.kau.ttokttok.data.remote.dto.noisecalendar.res.DailyCalendarRecord
 import java.time.LocalDateTime
+import android.util.Log
 
 /**
  * 소음 일기 기능 ViewModel
@@ -70,6 +71,10 @@ class NoiseLogViewModel @Inject constructor(
     private val _noiseLogDatesInMonth = MutableStateFlow<Set<LocalDate>>(emptySet())
     val noiseLogDatesInMonth: StateFlow<Set<LocalDate>> = _noiseLogDatesInMonth.asStateFlow()
 
+    // UI에 한 번만 보여줄 메시지 (Toast 등)
+    private val _uiMessage = MutableStateFlow<String?>(null)
+    val uiMessage: StateFlow<String?> = _uiMessage.asStateFlow()
+
     init {
         loadAllLogs() // ViewModel 생성 시 전체 일기 로드
         fetchTotalNoiseRecordCount()
@@ -95,10 +100,18 @@ class NoiseLogViewModel @Inject constructor(
     fun selectDate(date: Date) {
         _selectedDate.value = date
         viewModelScope.launch {
-            val fmt = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
-            val dateString = fmt.format(date)
+            val cal = java.util.Calendar.getInstance().apply { time = date }
+            val year = cal.get(java.util.Calendar.YEAR)
+            val month = cal.get(java.util.Calendar.MONTH) + 1 // Calendar.MONTH는 0부터
+            val day = cal.get(java.util.Calendar.DAY_OF_MONTH)
 
-            when (val result = safeApiCall { noiseCalendarApiService.getDailyCalendar(dateString) }) {
+            when (val result = safeApiCall {
+                noiseCalendarApiService.getDailyCalendar(
+                    year = year,
+                    month = month,
+                    day = day
+                )
+            }) {
                 is NetworkResult.Success -> {
                     val logs = result.data.data.records
                         .sortedBy { LocalDateTime.parse(it.occuredAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME) }
@@ -106,6 +119,19 @@ class NoiseLogViewModel @Inject constructor(
                     _selectedLogs.value = logs
                 }
                 is NetworkResult.Error -> {
+                    // 해당 날짜에 소음 기록이 없을 때 서버에서 NOISE4002 코드 반환
+                    if (result.code == "NOISE4002") {
+                        _selectedLogs.value = emptyList()
+                        _uiMessage.value = "이 날짜에는 소음일기가 없습니다."
+                        return@launch
+                    }
+
+                    Log.e(
+                        "NoiseLogViewModel",
+                        "getDailyCalendar 실패 - code=${result.code}, message=${result.message}",
+                        result.exception
+                    )
+
                     repository.getNoiseLogsByDate(date).onSuccess { logs ->
                         _selectedLogs.value = logs.sortedBy { it.measuredAt }
                     }.onFailure {
@@ -114,6 +140,11 @@ class NoiseLogViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    // UI에서 메시지를 소비한 뒤 호출하여 한 번만 보여지도록 초기화
+    fun consumeUiMessage() {
+        _uiMessage.value = null
     }
 
     // 일기 삭제 - Repository를 통해 서버와 로컬 DB에서 삭제
@@ -148,23 +179,54 @@ class NoiseLogViewModel @Inject constructor(
         viewModelScope.launch {
             val req = CreateNoiseRecordReq(
                 occuredAt = log.measuredAt.toIsoStringZ(),
-                duration = 0, // TODO: duration 정보 없어서 0으로 전달
+                duration = log.duration.toInt(), // 측정 duration(초)을 서버로 전달
                 dbHigh = log.maxDecibel,
                 dbAvg = log.avgDecibel,
                 category = mapCategory(log.noiseType),
                 grade = mapGrade(log.avgDecibel),
-                description = log.memo
+                description = log.memo,
+                summary = log.memo   // 등록 시에도 summary에 메모를 함께 전달
             )
 
             when (val result = safeApiCall { noiseRecordApiService.createNoiseRecord(req) }) {
                 is NetworkResult.Success -> {
+                    // 서버 응답 확인용 로그
+                    Log.d(
+                        "NoiseLogViewModel",
+                        "createNoiseRecord 성공 - id=${result.data.id}, description=${result.data.description}, summary=${result.data.summary}"
+                    )
+
+                    // 서버가 등록 시 description만 저장하고 summary는 null로 주는 문제 해결:
+                    // 즉시 수정 API를 호출해서 summary에도 메모를 저장
+                    if (result.data.summary.isNullOrBlank() && !log.memo.isNullOrBlank()) {
+                        val patchReq = ModifyNoiseRecordReq(
+                            category = mapCategory(log.noiseType),
+                            occuredAt = log.measuredAt.toIsoStringZ(),
+                            noiseGrade = mapGrade(log.avgDecibel),
+                            dbHigh = log.maxDecibel,
+                            dbAvg = log.avgDecibel,
+                            summary = log.memo
+                        )
+
+                        // 백그라운드로 수정 API 호출 (실패해도 무시)
+                        viewModelScope.launch {
+                            safeApiCall { noiseRecordApiService.modifyNoiseRecord(result.data.id, patchReq) }
+                            Log.d("NoiseLogViewModel", "등록 직후 summary 업데이트 완료")
+                        }
+                    }
+
                     // 로컬 목록도 갱신해 화면 반영
                     repository.saveNoiseLog(log)
                     refreshHeaderCounters()
                     selectDate(_selectedDate.value)
                 }
                 is NetworkResult.Error -> {
-                    // 실패 시 기존 로컬 저장 로직 유지(옵션)
+                    Log.e(
+                        "NoiseLogViewModel",
+                        "createNoiseRecord 실패 - code=${result.code}, message=${result.message}",
+                        result.exception
+                    )
+                    _uiMessage.value = result.message ?: "소음 일기 저장에 실패했습니다. 잠시 후 다시 시도해 주세요."
                 }
             }
         }
@@ -176,20 +238,28 @@ class NoiseLogViewModel @Inject constructor(
             val id = log.id?.toLongOrNull() ?: return@launch
             val req = ModifyNoiseRecordReq(
                 category = mapCategory(log.noiseType),
-                occuredAt = log.measuredAt.toIsoStringNoZ(),
+                // 생성 API와 동일하게 UTC 기준 ISO_OFFSET_DATE_TIME 포맷 사용
+                occuredAt = log.measuredAt.toIsoStringZ(),
                 noiseGrade = mapGrade(log.avgDecibel),
                 dbHigh = log.maxDecibel,
                 dbAvg = log.avgDecibel,
                 summary = log.memo
             )
 
-            when (safeApiCall { noiseRecordApiService.modifyNoiseRecord(id, req) }) {
+            when (val result = safeApiCall { noiseRecordApiService.modifyNoiseRecord(id, req) }) {
                 is NetworkResult.Success -> {
                     repository.updateNoiseLog(log)
                     refreshHeaderCounters()
                     selectDate(_selectedDate.value)
                 }
-                is NetworkResult.Error -> {}
+                is NetworkResult.Error -> {
+                    Log.e(
+                        "NoiseLogViewModel",
+                        "modifyNoiseRecord 실패 - code=${result.code}, message=${result.message}",
+                        result.exception
+                    )
+                    _uiMessage.value = result.message ?: "소음 일기 수정에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                }
             }
         }
     }
@@ -236,6 +306,19 @@ class NoiseLogViewModel @Inject constructor(
     // 월간 캘린더 API 연동
     fun fetchMonthlyCalendar(year: Int, month: Int) {
         viewModelScope.launch {
+            // 디버그용: 실제로 서버로 나가는 year/month를 로그로 확인
+            Log.d("NoiseLogViewModel", "fetchMonthlyCalendar: year=$year, month=$month")
+
+            // 방어 로직: 서버는 1~12 범위의 month만 허용한다고 가정하고, 범위를 벗어나면 호출하지 않음
+            if (month !in 1..12) {
+                Log.e(
+                    "NoiseLogViewModel",
+                    "fetchMonthlyCalendar called with invalid month=$month (year=$year). 서버 호출을 생략합니다."
+                )
+                _noiseLogDatesInMonth.value = emptySet()
+                return@launch
+            }
+
             when (val result = safeApiCall { noiseCalendarApiService.getMonthCalendar(year, month) }) {
                 is NetworkResult.Success -> {
                     val set = result.data.data.dates
@@ -250,6 +333,11 @@ class NoiseLogViewModel @Inject constructor(
                     _noiseLogDatesInMonth.value = set
                 }
                 is NetworkResult.Error -> {
+                    Log.e(
+                        "NoiseLogViewModel",
+                        "getMonthCalendar 실패 - code=${result.code}, message=${result.message}, year=$year, month=$month",
+                        result.exception
+                    )
                     _noiseLogDatesInMonth.value = emptySet()
                 }
             }
@@ -260,16 +348,40 @@ class NoiseLogViewModel @Inject constructor(
     fun createReport(selectedIds: List<String>) {
         viewModelScope.launch {
             val ids = selectedIds.mapNotNull { it.toLongOrNull() }
-            if (ids.isEmpty()) return@launch
+            if (ids.isEmpty()) {
+                Log.w("NoiseLogViewModel", "createReport 호출됐지만 유효한 ID가 없음")
+                return@launch
+            }
 
-            when (safeApiCall { reportApiService.createReport(CreateReportReq(recordIds = ids)) }) {
+            Log.d("NoiseLogViewModel", "createReport 요청 - recordIds=${ids.joinToString()}")
+
+            when (val result = safeApiCall { reportApiService.createReport(CreateReportReq(recordIds = ids)) }) {
                 is NetworkResult.Success -> {
+                    Log.d(
+                        "NoiseLogViewModel",
+                        "createReport 성공 - reportId=${result.data.reportId}, pdfUrl=${result.data.pdfUrl}"
+                    )
+                    _uiMessage.value = "리포트가 소음현황 페이지로 전송되었습니다"
+
                     // 리포트 생성 후 헤더/리스트 갱신
                     refreshHeaderCounters()
                     selectDate(_selectedDate.value)
                 }
                 is NetworkResult.Error -> {
-                    // TODO: 에러 처리 (스낵바/토스트)
+                    Log.e(
+                        "NoiseLogViewModel",
+                        "createReport 실패 - code=${result.code}, message=${result.message}",
+                        result.exception
+                    )
+
+                    // HTTP 404는 서버 API 미구현 또는 경로 오류
+                    val errorMessage = when {
+                        result.message?.contains("404") == true ->
+                            "리포트 전송 기능이 아직 준비되지 않았습니다. 서버 담당자에게 문의해 주세요."
+                        else ->
+                            result.message ?: "리포트 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                    }
+                    _uiMessage.value = errorMessage
                 }
             }
         }
@@ -307,12 +419,20 @@ class NoiseLogViewModel @Inject constructor(
     private fun DailyCalendarRecord.toDomain(): NoiseLog {
         val occured = LocalDateTime.parse(occuredAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         val measuredDate = Date.from(occured.atZone(ZoneOffset.systemDefault()).toInstant())
+
+        // 메모 우선순위: summary(수정 시) > description(등록 시) > 빈 문자열
+        val memoText = when {
+            !summary.isNullOrBlank() -> summary
+            !description.isNullOrBlank() -> description
+            else -> ""
+        }
+
         return NoiseLog(
             id = recordId.toString(),
             noiseType = category,
             maxDecibel = dbHigh.toDouble(),
             avgDecibel = dbAvg.toDouble(),
-            memo = summary ?: "",
+            memo = memoText,
             measuredAt = measuredDate,
             hasReport = false
         )
