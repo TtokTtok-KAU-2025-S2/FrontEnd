@@ -8,13 +8,13 @@ import retrofit2.http.Query
 
 interface NoiseCalendarApiService {
     // TODO: 아래 메소드들은 BE 준비중
-    @GET("api/noise/records/calendar")
+    @GET("noise/records/calendar")
     suspend fun getMonthCalendar(
         @Query("year") year: Int,
         @Query("month") month: Int
     ): ApiResponse<GetMonthlyNoiseCalendarRes>
 
-    @GET("api/noise/records/calendar")
+    @GET("noise/records/calendar")
     suspend fun getDailyCalendar(
         @Query("date") date: String
     ): ApiResponse<GetDailyCalendarRes>

@@ -20,6 +20,7 @@ import com.kau.ttokttok.databinding.FragmentMyProfileBinding
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -109,13 +110,20 @@ class NoiseLogFragment : Fragment() {
         observeViewModel()
 
         // 초기 로드 시 오늘 날짜의 일기 자동 조회
-        val today = Calendar.getInstance().apply {
+        val todayCal = Calendar.getInstance()
+        val today = todayCal.apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.time
         viewModel.selectDate(today)
+
+        // 초기 월간 캘린더 데이터 로드
+        viewModel.fetchMonthlyCalendar(
+            year = todayCal.get(Calendar.YEAR),
+            month = todayCal.get(Calendar.MONTH) + 1
+        )
 
         // FAB 애니메이션 시작 (10초 후 첫 실행)
         handler.postDelayed(flipAnimationRunnable, 10000)
@@ -167,6 +175,12 @@ class NoiseLogFragment : Fragment() {
                 set(Calendar.MILLISECOND, 0)
             }
             viewModel.selectDate(calendar.time)
+
+            // 월이 바뀔 때 월간 캘린더 API 호출
+            viewModel.fetchMonthlyCalendar(
+                year = year,
+                month = month + 1 // Calendar.MONTH는 0부터 시작
+            )
         }
     }
 
@@ -181,10 +195,6 @@ class NoiseLogFragment : Fragment() {
         }
     }
 
-    /**
-     * 리포트 생성 버튼 설정
-     * 선택된 일기들을 PDF 리포트로 생성
-     */
     private fun setupReportButton() {
         binding.btnCreateReport.setOnClickListener {
             val selectedLogs = adapter.getSelectedLogs()
@@ -194,18 +204,11 @@ class NoiseLogFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // TODO: [백엔드 연동] Repository를 통해 서버에 리포트 생성 요청
-            // TODO: [백엔드 연동] POST /api/reports { noiseLogIds: ["id1", "id2", ...] }
-            // TODO: [백엔드 연동] 요청 예시: viewModel.createReport(selectedLogs.map { it.id })
-            // TODO: [백엔드 연동] 성공 시 리포트 ID와 PDF 다운로드 URL 응답 받음
-            // TODO: [백엔드 연동] 실패 시 에러 메시지와 재시도 옵션 제공
-            selectedLogs.forEach { log ->
-                viewModel.toggleReportStatus(log)
-            }
+            val ids = selectedLogs.mapNotNull { it.id }
+            viewModel.createReport(ids)
 
             adapter.clearSelection()
-            Toast.makeText(requireContext(), "${selectedLogs.size}개의 리포트가 생성되었습니다", Toast.LENGTH_SHORT).show()
-            // TODO: [백엔드 연동] 리포트 생성 완료 후 리포트 목록 화면으로 이동 옵션 제공
+            Toast.makeText(requireContext(), "${selectedLogs.size}개의 리포트 요청을 전송했습니다", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -224,15 +227,54 @@ class NoiseLogFragment : Fragment() {
             }
         }
 
-        // TODO: [백엔드 연동] 에러 상태 관찰 추가
-        // TODO: [백엔드 연동] viewModel.errorState.collect { error -> showError(error) }
-        // TODO: [백엔드 연동] 로딩 상태 관찰 추가
-        // TODO: [백엔드 연동] viewModel.isLoading.collect { isLoading -> showLoading(isLoading) }
+        // 전체 일기 목록은 다른 통계/기능에 활용될 수 있음
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.noiseLogs.collect { logs ->
+                // 현재는 월간/평균 계산을 서버 값으로 대체했으므로 별도 로직 없음
                 updateStats(logs)
             }
         }
+
+        // 서버 전체 소음 기록 수(total-count) 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.totalNoiseRecordCount.collectLatest { count ->
+                val displayCount = count ?: 0
+                binding.tvTotalCount.text = "${displayCount}건"
+            }
+        }
+
+        // 서버 이번 달 소음 기록 수(monthly-count) 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.monthlyNoiseRecordCount.collectLatest { count ->
+                val displayCount = count ?: 0
+                binding.tvMonthCount.text = "${displayCount}건"
+            }
+        }
+
+        // 서버 평균 데시벨(average-db) 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.averageNoiseDb.collectLatest { avg ->
+                val displayAvg = avg ?: 0.0
+                binding.tvAvgDb.text = displayAvg.toInt().toString()
+            }
+        }
+
+        // 월간 캘린더 데이터 관찰 (향후 커스텀 UI에 사용 가능)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.noiseLogDatesInMonth.collectLatest { datesWithNoise ->
+                // TODO: CalendarView 커스텀 시, datesWithNoise 정보를 활용해 해당 날짜에 파란 네모 표시 등 적용
+            }
+        }
+    }
+
+    /**
+     * 통계 정보 업데이트
+     * 현재는 서버 값과의 일관성을 위해 로컬 계산은 최소화.
+     * 필요시 추후 확장용 훅.
+     */
+    private fun updateStats(logs: List<com.kau.ttokttok.domain.model.NoiseLog>) {
+        // 총 기록 / 이번 달 / 평균 dB는 모두 서버 값으로 표시하므로
+        // 로컬 기반 통계 계산은 생략.
     }
 
     /**
@@ -248,34 +290,20 @@ class NoiseLogFragment : Fragment() {
         }
     }
 
-    /**
-     * 통계 정보 업데이트
-     * - 총 기록 수
-     * - 이번 달 기록 수
-     * - 평균 데시벨
-     */
-    private fun updateStats(logs: List<com.kau.ttokttok.domain.model.NoiseLog>) {
-        binding.tvTotalCount.text = "${logs.size}건"
-
-        val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
-        val monthCount = logs.count { log ->
-            val cal = Calendar.getInstance().apply { time = log.measuredAt }
-            cal.get(Calendar.MONTH) == thisMonth
-        }
-        binding.tvMonthCount.text = "${monthCount}건"
-
-        val avgDb = if (logs.isNotEmpty()) {
-            logs.map { it.avgDecibel }.average().toInt()
-        } else {
-            0
-        }
-        binding.tvAvgDb.text = "$avgDb"
-    }
-
     override fun onResume() {
         super.onResume()
         // 다른 화면에서 돌아올 때 데이터 새로고침 (일기 추가/수정 후)
         viewModel.loadAllLogs()
+        viewModel.fetchTotalNoiseRecordCount()
+        viewModel.fetchMonthlyNoiseRecordCount()
+        viewModel.fetchAverageNoiseDb()
+
+        val currentCal = Calendar.getInstance()
+        viewModel.fetchMonthlyCalendar(
+            year = currentCal.get(Calendar.YEAR),
+            month = currentCal.get(Calendar.MONTH) + 1
+        )
+
         viewModel.selectDate(viewModel.selectedDate.value)
     }
 
