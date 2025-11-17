@@ -8,8 +8,8 @@ data class ModifyNoiseRecordRes(
     val occuredAt: String,
     // TODO: 추후 Enum으로 변경
     val noiseGrade: String,
-    val dbHigh: Int,
-    val dbAvg: Int,
+    val dbHigh: Double,
+    val dbAvg: Double,
     val summary: String,
     val updatedAt: String
 )

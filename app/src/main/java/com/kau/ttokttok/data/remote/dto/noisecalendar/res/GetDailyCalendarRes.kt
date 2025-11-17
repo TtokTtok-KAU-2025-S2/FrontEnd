@@ -20,8 +20,8 @@ data class DailyCalendarRecord(
     val occuredAt: String,
     val updatedAt: String,
     val grade: String,
-    val dbHigh: Int,
-    val dbAvg: Int,
+    val dbHigh: Double,
+    val dbAvg: Double,
     val summary: String?,
     val description: String?  // 등록 시 서버가 description으로 보낼 수 있으므로 추가
 )
