@@ -30,9 +30,9 @@ import com.kau.ttokttok.ui.component.common.header.WhiteHeader
 
 private val White   = Color.White       // bg-white
 private val Gray900 = Color(0xFF111827) // text-gray-900
-private val Gray500 = Color(0xFF6B7280) // text-gray-500
-private val Gray400 = Color(0xFF9CA3AF) // text-gray-400
-private val Gray200 = Color(0xFFE5E7EB) // border-gray-200
+val Gray500 = Color(0xFF6B7280) // text-gray-500
+val Gray400 = Color(0xFF9CA3AF) // text-gray-400
+val Gray200 = Color(0xFFE5E7EB) // border-gray-200
 private val Gray50Bg = Color(0xFFF9FAFB)
 
 @Preview
@@ -40,8 +40,7 @@ private val Gray50Bg = Color(0xFFF9FAFB)
 fun CommunityDetailScreen(
     modifier: Modifier = Modifier,
     uiState: CommunityDetailUiState = CommunityDetailUiState(),
-    onClickBack: () -> Unit = {},
-    onRefresh: () -> Unit = {}
+    onClickBack: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -54,8 +53,7 @@ fun CommunityDetailScreen(
         )
 
         BoardDetailContent(
-            uiState = uiState,
-            onRefresh = onRefresh
+            uiState = uiState
         )
     }
 }

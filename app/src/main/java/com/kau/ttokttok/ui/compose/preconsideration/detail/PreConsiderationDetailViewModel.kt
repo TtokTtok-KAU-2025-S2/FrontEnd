@@ -12,6 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class PreConsiderationDetailUiState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+
     val title: String = "",
     val content: String = "",
     val buildingNumber: Int = 0,

@@ -14,9 +14,6 @@ fun CommunityDetailRoute(
 
     CommunityDetailScreen(
         uiState = uiState,
-        onClickBack = onClickBack,
-        onRefresh = {
-            viewModel.getCommunityDetail()
-        }
+        onClickBack = onClickBack
     )
 }

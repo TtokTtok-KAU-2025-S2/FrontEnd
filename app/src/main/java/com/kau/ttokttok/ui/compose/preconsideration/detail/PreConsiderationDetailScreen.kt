@@ -3,19 +3,30 @@ package com.kau.ttokttok.ui.compose.preconsideration.detail
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
-import com.kau.ttokttok.ui.compose.community.detail.BoardDetailContent
+import com.kau.ttokttok.ui.compose.community.detail.Gray200
+import com.kau.ttokttok.ui.compose.community.detail.Gray400
+import com.kau.ttokttok.ui.compose.community.detail.Gray500
+
 
 private val Orange50  = Color(0xFFFFF7ED) // bg-orange-50
 private val Orange200 = Color(0xFFFECBA1) // border-orange-200
@@ -42,12 +53,8 @@ fun PreConsiderationDetailScreen(
         )
 
         // 이 화면의 다른 상세(제목/내용 등)
-        BoardDetailContent(
-            buildingNumber = uiState.buildingNumber,
-            unitNumber = uiState.unitNumber,
-            title = uiState.title,
-            content = uiState.content,
-            createdAt = uiState.createdAt
+        PreConsiderationBoardDetailContent(
+            uiState = uiState
         )
 
         // 🔸 읽기 전용 사전 양해 카드 (항상 표시)
@@ -121,5 +128,72 @@ private fun DisplayRow(
             fontSize = 14.sp,
             modifier = Modifier.padding(top = 4.dp)
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PreConsiderationBoardDetailContent(
+    modifier: Modifier = Modifier,
+    uiState: PreConsiderationDetailUiState = PreConsiderationDetailUiState(),
+    onRefresh: () -> Unit = { }
+) {
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    PullToRefreshBox(
+        modifier = modifier
+            .background(Gray50Bg)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        state = pullToRefreshState,
+        isRefreshing = uiState.isLoading,
+        onRefresh = onRefresh
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = White),
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(0.5.dp, Gray200),
+            elevation = CardDefaults.cardElevation(0.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                // 상단 메타: 위치 / 날짜
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = String.format("%s", uiState.buildingNumber),
+                        color = Gray500,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = uiState.createdAt,
+                        color = Gray400,
+                        fontSize = 11.sp
+                    )
+                }
+
+                // 제목
+                Text(
+                    text = uiState.title,
+                    color = Gray900,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                Text(
+                    text = uiState.content,
+                    color = Gray900,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+        }
     }
 }
