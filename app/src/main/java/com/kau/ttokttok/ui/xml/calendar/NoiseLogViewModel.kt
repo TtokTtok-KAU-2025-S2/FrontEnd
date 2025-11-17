@@ -9,7 +9,6 @@ import com.kau.ttokttok.data.remote.api.NoiseRecordApiService
 import com.kau.ttokttok.data.remote.api.ReportApiService
 import com.kau.ttokttok.data.remote.dto.noiserecord.req.CreateNoiseRecordReq
 import com.kau.ttokttok.data.remote.dto.noiserecord.req.ModifyNoiseRecordReq
-import com.kau.ttokttok.data.remote.dto.report.req.CreateReportReq
 import com.kau.ttokttok.domain.model.NoiseLog
 import com.kau.ttokttok.domain.repository.NoiseLogRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -353,36 +352,57 @@ class NoiseLogViewModel @Inject constructor(
                 return@launch
             }
 
-            Log.d("NoiseLogViewModel", "createReport 요청 - recordIds=${ids.joinToString()}")
+            Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            Log.d("NoiseLogViewModel", "리포트 생성 API 호출 시작")
+            Log.d("NoiseLogViewModel", "선택된 소음 일기 개수: ${ids.size}개")
+            Log.d("NoiseLogViewModel", "요청 URL: POST /noise/records/{recordId}/send")
+            Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-            when (val result = safeApiCall { reportApiService.createReport(CreateReportReq(recordIds = ids)) }) {
-                is NetworkResult.Success -> {
-                    Log.d(
-                        "NoiseLogViewModel",
-                        "createReport 성공 - reportId=${result.data.reportId}, pdfUrl=${result.data.pdfUrl}"
-                    )
-                    _uiMessage.value = "리포트가 소음현황 페이지로 전송되었습니다"
+            var successCount = 0
+            var failCount = 0
 
-                    // 리포트 생성 후 헤더/리스트 갱신
-                    refreshHeaderCounters()
-                    selectDate(_selectedDate.value)
-                }
-                is NetworkResult.Error -> {
-                    Log.e(
-                        "NoiseLogViewModel",
-                        "createReport 실패 - code=${result.code}, message=${result.message}",
-                        result.exception
-                    )
+            // 각 소음 일기에 대해 개별적으로 리포트 생성
+            ids.forEach { recordId ->
+                Log.d("NoiseLogViewModel", "리포트 전송 중... recordId=$recordId")
 
-                    // HTTP 404는 서버 API 미구현 또는 경로 오류
-                    val errorMessage = when {
-                        result.message?.contains("404") == true ->
-                            "리포트 전송 기능이 아직 준비되지 않았습니다. 서버 담당자에게 문의해 주세요."
-                        else ->
-                            result.message ?: "리포트 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                when (val result = safeApiCall { reportApiService.createReport(recordId) }) {
+                    is NetworkResult.Success -> {
+                        successCount++
+                        Log.d("NoiseLogViewModel", "✅ 리포트 전송 성공! (recordId=$recordId)")
+                        Log.d("NoiseLogViewModel", "  - 생성된 소음현황 게시글 ID: ${result.data}")
                     }
-                    _uiMessage.value = errorMessage
+                    is NetworkResult.Error -> {
+                        failCount++
+                        Log.e("NoiseLogViewModel", "❌ 리포트 전송 실패! (recordId=$recordId)")
+                        Log.e("NoiseLogViewModel", "  - HTTP 코드: ${result.code}")
+                        Log.e("NoiseLogViewModel", "  - 에러 메시지: ${result.message}")
+                    }
                 }
+            }
+
+            // 결과 메시지 표시
+            val resultMessage = when {
+                failCount == 0 -> {
+                    if (successCount == 1) {
+                        "리포트가 소음현황 페이지로 전송되었습니다"
+                    } else {
+                        "${successCount}개의 리포트가 소음현황 페이지로 전송되었습니다"
+                    }
+                }
+                successCount == 0 -> {
+                    "리포트 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                }
+                else -> {
+                    "${successCount}개 성공, ${failCount}개 실패했습니다"
+                }
+            }
+
+            _uiMessage.value = resultMessage
+
+            // 리포트 생성 후 헤더/리스트 갱신
+            if (successCount > 0) {
+                refreshHeaderCounters()
+                selectDate(_selectedDate.value)
             }
         }
     }
@@ -430,8 +450,8 @@ class NoiseLogViewModel @Inject constructor(
         return NoiseLog(
             id = recordId.toString(),
             noiseType = category,
-            maxDecibel = dbHigh.toDouble(),
-            avgDecibel = dbAvg.toDouble(),
+            maxDecibel = dbHigh,
+            avgDecibel = dbAvg,
             memo = memoText,
             measuredAt = measuredDate,
             hasReport = false
