@@ -1,5 +1,6 @@
 package com.kau.ttokttok.ui.component.common
 
+import android.R.id.message
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,7 +14,9 @@ fun AppDialog(
     title: String,
     message: String,
     onDismiss: () -> Unit,
-    dismissText: String = "확인"
+    dismissText: String = "취소",
+    onConfirm: (() -> Unit)? = null,
+    confirmText: String = "확인"
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -32,9 +35,17 @@ fun AppDialog(
             )
         },
 
-        confirmButton = {
+        dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(dismissText)
+            }
+        },
+
+        confirmButton = {
+            if (onConfirm != null) {
+                TextButton(onClick = onConfirm) {
+                    Text(confirmText)
+                }
             }
         },
 

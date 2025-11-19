@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.serialization.internal.throwMissingFieldException
 import javax.inject.Inject
 
 /**
@@ -37,13 +38,36 @@ data class SettingUiState(
 // TODO: EVENT 정의
 // Event에 맞게 UI를 다시 만들어라
 sealed interface SettingEvent {
-
+    data object NavigateToEditProfile : SettingEvent            // 프로필 수정 화면으로 이동
+    data object NavigateToChangeNickname : SettingEvent         // 닉네임 변경 화면으로 이동
+    data object NavigateToChangeAddress : SettingEvent          // 거주지 변경 화면으로 이동
+    data object NavigateToChangePassword : SettingEvent         // 비밀번호 변경 화면으로 이동
+    data object ShowNoticeDialog : SettingEvent              // 공지사항 화면을호 이동
+    data object ShowTermsDialog : SettingEvent                  // 서비스 이용약관 화면으로 이동
+    data object ShowPrivacyDialog : SettingEvent                // 개인정보 처리방침 화면으로 이동
+    data object ShowLogoutConfirmDialog : SettingEvent          // 로그아웃 다이얼로그
+    data object ShowDeleteAccountConfirmDialog : SettingEvent   // 탈퇴 다이얼로그
 }
 
 // TODO: UiAction 정의
 // 사용자가 이러한 행동을 했다는 것을 알려준다.
 sealed interface SettingUiAction {
-
+    data object OnEditProfileClicked : SettingUiAction          // 가장 상단 수정 버튼 클릭
+    //계정 관리
+    data object OnChangeNicknameClicked : SettingUiAction       // 닉네임 변경 클릭
+    data object OnChangeAddressClicked : SettingUiAction        // 거주지 변경 클릭
+    data object OnChangePasswordClicked : SettingUiAction       // 비밀번호 변경 클릭
+    data object OnLogoutClicked : SettingUiAction               // 로그아웃 클릭
+    data object OnDeleteAccountClicked : SettingUiAction        // 회원 탈퇴 클릭
+    // 앱 정보
+    data object OnNoticeClicked : SettingUiAction               // 공지사항 클릭
+    data object OnTermsClicked : SettingUiAction                // 서비스 이용약관 클릭
+    data object OnPrivacyClicked : SettingUiAction              // 개인정보 처리방침 클릭
+    //알림 설정 스위치(토글) 변경
+    data class OnToggleNotifyAll(val checked: Boolean) : SettingUiAction
+    data class OnToggleNotifyNoiseVote(val checked: Boolean) : SettingUiAction          //소음 확인
+    data class OnToggleNotifyPreConsideration(val checked: Boolean) : SettingUiAction   // 사전양해 알림
+    data class OnToggleNotifyCommunity(val checked: Boolean) : SettingUiAction          // 공지사항 알림
 }
 
 @HiltViewModel
@@ -94,6 +118,21 @@ class SettingViewModel @Inject constructor(
     // TODO: 각 액션에 맞게 부를 메소드 작성
     fun onUiAction(action: SettingUiAction) {
         when (action) {
+            is SettingUiAction.OnToggleNotifyAll -> toggleNotifyAll(action.checked)
+            is SettingUiAction.OnToggleNotifyNoiseVote -> _uiState.value = _uiState.value.copy(canNotifyNoiseVote = action.checked)
+            is SettingUiAction.OnToggleNotifyPreConsideration -> _uiState.value = _uiState.value.copy(canNotifyPreConsideration = action.checked)
+            is SettingUiAction.OnToggleNotifyCommunity -> _uiState.value = _uiState.value.copy(canNotifyCommunity = action.checked)
+
+            SettingUiAction.OnEditProfileClicked -> emit(SettingEvent.NavigateToEditProfile)
+            SettingUiAction.OnChangeNicknameClicked -> emit(SettingEvent.NavigateToChangeNickname)
+            SettingUiAction.OnChangeAddressClicked -> emit(SettingEvent.NavigateToChangeAddress)
+            SettingUiAction.OnChangePasswordClicked -> emit(SettingEvent.NavigateToChangePassword)
+            SettingUiAction.OnNoticeClicked -> emit(SettingEvent.ShowNoticeDialog)
+            SettingUiAction.OnTermsClicked -> emit(SettingEvent.ShowTermsDialog)
+            SettingUiAction.OnPrivacyClicked -> emit(SettingEvent.ShowPrivacyDialog)
+
+            SettingUiAction.OnLogoutClicked -> emit(SettingEvent.ShowLogoutConfirmDialog)
+            SettingUiAction.OnDeleteAccountClicked -> emit(SettingEvent.ShowDeleteAccountConfirmDialog)
             else -> {
 
             }
@@ -113,8 +152,16 @@ class SettingViewModel @Inject constructor(
 
     // TODO: NoitifyAll을 바꾸면 -> 다른 toggle도 같이 꺼지도록 or 바꿀 수 없도록 한다.
     // TODO: NotifyAll이 false -> 다른 toggle의 값이 바뀌지 않도록 한다.
-    private fun toggleNotifyAll() {
+    private fun toggleNotifyAll(checked: Boolean) {
+        val state = _uiState.value
+        if (state.canNotifyAll == checked) return
 
+        _uiState.value = state.copy(
+            canNotifyAll = checked,
+            canNotifyNoiseVote = checked,
+            canNotifyPreConsideration = checked,
+            canNotifyCommunity = checked,
+        )
     }
 
     private fun emit(event: SettingEvent) {

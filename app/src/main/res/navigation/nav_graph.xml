@@ -90,7 +90,21 @@
         android:id="@+id/settingFragment"
         android:name="com.kau.ttokttok.ui.compose.setting.SettingFragment"
         android:label="Setting"
-        />
+        >
+        <action
+            android:id="@+id/action_settingFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_changeNicknameFragment"
+            app:destination="@id/changeNicknameFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_changeAddressFragment"
+            app:destination="@id/changeAddressFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/notificationFragment"
@@ -115,6 +129,26 @@
         android:id="@+id/noiseMeasurementFragment"
         android:name="com.kau.ttokttok.ui.xml.calendar.NoiseMeasurementFragment"
         android:label="Noise Measurement"
+        />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.profile.EditProfileFragment"
+        android:label="Profile edit"
+        />
+    <fragment
+        android:id="@+id/changeNicknameFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.nickname.ChangeNicknameFragment"
+        android:label="Nickname change"
+        />
+    <fragment
+        android:id="@+id/changeAddressFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.address.ChangeAddressFragment"
+        android:label="Address change"
+        />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.password.ChangePasswordFragment"
+        android:label="Password change"
         />
 
 </navigation>

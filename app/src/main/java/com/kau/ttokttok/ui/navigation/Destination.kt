@@ -23,5 +23,9 @@ enum class Destination(val fragmentName: String) {
     NOTIFICATION("notification"),
     NOISE_LOG("noiseLogFragment"),
     NOISE_LOG_FORM("noiseLogFormFragment"),
-    NOISE_MEASUREMENT("noiseMeasurementFragment")
+    NOISE_MEASUREMENT("noiseMeasurementFragment"),
+    EDIT_PROFILE("editProfileFragment"),
+    CHANGE_NICKNAME("changeNicknameFragment"),
+    CHANGE_ADDRESS("changeAddressFragment"),
+    CHANGE_PASSWORD("changePasswordFragment")
 }
