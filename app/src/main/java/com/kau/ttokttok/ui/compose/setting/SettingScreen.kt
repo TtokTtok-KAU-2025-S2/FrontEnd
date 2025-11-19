@@ -150,7 +150,7 @@ fun SettingScreen(
                     SettingCard(
                         content = {
                             ProfileCard(
-                                onEditClick = {},
+                                onEditClick = {onEvent(SettingUiAction.OnEditProfileClicked)},
                                 user = uiState.user ?: User("", 0, 0)
                             )
                         }
@@ -170,11 +170,11 @@ fun SettingScreen(
                     // TODO: viewModel 연결
                     SettingCard {
                         AccountManagementSection(
-                            onChangeNickname = {},
-                            onChangeAddress = {},
-                            onChangePassword = {},
-                            onLogout = {},
-                            onDeleteAccount = {}
+                            onChangeNickname = {onEvent(SettingUiAction.OnChangeNicknameClicked)},
+                            onChangeAddress = {onEvent(SettingUiAction.OnChangeAddressClicked)},
+                            onChangePassword = {onEvent(SettingUiAction.OnChangePasswordClicked)},
+                            onLogout = {onEvent(SettingUiAction.OnLogoutClicked)},
+                            onDeleteAccount = {onEvent(SettingUiAction.OnDeleteAccountClicked)}
                         )
                     }
 
@@ -184,9 +184,9 @@ fun SettingScreen(
                     SettingCard {
                         AppInfoSection(
                             appVersion = "v1.0.0",
-                            onNoticeClick = {},
-                            onTermsClick = {},
-                            onPrivacyClick = {}
+                            onNoticeClick = {onEvent(SettingUiAction.OnNoticeClicked)},
+                            onTermsClick = {onEvent(SettingUiAction.OnTermsClicked)},
+                            onPrivacyClick = {onEvent(SettingUiAction.OnPrivacyClicked)}
                         )
                     }
                 }
@@ -352,7 +352,7 @@ fun NotificationSettingsSection(
                 subtitle = "전체 알림 받기",
                 checked = uiState.canNotifyAll,
                 onCheckedChange = {
-                    onEvent
+                    onEvent(SettingUiAction.OnToggleNotifyAll(it))
                 }
             )
 
@@ -365,7 +365,7 @@ fun NotificationSettingsSection(
                 subtitle = "이웃의 소음 문의 알림",
                 checked = uiState.canNotifyNoiseVote,
                 onCheckedChange = {
-                    onEvent
+                    onEvent(SettingUiAction.OnToggleNotifyNoiseVote(it))
                 }
             )
 
@@ -375,7 +375,7 @@ fun NotificationSettingsSection(
                 subtitle = "주민들의 사전 양해",
                 checked = uiState.canNotifyPreConsideration,
                 onCheckedChange = {
-                    onEvent
+                    onEvent(SettingUiAction.OnToggleNotifyPreConsideration(it))
                 }
             )
 
@@ -383,9 +383,9 @@ fun NotificationSettingsSection(
             SettingToggleRow(
                 title = "공지사항 알림",
                 subtitle = "새 글 및 댓글 알림",
-                checked = uiState.canNotifyPreConsideration,
+                checked = uiState.canNotifyCommunity,
                 onCheckedChange = {
-                    onEvent
+                    onEvent(SettingUiAction.OnToggleNotifyCommunity(it))
                 }
             )
         }
