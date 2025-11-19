@@ -20,5 +20,7 @@ data class NoiseLog(
     val avgDecibel: Double,
     val memo: String,
     val measuredAt: Date,
+    // 측정 소요 시간(초 단위). 측정 화면에서 전달된 duration을 서버 Create/Modify API에 넘길 때 사용.
+    val duration: Long = 0L,
     val hasReport: Boolean = false // TODO: [백엔드 연동] 서버의 리포트 생성 상태와 동기화
 )
