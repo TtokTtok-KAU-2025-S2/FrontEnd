@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.kau.ttokttok.R
 
 class MonthReportFragment : Fragment() {
     override fun onCreateView(
@@ -21,7 +22,11 @@ class MonthReportFragment : Fragment() {
 
         setContent {
             MonthReportScreen(
-                onClickMoreInformation = { findNavController() }
+                onClickMoreInformation = {
+                    findNavController().navigate(
+                        R.id.action_monthReportFragment_to_nationalApartmentFragment
+                    )
+                }
             )
         }
     }
