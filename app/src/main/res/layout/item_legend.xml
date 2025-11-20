@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <View
+        android:id="@+id/colorIndicator"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginEnd="4dp"
+        android:background="@color/chart_blue" />
+
+    <TextView
+        android:id="@+id/tvLegendLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="발걸음"
+        android:textColor="@color/text_light"
+        android:textSize="12sp" />
+
+</LinearLayout>
