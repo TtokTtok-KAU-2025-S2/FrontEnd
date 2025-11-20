@@ -67,7 +67,8 @@ fun SettingScreen(
     modifier: Modifier = Modifier,
     uiState: SettingUiState = SettingUiState(),
     onEvent: (SettingUiAction) -> Unit = {},
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onConfirmLogout: () -> Unit = {}
 ) {
     val scroll = rememberScrollState()
 
@@ -170,7 +171,6 @@ fun SettingScreen(
                     // TODO: viewModel 연결
                     SettingCard {
                         AccountManagementSection(
-                            onChangeNickname = {onEvent(SettingUiAction.OnChangeNicknameClicked)},
                             onChangeAddress = {onEvent(SettingUiAction.OnChangeAddressClicked)},
                             onChangePassword = {onEvent(SettingUiAction.OnChangePasswordClicked)},
                             onLogout = {onEvent(SettingUiAction.OnLogoutClicked)},
@@ -445,7 +445,6 @@ private fun SettingToggleRow(
 
 @Composable
 fun AccountManagementSection(
-    onChangeNickname: () -> Unit,
     onChangeAddress: () -> Unit,
     onChangePassword: () -> Unit,
     onLogout: () -> Unit,
@@ -475,11 +474,6 @@ fun AccountManagementSection(
 
         // Content
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SettingRow(
-                icon = Icons.Filled.Edit,
-                title = "닉네임 변경",
-                onClick = onChangeNickname
-            )
             SettingRow(
                 icon = Icons.Filled.Home,
                 title = "거주지 변경",
