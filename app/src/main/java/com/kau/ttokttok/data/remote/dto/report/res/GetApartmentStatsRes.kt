@@ -15,8 +15,9 @@ data class Apartment(
 )
 
 data class NoiseDistribution(
-    val FOOTSTEPS: Int = 0,
-    val FURNITURE: Int = 0,
-    val HAMMERING: Int = 0,
-    val MUSIC: Int = 0,
+    val FOOTSTEPS: Int? = 0,
+    val FURNITURE: Int? = 0,
+    val HAMMERING: Int? = 0,
+    val MUSIC: Int? = 0,
+    val UNKNOWN: Int? = 0
 )
