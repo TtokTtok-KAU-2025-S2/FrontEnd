@@ -33,6 +33,8 @@
     <string name="noise_level_low">조용함</string>
     <string name="noise_level_medium">보통</string>
     <string name="noise_level_high">시끄러움</string>
-    <string name="active_status">활성화</string>
+    <string name="active_status_high">앱 활성도 : 상</string>
+    <string name="active_status_medium">앱 활성도 : 중</string>
+    <string name="active_status_low">앱 활성도 : 하</string>
     <string name="total_reports">건</string>
 </resources>

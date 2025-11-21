@@ -34,7 +34,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp"
-            android:text="활성화"
+            android:text="앱 활성도 : 상"
             android:textColor="@android:color/white"
             android:textSize="10sp"
             android:visibility="visible" />

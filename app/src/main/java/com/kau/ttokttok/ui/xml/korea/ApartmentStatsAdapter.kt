@@ -49,12 +49,12 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
             setupLegend(apartment.noiseDistribution)
         }
 
-        // 상태 배지 (HIGH/MEDIUM/LOW)
+        // 상태 배지 (HIGH/MEDIUM/LOW) - 앱 사용량/활성화 여부
         private fun setupBadge(status: String) {
             val (text, bgRes) = when (status) {
-                "HIGH" -> "시끄러움" to R.drawable.bg_badge_red
-                "MEDIUM" -> "보통" to R.drawable.bg_badge_orange
-                "LOW" -> "조용함" to R.drawable.bg_badge_green
+                "HIGH" -> "앱 활성도 : 상" to R.drawable.bg_badge_green
+                "MEDIUM" -> "앱 활성도 : 중" to R.drawable.bg_badge_orange
+                "LOW" -> "앱 활성도 : 하" to R.drawable.bg_badge_red
                 else -> return binding.tvActiveBadge.run { visibility = View.GONE }
             }
 
@@ -65,12 +65,14 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
             }
         }
 
-        // 통계 정보 (총 건수, 소음 레벨)
+        // 통계 정보 (총 건수, 소음 레벨) - 실제 리포트 건수 기반으로 소음 정도 판단
         private fun setupStats(distribution: NoiseDistribution) {
             val total = getTotalCount(distribution)
-            val (levelText, colorRes) = when (binding.tvActiveBadge.text) {
-                "시끄러움" -> "시끄러움" to R.color.db_high
-                "보통" -> "보통" to R.color.db_moderate
+
+            // 실제 리포트 건수를 기반으로 소음 레벨 판단
+            val (levelText, colorRes) = when {
+                total >= 50 -> "시끄러움" to R.color.db_high
+                total >= 20 -> "보통" to R.color.db_moderate
                 else -> "조용함" to R.color.db_safe
             }
 
