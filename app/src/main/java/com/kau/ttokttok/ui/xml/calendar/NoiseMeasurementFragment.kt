@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,24 +17,37 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.kau.ttokttok.databinding.FragmentNoiseMeasurementBinding
+import com.kau.ttokttok.domain.repository.RecordingRepository
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.Locale
 import kotlin.coroutines.coroutineContext
 import kotlin.math.log10
 import kotlin.math.sqrt
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NoiseMeasurementFragment : Fragment() {
     private var _binding: FragmentNoiseMeasurementBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var recordingRepository: RecordingRepository
+
     private var audioRecord: AudioRecord? = null
+    private var mediaRecorder: MediaRecorder? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var recordingFilePath: String? = null
     private var isRecording = false
+    private var isPlaying = false
     private var recordingJob: Job? = null
     private var timerJob: Job? = null
     private var maxDb = 0.0
@@ -65,7 +79,13 @@ class NoiseMeasurementFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.btnControl.setOnClickListener {
-            if (isRecording) stopMeasurementAndNavigate() else checkPermissionAndStart()
+            if (isRecording) stopMeasurementAndShowButtons() else checkPermissionAndStart()
+        }
+        binding.btnPlayRecording.setOnClickListener {
+            togglePlayRecording()
+        }
+        binding.btnComplete.setOnClickListener {
+            navigateToNoiseLogForm()
         }
         updateControlButton(false)
     }
@@ -94,7 +114,7 @@ class NoiseMeasurementFragment : Fragment() {
         }
     }
 
-    private fun startMeasurement() { // AudioRecord 초기화 및 측정 시작
+    private fun startMeasurement() { // AudioRecord 초기화 및 측정 시작, MediaRecorder로 녹음
         if (isRecording) return
         try {
             val bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)
@@ -103,11 +123,39 @@ class NoiseMeasurementFragment : Fragment() {
                 return
             }
             resetMeasurementState()
+
+            // MediaRecorder로 녹음 시작 (M4A 형식 - AI 분석 최적화)
+            recordingFilePath = "${requireContext().externalCacheDir?.absolutePath}/noise_${System.currentTimeMillis()}.m4a"
+            mediaRecorder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                MediaRecorder(requireContext())
+            } else {
+                @Suppress("DEPRECATION")
+                MediaRecorder()
+            }.apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                // AAC_ADTS 형식 사용 - 순수 오디오 전용 AAC
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS) // M4A/AAC 오디오 전용
+                } else {
+                    setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                }
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setAudioEncodingBitRate(128000) // 128kbps
+                setAudioSamplingRate(44100) // 44.1kHz
+                setOutputFile(recordingFilePath)
+                prepare()
+                start()
+            }
+
+            // AudioRecord로 데시벨 측정
             audioRecord = createBestAudioRecord(bufferSize)
             if (audioRecord?.state != AudioRecord.STATE_INITIALIZED) {
                 Toast.makeText(requireContext(), "마이크를 초기화할 수 없습니다", Toast.LENGTH_SHORT).show()
                 audioRecord?.release()
                 audioRecord = null
+                mediaRecorder?.stop()
+                mediaRecorder?.release()
+                mediaRecorder = null
                 return
             }
             audioRecord?.startRecording()
@@ -212,7 +260,6 @@ class NoiseMeasurementFragment : Fragment() {
         return smoothedDb!!
     }
 
-
     private suspend fun handleRecordingError(message: String) {
         withContext(Dispatchers.Main) {
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -246,22 +293,127 @@ class NoiseMeasurementFragment : Fragment() {
         audioRecord?.stop()
         audioRecord?.release()
         audioRecord = null
+
+        try {
+            mediaRecorder?.stop()
+            mediaRecorder?.release()
+            mediaRecorder = null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         updateControlButton(false)
     }
 
-    private fun stopMeasurementAndNavigate() { // 측정 종료 후 결과 화면으로 이동
+    private fun stopMeasurementAndShowButtons() { // 측정 종료 후 재생/완료 버튼 표시
         stopMeasurement()
 
+        // 녹음 파일이 존재하면 재생 및 완료 버튼 표시
+        val recordingFile = recordingFilePath?.let { File(it) }
+        if (recordingFile != null && recordingFile.exists()) {
+            binding.recordingActionsContainer.visibility = View.VISIBLE
+            Toast.makeText(requireContext(), "측정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            // 녹음 파일이 없으면 바로 소음일기 작성 페이지로 이동
+            navigateToNoiseLogForm()
+        }
+    }
+
+    private fun navigateToNoiseLogForm() { // 소음일기 작성 페이지로 이동 (완료 버튼 클릭 시)
+        // 녹음 파일이 있으면 업로드 후 이동
+        val recordingFile = recordingFilePath?.let { File(it) }
+        if (recordingFile != null && recordingFile.exists()) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                uploadRecordingFileAndNavigate(recordingFile)
+            }
+        } else {
+            // 녹음 파일이 없으면 바로 이동
+            moveToNoiseLogForm()
+        }
+    }
+
+    private suspend fun uploadRecordingFileAndNavigate(recordingFile: File) {
+        try {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "녹음 파일 업로드 중...", Toast.LENGTH_SHORT).show()
+            }
+
+            val result = recordingRepository.uploadRecording(recordingFile)
+            result.onSuccess { response ->
+                recordingFilePath = response.fileUrl // 업로드된 URL로 교체
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "업로드 완료!", Toast.LENGTH_SHORT).show()
+                    moveToNoiseLogForm()
+                }
+            }.onFailure { e ->
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "업로드 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                    // 실패해도 이동은 가능하도록
+                    moveToNoiseLogForm()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            withContext(Dispatchers.Main) {
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "오류 발생: ${e.message}", Toast.LENGTH_SHORT).show()
+                    moveToNoiseLogForm()
+                }
+            }
+        }
+    }
+
+    private fun moveToNoiseLogForm() {
         val bundle = Bundle().apply {
             putDouble("max_db", maxDb)
             putDouble("avg_db", avgDb)
             putLong("duration", (System.currentTimeMillis() - startTime) / 1000)
             putLong("measured_at", startTime)
-            // putString("measurement_id", measurementId)
+            recordingFilePath?.let { putString("recording_url", it) }
         }
 
         findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)
-        Toast.makeText(requireContext(), "측정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun togglePlayRecording() { // 녹음 파일 재생/정지
+        if (recordingFilePath == null || !File(recordingFilePath!!).exists()) {
+            Toast.makeText(requireContext(), "재생할 녹음 파일이 없습니다", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (isPlaying) {
+            stopPlayback()
+        } else {
+            startPlayback()
+        }
+    }
+
+    private fun startPlayback() {
+        try {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(recordingFilePath)
+                prepare()
+                setOnCompletionListener {
+                    stopPlayback()
+                }
+                start()
+            }
+            isPlaying = true
+            binding.btnPlayRecording.text = "재생 중지"
+            binding.btnPlayRecording.setIconResource(android.R.drawable.ic_media_pause)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "재생 중 오류가 발생했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun stopPlayback() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+        isPlaying = false
+        binding.btnPlayRecording.text = "녹음 재생"
+        binding.btnPlayRecording.setIconResource(android.R.drawable.ic_media_play)
     }
 
     private fun computeRms(buffer: ShortArray, read: Int) = // RMS(Root Mean Square) 계산
@@ -277,6 +429,7 @@ class NoiseMeasurementFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         stopMeasurement()
+        stopPlayback()
         _binding = null
     }
 
