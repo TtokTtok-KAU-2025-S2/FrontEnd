@@ -1,5 +1,11 @@
 package com.kau.ttokttok.data.remote.dto.noiserecord.res
 
+import com.kau.ttokttok.domain.model.NoiseLog
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Date
+
 data class CreateNoiseRecordRes(
     val id: Long,
     val userId: Long,
@@ -13,4 +19,28 @@ data class CreateNoiseRecordRes(
     // 서버에서 LocalDateTime 문자열을 내려주므로, Moshi 커스텀 어댑터 없이 String으로 수신
     val occuredAt: String,
     val updateAt: String
-)
+) {
+    /**
+     * Response String 날짜를 Domain 모델로 변환
+     */
+    fun toDomain(): NoiseLog {
+        val measuredDate = parseStringToDate(occuredAt)
+        val memoText = summary ?: description ?: ""
+
+        return NoiseLog(
+            id = id.toString(),
+            noiseType = category,
+            maxDecibel = dbHigh,
+            avgDecibel = dbAvg,
+            memo = memoText,
+            measuredAt = measuredDate,
+            duration = duration.toLong(),
+            hasReport = false
+        )
+    }
+
+    private fun parseStringToDate(dateString: String): Date {
+        val localDateTime = LocalDateTime.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        return Date.from(localDateTime.atZone(ZoneOffset.systemDefault()).toInstant())
+    }
+}
