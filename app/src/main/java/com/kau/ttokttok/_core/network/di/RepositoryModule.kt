@@ -8,12 +8,14 @@ import com.kau.ttokttok.data.local.repository.NotificationRepositoryImpl
 import com.kau.ttokttok.data.local.repository.PreConsiderationRepositoryImpl
 import com.kau.ttokttok.data.local.repository.ReportRepositoryImpl
 import com.kau.ttokttok.data.local.repository.SettingRepositoryImpl
+import com.kau.ttokttok.data.repository.RecordingRepositoryImpl
 import com.kau.ttokttok.domain.repository.AuthRepository
 import com.kau.ttokttok.domain.repository.CommunityRepository
 import com.kau.ttokttok.domain.repository.NoiseVoteRepository
 import com.kau.ttokttok.domain.repository.NoiseLogRepository
 import com.kau.ttokttok.domain.repository.NotificationRepository
 import com.kau.ttokttok.domain.repository.PreConsiderationRepository
+import com.kau.ttokttok.domain.repository.RecordingRepository
 import com.kau.ttokttok.domain.repository.ReportRepository
 import com.kau.ttokttok.domain.repository.SettingRepository
 import dagger.Binds
@@ -72,4 +74,10 @@ abstract class RepositoryModule {
     abstract fun bindsSettingRepository(
         impl: SettingRepositoryImpl
     ): SettingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRecordingRepository(
+        impl: RecordingRepositoryImpl
+    ): RecordingRepository
 }

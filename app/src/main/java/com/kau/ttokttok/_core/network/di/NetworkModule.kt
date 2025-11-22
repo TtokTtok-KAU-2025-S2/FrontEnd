@@ -7,6 +7,7 @@ import com.kau.ttokttok.data.remote.api.NoiseCalendarApiService
 import com.kau.ttokttok.data.remote.api.NoiseRecordApiService
 import com.kau.ttokttok.data.remote.api.NoiseStatusBoardApiService
 import com.kau.ttokttok.data.remote.api.PreNoticeApiService
+import com.kau.ttokttok.data.remote.api.RecordingApiService
 import com.kau.ttokttok.data.remote.api.ReportApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -33,8 +34,19 @@ object NetworkModule {
     // ───────────────────────────────
     @Provides
     @Singleton
-    fun provideLogging(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+    fun provideLogging(): HttpLoggingInterceptor {
+        val logger = HttpLoggingInterceptor { message ->
+            // Multipart 바이너리 데이터는 로그에서 제외
+            if (!message.contains("Content-Disposition: form-data") &&
+                !message.contains("ftyp") &&
+                !message.contains("mdat")) {
+                println(message)
+            }
+        }
+        logger.level = HttpLoggingInterceptor.Level.BODY
+        logger.redactHeader("Authorization")
+        logger.redactHeader("Cookie")
+        return logger
     }
 
     // ───────────────────────────────
@@ -147,4 +159,10 @@ object NetworkModule {
     fun provideReportApiService(
         retrofit: Retrofit
     ): ReportApiService = retrofit.create(ReportApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRecordingApiService(
+        retrofit: Retrofit
+    ): RecordingApiService = retrofit.create(RecordingApiService::class.java)
 }
