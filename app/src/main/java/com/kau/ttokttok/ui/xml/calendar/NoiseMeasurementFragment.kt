@@ -334,21 +334,26 @@ class NoiseMeasurementFragment : Fragment() {
 
     private suspend fun uploadRecordingFileAndNavigate(recordingFile: File) {
         try {
+            // 1️⃣ 로컬에 영구 저장
+            saveRecordingToLocalStorage(recordingFile)
+
             withContext(Dispatchers.Main) {
                 Toast.makeText(requireContext(), "녹음 파일 업로드 중...", Toast.LENGTH_SHORT).show()
             }
 
+            // 2️⃣ 서버에 업로드
             val result = recordingRepository.uploadRecording(recordingFile)
             result.onSuccess { response ->
                 recordingFilePath = response.fileUrl // 업로드된 URL로 교체
+
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "업로드 완료!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "업로드 완료! (로컬 저장됨)", Toast.LENGTH_SHORT).show()
                     moveToNoiseLogForm()
                 }
             }.onFailure { e ->
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "업로드 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-                    // 실패해도 이동은 가능하도록
+                    Toast.makeText(requireContext(), "업로드 실패: ${e.message} (로컬 저장됨)", Toast.LENGTH_SHORT).show()
+                    // 실패해도 로컬에는 저장됨
                     moveToNoiseLogForm()
                 }
             }
@@ -414,6 +419,33 @@ class NoiseMeasurementFragment : Fragment() {
         isPlaying = false
         binding.btnPlayRecording.text = "녹음 재생"
         binding.btnPlayRecording.setIconResource(android.R.drawable.ic_media_play)
+    }
+
+    // ═══════════════════════════════
+    // 로컬 저장 관련 함수
+    // ═══════════════════════════════
+
+    /**
+     * 녹음 파일을 앱 내부 저장소에 영구 저장
+     * 위치: /data/data/com.kau.ttokttok/files/recordings/
+     */
+    private suspend fun saveRecordingToLocalStorage(sourceFile: File): File = withContext(Dispatchers.IO) {
+        try {
+            // 앱 전용 저장소에 영구 저장 (앱 삭제 전까지 유지)
+            val recordingsDir = File(requireContext().filesDir, "recordings")
+            if (!recordingsDir.exists()) {
+                recordingsDir.mkdirs()
+            }
+
+            val destFile = File(recordingsDir, "recording_${System.currentTimeMillis()}.m4a")
+            sourceFile.copyTo(destFile, overwrite = true)
+
+            android.util.Log.d("NoiseMeasurement", "✅ Recording saved locally: ${destFile.absolutePath}")
+            destFile
+        } catch (e: Exception) {
+            android.util.Log.e("NoiseMeasurement", "❌ Failed to save recording locally", e)
+            sourceFile // 실패 시 원본 반환
+        }
     }
 
     private fun computeRms(buffer: ShortArray, read: Int) = // RMS(Root Mean Square) 계산
