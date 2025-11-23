@@ -42,7 +42,17 @@
     <fragment
         android:id="@+id/monthReportFragment"
         android:name="com.kau.ttokttok.ui.compose.monthreport.MonthReportFragment"
-        android:label="MonthReport"
+        android:label="MonthReport">
+
+        <action
+            android:id="@+id/action_monthReportFragment_to_nationalApartmentFragment"
+            app:destination="@id/nationalApartmentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nationalApartmentFragment"
+        android:name="com.kau.ttokttok.ui.xml.korea.NationalApartmentFragment"
+        android:label="NationalApartment"
         />
 
     <fragment
