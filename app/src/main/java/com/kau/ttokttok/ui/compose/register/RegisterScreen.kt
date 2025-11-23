@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,17 +12,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddHome
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,17 +32,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kau.ttokttok.ui.component.auth.AuthInputField
+import com.kau.ttokttok.ui.component.auth.FrostedPanel
+import com.kau.ttokttok.ui.component.auth.NoIconAuthInputField
+import com.kau.ttokttok.ui.component.auth.PasswordField
+import com.kau.ttokttok.ui.component.auth.button.RegisterButton
 import com.kau.ttokttok.ui.component.common.background.StarField
-import com.kau.ttokttok.ui.compose.login.EmailField
-import com.kau.ttokttok.ui.compose.login.FrostedPanel
-import com.kau.ttokttok.ui.compose.login.PasswordField
-
 @Preview
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     onClickRegister: (String, String, String, String) -> Unit = { _, _, _, _ -> },
 ) {
+    var aptId by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var buildingNumber by rememberSaveable { mutableStateOf("")}
@@ -102,7 +100,6 @@ fun RegisterScreen(
                     .padding(bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 애니메이션 들어가는 로고
                 Box(
                     modifier = Modifier
                         .size(64.dp) // w-16 h-16
@@ -144,9 +141,22 @@ fun RegisterScreen(
                 )
             }
 
-            EmailField(
+            AuthInputField(
+                onValueChange = { aptId = it },
+                value = aptId,
+                headerText = "아파트 번호",
+                imageVector = Icons.Outlined.AddHome,
+                exampleText = "101"
+            )
+
+            Spacer(modifier.height(16.dp))
+
+            AuthInputField(
+                onValueChange = { email = it },
                 value = email,
-                onValueChange = { email = it }
+                headerText = "이메일",
+                imageVector = Icons.Outlined.Email,
+                exampleText = "example@gmail.com"
             )
 
             Spacer(Modifier.height(16.dp))
@@ -162,25 +172,28 @@ fun RegisterScreen(
                 modifier = Modifier,
                 horizontalArrangement =  Arrangement.spacedBy(12.dp)
             ) {
-                BuildingNumberField(
-                    value = buildingNumber,
+                NoIconAuthInputField(
+                    modifier = Modifier.weight(1f),
                     onValueChange = { buildingNumber = it },
-                    modifier = Modifier.weight(1f)
+                    value = buildingNumber,
+                    headerText = "동",
+                    exampleText = "000동"
                 )
 
-                UnitNumberField(
+                NoIconAuthInputField(
+                    modifier = Modifier.weight(1f),
+                    onValueChange = { buildingNumber = it},
                     value = unitNumber,
-                    onValueChange = { unitNumber = it },
-                    modifier = Modifier.weight(1f)
+                    headerText = "호수",
+                    exampleText = "000호"
                 )
-
             }
 
             Spacer(Modifier.height(16.dp))
 
             Text(
                 "동/호수 정보는 본인 확인용으로만 사용되며, 다른\n사용자에게 공개되지 않습니다.",
-                color = Color.White
+                color = Color.White.copy(alpha = 0.6f)
             )
 
             Spacer(Modifier.height(32.dp))
@@ -191,133 +204,5 @@ fun RegisterScreen(
                 }
             )
         }
-    }
-}
-
-@Composable
-fun BuildingNumberField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var isFocused by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "동",
-            color = Color.White,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(bottom = 6.dp)
-        )
-
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            placeholder = {
-                Text(
-                    "000동",
-                    color = Color.White.copy(alpha = 0.6f) // placeholder:text-white/60
-                )
-            },
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(color = Color.White), // 입력 텍스트 색
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(12.dp)), // rounded-xl
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White.copy(alpha = 0.1f),   // bg-white/10
-                unfocusedContainerColor = Color.White.copy(alpha = 0.1f), // bg-white/10
-                disabledContainerColor = Color.White.copy(alpha = 0.1f),
-
-                focusedIndicatorColor = Color.White.copy(alpha = 0.4f),   // focus:border-white/40
-                unfocusedIndicatorColor = Color.White.copy(alpha = 0.2f), // border-white/20
-
-                cursorColor = Color.White,
-                focusedLeadingIconColor = Color.White.copy(alpha = 0.6f),
-                unfocusedLeadingIconColor = Color.White.copy(alpha = 0.6f),
-                focusedTrailingIconColor = Color.White.copy(alpha = 0.6f),
-                unfocusedTrailingIconColor = Color.White.copy(alpha = 0.6f)
-            )
-        )
-    }
-}
-
-@Composable
-fun UnitNumberField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var isFocused by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "호수",
-            color = Color.White,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(bottom = 6.dp)
-        )
-
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            placeholder = {
-                Text(
-                    "000호",
-                    color = Color.White.copy(alpha = 0.6f) // placeholder:text-white/60
-                )
-            },
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(color = Color.White), // 입력 텍스트 색
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(12.dp)), // rounded-xl
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White.copy(alpha = 0.1f),   // bg-white/10
-                unfocusedContainerColor = Color.White.copy(alpha = 0.1f), // bg-white/10
-                disabledContainerColor = Color.White.copy(alpha = 0.1f),
-
-                focusedIndicatorColor = Color.White.copy(alpha = 0.4f),   // focus:border-white/40
-                unfocusedIndicatorColor = Color.White.copy(alpha = 0.2f), // border-white/20
-
-                cursorColor = Color.White,
-                focusedLeadingIconColor = Color.White.copy(alpha = 0.6f),
-                unfocusedLeadingIconColor = Color.White.copy(alpha = 0.6f),
-                focusedTrailingIconColor = Color.White.copy(alpha = 0.6f),
-                unfocusedTrailingIconColor = Color.White.copy(alpha = 0.6f)
-            )
-        )
-    }
-}
-
-@Composable
-fun RegisterButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp), // h-12
-        shape = RoundedCornerShape(12.dp), // rounded-xl
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White.copy(alpha = 0.2f),   // bg-white/20
-            contentColor = Color.White                        // text-white
-        ),
-        contentPadding = PaddingValues(0.dp) // Tailwind 기본처럼 꽉 채운 텍스트
-    ) {
-        Text(
-            "회원가입",
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }
