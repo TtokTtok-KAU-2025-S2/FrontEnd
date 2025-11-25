@@ -42,7 +42,7 @@ import com.kau.ttokttok.ui.component.common.background.StarField
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    onClickRegister: (String, String, String, String) -> Unit = { _, _, _, _ -> },
+    onClickRegister: (String, String, String, String, String) -> Unit = { _, _, _, _, _ -> },
 ) {
     var aptId by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
@@ -200,7 +200,7 @@ fun RegisterScreen(
 
             RegisterButton(
                 onClick = {
-                    onClickRegister(email, password, buildingNumber, unitNumber)
+                    onClickRegister(aptId, email, password, buildingNumber, unitNumber)
                 }
             )
         }

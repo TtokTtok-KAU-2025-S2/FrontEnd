@@ -94,7 +94,7 @@ fun NavController.onSuccessLogin() {
         R.id.mainFragment,
         null,
         navOptions {
-            popUpTo(R.id.loginFragment) {
+            popUpTo(graph.startDestinationId) {
                 inclusive = true
             }
 

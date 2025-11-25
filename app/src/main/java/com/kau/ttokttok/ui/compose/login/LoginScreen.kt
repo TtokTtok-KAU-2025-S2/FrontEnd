@@ -26,6 +26,7 @@ import com.kau.ttokttok.ui.component.auth.FrostedPanel
 import com.kau.ttokttok.ui.component.auth.PasswordField
 import com.kau.ttokttok.ui.component.auth.button.LoginButton
 import com.kau.ttokttok.ui.component.auth.button.SignupButton
+import com.kau.ttokttok.ui.component.auth.dialog.TempPasswordDialog
 import com.kau.ttokttok.ui.component.common.background.StarField
 
 @Preview(showBackground = true)
@@ -34,11 +35,13 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     onClickLogin: (email: String, password: String) -> Unit = { _, _ -> },
     onClickRegister: () -> Unit = {},
-    onRequestTempPassword: () -> Unit = {}
+    onRequestTempPassword: (String) -> Unit = {}
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    var showTempPasswordDialog by rememberSaveable { mutableStateOf(false)}
 
     Box(
         modifier = modifier
@@ -181,7 +184,7 @@ fun LoginScreen(
                 )
 
                 TextButton(
-                    onClick = onRequestTempPassword,
+                    onClick = { showTempPasswordDialog = true },
                     modifier = Modifier.wrapContentWidth(),
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color(0xFF64B5F6)
@@ -196,5 +199,18 @@ fun LoginScreen(
                 }
             }
         }
+    }
+
+    if (showTempPasswordDialog) {
+        TempPasswordDialog(
+            initialEmail = email,
+            onConfirm = { inputEmail ->
+                onRequestTempPassword(inputEmail)
+                showTempPasswordDialog = false
+            },
+            onDismiss = {
+                showTempPasswordDialog = false
+            }
+        )
     }
 }

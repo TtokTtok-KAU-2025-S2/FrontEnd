@@ -3,7 +3,7 @@ package com.kau.ttokttok.data.remote.dto.auth.req
 import com.squareup.moshi.Json
 
 data class RegisterReq(
-    val aptId: Long = 1L,
+    val aptId: Long,
     val email: String,
     val password: String,
     @Json(name = "dong")

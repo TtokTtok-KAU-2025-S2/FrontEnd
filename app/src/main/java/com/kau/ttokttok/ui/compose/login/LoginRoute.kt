@@ -1,11 +1,12 @@
 package com.kau.ttokttok.ui.compose.login
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kau.ttokttok.ui.component.common.AppDialog
 
 @Composable
@@ -14,8 +15,7 @@ fun LoginRoute(
     onRegister: () -> Unit,
     onSuccess: () -> Unit,
 ) {
-    // val uiState by viewModel.uiState.collectAsState()
-    val snackbar = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // 다이얼로그 상태
     val showDialog = remember { mutableStateOf(false)}
@@ -25,10 +25,6 @@ fun LoginRoute(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is LoginEvent.ShowMessage -> {
-                    snackbar.showSnackbar(event.message)
-                }
-
                 is LoginEvent.ShowAlert -> {
                     dialogTitle.value = event.title
                     dialogMessage.value = event.message
@@ -61,6 +57,10 @@ fun LoginRoute(
             email, pw -> viewModel.onClickLogin(email, pw)
         },
 
-        onClickRegister = onRegister
+        onClickRegister = onRegister,
+
+        onRequestTempPassword = {
+            email -> viewModel.onRequestTempPassword(email)
+        }
     )
 }

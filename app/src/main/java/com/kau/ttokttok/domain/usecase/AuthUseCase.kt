@@ -42,6 +42,7 @@ class AuthUseCase @Inject constructor(
     }
 
     suspend fun register(
+        aptId: Long,
         email: String,
         password: String,
         buildingNumber: Int,
@@ -50,6 +51,7 @@ class AuthUseCase @Inject constructor(
 
         val result = repository.register(
             RegisterReq(
+                aptId = aptId,
                 email = email,
                 password = password,
                 buildingNumber = buildingNumber,

@@ -49,8 +49,8 @@ fun RegisterRoute(
 
     RegisterScreen(
         onClickRegister = {
-            email, password, buildingNumber, unitNumber ->
-            viewModel.onClickRegister(email, password, buildingNumber,unitNumber)
+            aptId, email, password, buildingNumber, unitNumber ->
+            viewModel.onClickRegister(aptId, email, password, buildingNumber, unitNumber)
         }
     )
 }

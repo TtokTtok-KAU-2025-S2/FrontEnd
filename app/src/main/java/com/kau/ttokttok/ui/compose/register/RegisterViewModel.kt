@@ -34,7 +34,9 @@ class RegisterViewModel @Inject constructor(
     private val _events = MutableSharedFlow<RegisterEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<RegisterEvent> = _events.asSharedFlow()
 
+    // TODO: 리팩토링 (ViewModel에서 입력검사 X -> UseCase로 옮기기)
     fun onClickRegister(
+        aptId: String,
         email: String,
         password: String,
         buildingNumber: String,
@@ -45,11 +47,12 @@ class RegisterViewModel @Inject constructor(
 
             try {
                 // 동/호수 입력 검증 및 파싱
+                val parsedAptId = parseApartmentId(aptId)
                 val parsedBuildingNumber = parseBuildingNumber(buildingNumber)
                 val parsedUnitNumber = parseUnitNumber(unitNumber)
 
                 // BE 연결
-                when (val r = authUseCase.register(email, password, parsedBuildingNumber, parsedUnitNumber)) {
+                when (val r = authUseCase.register(parsedAptId, email, password, parsedBuildingNumber, parsedUnitNumber)) {
                     is NetworkResult.Success -> {
 
                         emit(RegisterEvent.NavigateHome)
@@ -75,6 +78,10 @@ class RegisterViewModel @Inject constructor(
 
     private fun emit(event: RegisterEvent) {
         _events.tryEmit(event)
+    }
+
+    private fun parseApartmentId(aptId: String): Long {
+        return aptId.toLongOrNull() ?: throw java.lang.IllegalArgumentException("숫자 형식이 아닙니다.")
     }
 
     private fun parseBuildingNumber(buildingNumber: String) : Int {
