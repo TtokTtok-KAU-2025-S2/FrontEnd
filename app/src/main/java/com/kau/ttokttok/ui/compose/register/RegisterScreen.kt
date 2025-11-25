@@ -182,7 +182,7 @@ fun RegisterScreen(
 
                 NoIconAuthInputField(
                     modifier = Modifier.weight(1f),
-                    onValueChange = { buildingNumber = it},
+                    onValueChange = { unitNumber = it},
                     value = unitNumber,
                     headerText = "호수",
                     exampleText = "000호"
