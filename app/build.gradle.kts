@@ -101,4 +101,6 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0") //파이차트 (전국 아파트 현황)
 }

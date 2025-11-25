@@ -30,7 +30,7 @@ import com.kau.ttokttok.ui.navigation.Destination
 fun MainScreen(
     modifier: Modifier = Modifier,
     uiState: MainUiState = MainUiState(),
-    onNavigate: (Destination) -> Unit = {},
+    onNavigate: (Destination) -> Unit = {}
 ) {
     Box(
         modifier = modifier

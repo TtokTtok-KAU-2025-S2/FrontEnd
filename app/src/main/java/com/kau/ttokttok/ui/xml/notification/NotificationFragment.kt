@@ -44,10 +44,31 @@ class NotificationFragment : Fragment() {
     // RecyclerView 초기화 및 설정
     private fun setupRecyclerView() {
         adapter = NotificationAdapter { notif ->
-            // TODO: 백엔드 연동 시 알림 클릭 시 상세 화면으로 이동하거나 관련 화면으로 라우팅
             vm.markAsRead(notif.id)  // 클릭 시 읽음 처리
             refreshUI()
-            showToast("읽음 처리: ${notif.title}")
+
+            // 알림 타입별로 해당 화면으로 네비게이션
+            when (notif.iconType) {
+                "noise_status" -> {
+                    // 소음 현황판으로 이동
+                    findNavController().navigate(R.id.noiseVoteFragment)
+                }
+                "prior_consent" -> {
+                    // 사전 양해 화면으로 이동
+                    findNavController().navigate(R.id.preConsiderationFragment)
+                }
+                "announcement" -> {
+                    // 공지사항(커뮤니티) 화면으로 이동
+                    findNavController().navigate(R.id.communityFragment)
+                }
+                "monthly_report" -> {
+                    // 월간 리포트 화면으로 이동
+                    findNavController().navigate(R.id.monthReportFragment)
+                }
+                else -> {
+                    showToast("읽음 처리: ${notif.title}")
+                }
+            }
         }
         binding.recyclerViewNotifications.apply {
             layoutManager = LinearLayoutManager(requireContext())  // 세로 리스트

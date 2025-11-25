@@ -9,6 +9,7 @@ import com.kau.ttokttok.data.remote.dto.auth.req.RegisterReq
 import com.kau.ttokttok.data.remote.dto.auth.res.LoginRes
 import com.kau.ttokttok.data.remote.dto.auth.res.RegisterRes
 import com.kau.ttokttok.domain.repository.AuthRepository
+import okhttp3.Address
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,5 +65,16 @@ class AuthUseCase @Inject constructor(
         }
 
         return result
+    }
+    suspend fun logout() {
+        tokenProvider.clear()
+        userProvider.clear()
+    }
+
+    suspend fun changePassword(password: String): NetworkResult<String> {
+        return NetworkResult.Success("비밀번호 변경 성공")
+    }
+    suspend fun changeAddress(address: String): NetworkResult<String> {
+        return NetworkResult.Success("거주지 변경 성공")
     }
 }

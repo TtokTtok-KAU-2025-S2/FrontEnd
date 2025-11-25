@@ -85,6 +85,10 @@ fun NavController.navigateTo(
         Destination.NOISE_LOG -> navigate(R.id.noiseLogFragment, args, options)
         Destination.NOISE_LOG_FORM -> navigate(R.id.noiseLogFormFragment, args, options)
         Destination.NOISE_MEASUREMENT -> navigate(R.id.noiseMeasurementFragment, args, options)
+        Destination.EDIT_PROFILE -> navigate(R.id.editProfileFragment, args,options)
+        Destination.CHANGE_NICKNAME -> navigate(R.id.changeNicknameFragment, args,options)
+        Destination.CHANGE_ADDRESS -> navigate(R.id.changeAddressFragment, args,options)
+        Destination.CHANGE_PASSWORD -> navigate(R.id.changePasswordFragment, args,options)
     }
 }
 
