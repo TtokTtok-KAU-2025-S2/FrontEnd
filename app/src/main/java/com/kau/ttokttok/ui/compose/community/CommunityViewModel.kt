@@ -7,6 +7,7 @@ import com.kau.ttokttok.domain.usecase.community.LoadPostsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,24 +31,29 @@ class CommunityViewModel @Inject constructor(
 
     fun loadPosts() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true
-            )
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
 
             loadPostsUseCase.invoke()
                 .onSuccess { posts ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        posts = posts
-                    )
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            posts = posts
+                        )
+                    }
                 }
 
                 .onFailure {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = null
-                    )
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
 
                     // TODO: 다이얼로그 추가
                 }

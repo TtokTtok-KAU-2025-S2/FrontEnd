@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,14 +16,11 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.board.CommunityBoardCard
 import com.kau.ttokttok.ui.component.common.header.BoardHeader
-
-private val Slate900 = Color(0xFF0F172A) // bg-slate-900
-private val Blue700  = Color(0xFF1D4ED8) // hover:bg-blue-700
+import com.kau.ttokttok.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -39,7 +37,8 @@ fun CommunityScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Slate900)          // flex-col h-full bg-slate-900
+            .background(Slate900)
+            .statusBarsPadding()
             .padding(bottom = 64.dp)       // pb-16
     ) {
         // Header
@@ -72,7 +71,6 @@ fun CommunityScreen(
                     CommunityBoardCard(
                         id = post.id,
                         title = post.title,
-                        authorLocation = post.buildingNumber,
                         createdAt = post.createdAt,
                         onClick = onClickPost
                     )

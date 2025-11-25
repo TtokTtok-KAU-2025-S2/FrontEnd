@@ -16,22 +16,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kau.ttokttok._core.util.DateUtils.formatDateTime
+import com.kau.ttokttok.ui.theme.*
 import java.time.LocalDateTime
-
-private val Slate800 = Color(0xFF1E293B)
-private val Slate700 = Color(0xFF334155)
-private val Gray400 = Color(0xFF9CA3AF)
-private val Gray100 = Color(0xFFF3F4F6)
 
 @Composable
 fun CommunityBoardCard(
     id: Long,
     title: String,
-    authorLocation: String,
     createdAt: LocalDateTime,
     onClick: (Long) -> Unit
 ) {
@@ -64,12 +58,6 @@ fun CommunityBoardCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Text(
-                            text = "${authorLocation} 주민",
-                            color = Gray400,
-                            fontSize = 12.sp
-                        )
-
                         Text(
                             text = createdAt.formatDateTime(),
                             color = Gray400,

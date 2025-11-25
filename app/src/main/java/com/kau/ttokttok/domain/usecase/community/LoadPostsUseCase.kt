@@ -2,7 +2,9 @@ package com.kau.ttokttok.domain.usecase.community
 
 import com.kau.ttokttok.domain.model.board.community.CommunityBoard
 import com.kau.ttokttok.domain.repository.CommunityRepository
+import javax.inject.Singleton
 
+@Singleton
 class LoadPostsUseCase(
     private val repository: CommunityRepository
 ) {

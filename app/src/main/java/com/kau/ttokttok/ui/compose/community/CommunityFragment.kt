@@ -24,7 +24,15 @@ class CommunityFragment : Fragment() {
         setContent {
             CommunityRoute(
                 onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_COMMUNITY)},
-                onClickPost = { findNavController().navigateTo(Destination.COMMUNITY_DETAIL)}
+                onClickPost = { id ->
+                    val args = Bundle().apply {
+                        putLong("preConsiderationId", id)
+                    }
+
+                    findNavController().navigateTo(
+                        dest = Destination.PRECONSIDERATION_DETAIL,
+                        args = args
+                    ) }
             )
         }
     }

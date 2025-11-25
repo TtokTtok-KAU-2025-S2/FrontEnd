@@ -95,11 +95,6 @@ fun BoardDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = String.format("%s", uiState.communityBoardDetail.author),
-                        color = Gray500,
-                        fontSize = 12.sp
-                    )
-                    Text(
                         text = uiState.communityBoardDetail.createdAt.formatDateTime(),
                         color = Gray400,
                         fontSize = 11.sp
