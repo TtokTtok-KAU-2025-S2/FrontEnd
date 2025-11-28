@@ -14,6 +14,9 @@ fun NoiseVoteRoute(
 
     NoiseVoteScreen(
         uiState = uiState,
-        onClickPost = onClickPost
+        onClickPost = onClickPost,
+        onRefresh = {
+            viewModel.loadPosts()
+        }
     )
 }

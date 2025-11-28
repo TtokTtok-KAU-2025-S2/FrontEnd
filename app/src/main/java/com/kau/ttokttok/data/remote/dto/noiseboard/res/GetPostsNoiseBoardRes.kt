@@ -20,7 +20,10 @@ data class NoiseBoard(
     val authorDong: Int,
     val reportedAt: String,
     val category: String,
-    val summary: String?
+    val summary: String?,
+    val totalParticipants: Int,
+    val totalEligibleVoters: Int,
+    val commentCount: Int
 )
 
 fun NoiseBoard.toNoiseVoteBoard(): NoiseVoteBoard {
@@ -29,6 +32,9 @@ fun NoiseBoard.toNoiseVoteBoard(): NoiseVoteBoard {
         authorLocation = String.format("%s동", authorDong),
         title = summary ?: "",
         reportedAt = LocalDateTime.parse(reportedAt, DateTimeFormatter.ISO_DATE_TIME),
-        category = category
+        category = category,
+        comment = commentCount,
+        currentVote = totalParticipants,
+        totalVote = totalEligibleVoters
     )
 }

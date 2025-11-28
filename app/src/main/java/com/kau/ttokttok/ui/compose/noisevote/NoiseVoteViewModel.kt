@@ -1,7 +1,5 @@
 package com.kau.ttokttok.ui.compose.noisevote
 
-import android.util.Log
-import androidx.compose.runtime.currentComposer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard

@@ -8,7 +8,7 @@ import javax.inject.Singleton
 class LoadPostsNoiseVoteUseCase(
     private val repository: NoiseVoteRepository
 ) {
-    suspend operator fun invoke(): Result<List<NoiseVoteBoard>> = runCatching {
-        repository.getPosts()
+    suspend operator fun invoke(): Result<List<NoiseVoteBoard>> {
+        return repository.getPosts()
     }
 }

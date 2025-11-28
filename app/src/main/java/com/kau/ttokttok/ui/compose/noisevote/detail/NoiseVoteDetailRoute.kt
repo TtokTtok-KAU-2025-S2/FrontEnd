@@ -15,11 +15,17 @@ fun NoiseVoteDetailRoute(
     NoiseVoteDetailScreen(
         uiState = uiState,
         onClickBack = onClickBack,
-        onVote = { voteCount ->
-            // TODO: viewModel.vote(voteType) 같은 형태로 연결
+        onVoteClick = { voteType ->
+            viewModel.clickVote(voteType)
         },
         onAddComment = { content ->
-            // TODO: viewModel.addComment(content) 같은 형태로 연결
+            viewModel.addComment(content)
+        },
+        onEditComment = { comment ->
+            viewModel.modifyComment(comment)
+        },
+        onDeleteComment = { comment ->
+            viewModel.deleteComment(comment)
         }
     )
 }

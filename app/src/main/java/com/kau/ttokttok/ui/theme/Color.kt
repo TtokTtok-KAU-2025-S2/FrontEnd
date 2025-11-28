@@ -44,3 +44,12 @@ val Orange900 = Color(0xFF7C2D12)
 val Gray700   = Color(0xFF374151)
 val Gray900   = Color(0xFF111827)
 val Gray50Bg  = Color(0xFFF9FAFB)
+
+val White    = Color.White
+val Gray600  = Color(0xFF4B5563)
+val Gray500  = Color(0xFF6B7280)
+val Gray200  = Color(0xFFE5E7EB)
+val Blue50   = Color(0xFFEFF6FF)
+val Blue700  = Color(0xFF1D4ED8)
+val Green50  = Color(0xFFECFDF5)
+val Green600 = Color(0xFF16A34A)

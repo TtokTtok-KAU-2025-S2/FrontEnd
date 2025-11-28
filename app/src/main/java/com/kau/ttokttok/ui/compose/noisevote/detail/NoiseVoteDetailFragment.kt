@@ -8,7 +8,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.kau.ttokttok.ui.compose.community.detail.CommunityDetailRoute
 
 class NoiseVoteDetailFragment : Fragment() {
     override fun onCreateView(

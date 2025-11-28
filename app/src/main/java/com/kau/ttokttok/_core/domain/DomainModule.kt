@@ -8,7 +8,13 @@ import com.kau.ttokttok.domain.usecase.community.CreatePostUseCase
 import com.kau.ttokttok.domain.usecase.community.GetPostDetailUseCase
 import com.kau.ttokttok.domain.usecase.community.LoadPostsUseCase
 import com.kau.ttokttok.domain.usecase.monthreport.GetMonthReportUseCase
+import com.kau.ttokttok.domain.usecase.noisevote.AddCommentUseCase
+import com.kau.ttokttok.domain.usecase.noisevote.CancelVoteUseCase
+import com.kau.ttokttok.domain.usecase.noisevote.DeleteCommentUseCase
+import com.kau.ttokttok.domain.usecase.noisevote.GetPostDetailNoiseVoteUseCase
 import com.kau.ttokttok.domain.usecase.noisevote.LoadPostsNoiseVoteUseCase
+import com.kau.ttokttok.domain.usecase.noisevote.ModifyCommentUseCase
+import com.kau.ttokttok.domain.usecase.noisevote.PostVoteUseCase
 import com.kau.ttokttok.domain.usecase.preconsideration.DeletePostPreConsiderationUseCase
 import com.kau.ttokttok.domain.usecase.preconsideration.LoadPostDetailPreConsiderationUseCase
 import dagger.Module
@@ -25,6 +31,48 @@ class DomainModule {
         repository: NoiseVoteRepositoryImpl
     ): LoadPostsNoiseVoteUseCase {
         return LoadPostsNoiseVoteUseCase(repository)
+    }
+
+    @Provides
+    fun providesGetPostDetailNoiseVoteUseCase(
+        repository: NoiseVoteRepositoryImpl
+    ): GetPostDetailNoiseVoteUseCase {
+        return GetPostDetailNoiseVoteUseCase(repository)
+    }
+
+    @Provides
+    fun providesPostVoteUseCase(
+        repository: NoiseVoteRepositoryImpl
+    ): PostVoteUseCase {
+        return PostVoteUseCase(repository)
+    }
+
+    @Provides
+    fun providesCancelVoteUseCase(
+        repository: NoiseVoteRepositoryImpl
+    ): CancelVoteUseCase {
+        return CancelVoteUseCase(repository)
+    }
+
+    @Provides
+    fun providesAddCommentUseCase(
+        repository: NoiseVoteRepositoryImpl
+    ): AddCommentUseCase {
+        return AddCommentUseCase(repository)
+    }
+
+    @Provides
+    fun providesModifyCommentUseCase(
+        repository: NoiseVoteRepositoryImpl
+    ): ModifyCommentUseCase {
+        return ModifyCommentUseCase(repository)
+    }
+
+    @Provides
+    fun providesDeleteCommentUseCase(
+        repository: NoiseVoteRepositoryImpl
+    ): DeleteCommentUseCase {
+        return DeleteCommentUseCase(repository)
     }
 
     // 사전 양해 게시판

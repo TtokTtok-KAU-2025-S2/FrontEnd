@@ -7,5 +7,8 @@ data class NoiseVoteBoard(
     val authorLocation: String,
     val title: String,
     val reportedAt: LocalDateTime,
-    val category: String
+    val comment: Int,
+    val category: String,
+    val currentVote: Int,
+    val totalVote: Int
 )

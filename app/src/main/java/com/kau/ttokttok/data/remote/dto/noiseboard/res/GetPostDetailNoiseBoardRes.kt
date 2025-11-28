@@ -1,28 +1,57 @@
 package com.kau.ttokttok.data.remote.dto.noiseboard.res
 
+import com.kau.ttokttok.domain.model.board.Comment
+import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail
+import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 data class GetPostDetailNoiseBoardRes(
     val reportId: Long,
     val authorDong: Int,
     val reportedAt: String,
     val category: String,
-    val summary: String,
-    val voteCounts: VoteCount,
-    val comments: List<Comment>
+    val summary: String?,
+
+    val maxDb: Double,
+    val avgDb: Double,
+
+    val voteCount: Map<String, Int>?,
+
+    val comments: List<CommentDTO>?
 )
 
-// TODO: 추후 Enum으로 변경하기
-data class VoteCount(
-    val HEARD: Int,
-    val NOT_HEARD: Int,
-    val BE_CAREFUL: Int
-)
+fun GetPostDetailNoiseBoardRes.toNoiseVoteBoardDetail(): NoiseVoteBoardDetail {
+    return NoiseVoteBoardDetail(
+        buildingNumber = authorDong,
+        reportedAt = LocalDateTime.parse(reportedAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        category = category,
+        title = summary ?: "",
 
-data class Comment(
+        maxDb = maxDb.toInt(),
+        avgDb = avgDb.toInt(),
+
+        voteCount = voteCount?.mapKeys { (key, _ ) -> NoiseVoteType.from(key) } ?: emptyMap(),
+        comments = comments?.map { dto ->
+            dto.toDomain()
+        } ?: emptyList()
+    )
+}
+
+data class CommentDTO(
     val commentId: Long,
     val authorDong: Int,
     val content: String,
     val createdAt: String,
     val isMyComment: Boolean
 )
+
+fun CommentDTO.toDomain(): Comment {
+    return Comment(
+        id = commentId,
+        buildingNumber = authorDong,
+        content = content,
+        createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        isMyComment = isMyComment
+    )
+}

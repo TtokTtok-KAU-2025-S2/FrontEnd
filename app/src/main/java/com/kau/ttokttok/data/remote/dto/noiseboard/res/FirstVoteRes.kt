@@ -1,10 +1,10 @@
 package com.kau.ttokttok.data.remote.dto.noiseboard.res
 
-import com.kau.ttokttok.domain.model.board.noisevote.VoteType
+import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
 import java.time.LocalDateTime
 
 data class FirstVoteRes(
     val voteId: Long,
-    val voteType: VoteType,
+    val noiseVoteType: NoiseVoteType,
     val createdAt: LocalDateTime
 )
