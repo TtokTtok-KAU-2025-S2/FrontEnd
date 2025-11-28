@@ -69,10 +69,9 @@ fun CommunityScreen(
                     key = { post -> post.id }
                 ) { post ->
                     CommunityBoardCard(
-                        id = post.id,
                         title = post.title,
                         createdAt = post.createdAt,
-                        onClick = onClickPost
+                        onClick = { onClickPost(post.id) }
                     )
                 }
             }

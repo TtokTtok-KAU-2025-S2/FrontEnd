@@ -1,5 +1,6 @@
 package com.kau.ttokttok.data.local.repository
 
+import com.kau.ttokttok._core.network.auth.toPlainRequestBody
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok._core.network.result.safeApiCall
 import com.kau.ttokttok.data.remote.api.CommunityApiService
@@ -16,13 +17,11 @@ class CommunityRepositoryImpl @Inject constructor(
     private val api: CommunityApiService
 ) : CommunityRepository {
     override suspend fun createPost(title: String, content: String): String {
-        val req = CreatePostCommunityReq(
-            title = title,
-            content = content,
+        return when (val response = safeApiCall { api.createPost(
+            title = title.toPlainRequestBody(),
+            content = content.toPlainRequestBody(),
             noticePicture = null
-        )
-
-        return when (val response = safeApiCall { api.createPost(req) }) {
+        ) }) {
             is NetworkResult.Success -> {
                 response.data.title
             }

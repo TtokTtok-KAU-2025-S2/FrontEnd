@@ -28,14 +28,13 @@ class CommunityDetailViewModel @Inject constructor(
     private val useCase: GetPostDetailUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
-
-    private val id: Long = savedStateHandle["id"] ?: -1L
+    private val communityId: Long = checkNotNull(savedStateHandle.get<Long>("communityId"))
 
     private val _uiState = MutableStateFlow(CommunityDetailUiState())
     val uiState: StateFlow<CommunityDetailUiState> = _uiState
 
     init {
-        getCommunityDetail(id)
+        getCommunityDetail(communityId)
     }
 
     fun getCommunityDetail(id: Long) {

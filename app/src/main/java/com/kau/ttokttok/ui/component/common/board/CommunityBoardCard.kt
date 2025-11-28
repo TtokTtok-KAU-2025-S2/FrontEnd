@@ -24,15 +24,14 @@ import java.time.LocalDateTime
 
 @Composable
 fun CommunityBoardCard(
-    id: Long,
     title: String,
     createdAt: LocalDateTime,
-    onClick: (Long) -> Unit
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(id) },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Slate800),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(0.5.dp, Slate700),

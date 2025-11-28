@@ -39,6 +39,7 @@ val Green400 = Color(0xFF34D399)
 
 val Orange50  = Color(0xFFFFF7ED)
 val Orange200 = Color(0xFFFECBA1)
+val Orange500 = Color(0xFFF97316) // border-l-orange-500
 val Orange900 = Color(0xFF7C2D12)
 val Gray700   = Color(0xFF374151)
 val Gray900   = Color(0xFF111827)

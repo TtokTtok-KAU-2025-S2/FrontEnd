@@ -11,15 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-private val Slate800 = Color(0xFF1E293B)
-private val Slate700 = Color(0xFF334155)
-private val Gray400 = Color(0xFF9CA3AF)
-private val Gray100 = Color(0xFFF3F4F6)
-private val Orange500 = Color(0xFFF97316) // border-l-orange-500
+import com.kau.ttokttok.ui.theme.*
 
 @Composable
 fun PreConsiderationBoardCard(
@@ -62,7 +56,7 @@ fun PreConsiderationBoardCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${authorLocation} 주민",
+                        text = "$authorLocation 주민",
                         color = Gray400,
                         fontSize = 12.sp
                     )
