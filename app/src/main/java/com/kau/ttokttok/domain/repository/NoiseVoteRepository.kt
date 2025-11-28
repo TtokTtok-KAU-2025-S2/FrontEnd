@@ -8,12 +8,12 @@ import com.kau.ttokttok.data.remote.dto.noiseboard.res.CancelVoteRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.DeleteCommentRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.FirstVoteRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostDetailNoiseBoardRes
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostsNoiseBoardRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.ModifyCommentRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.PostCommentRes
+import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
 
 interface NoiseVoteRepository {
-    suspend fun getPosts(): NetworkResult<GetPostsNoiseBoardRes>
+    suspend fun getPosts(): List<NoiseVoteBoard>
     suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailNoiseBoardRes>
     suspend fun firstVote(
         id: Long,

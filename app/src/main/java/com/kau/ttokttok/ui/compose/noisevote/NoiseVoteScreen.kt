@@ -7,36 +7,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.card.NoiseVoteBoardCard
 import com.kau.ttokttok.ui.component.common.header.NoiseVoteBoardHeader
-
-private val Slate900 = Color(0xFF0F172A) // bg-slate-900
-
-// 예시 데이터 모델
-data class NoiseReport(
-    val id: Long,
-    val authorLocation: String,
-    val summary: String
-)
+import com.kau.ttokttok.ui.theme.*
 
 @Preview
 @Composable
 fun NoiseVoteScreen(
     modifier: Modifier = Modifier,
-    onClickPost: (Long) -> Unit = { },
-    posts: List<NoiseReport> = emptyList()
+    uiState: NoiseVoteUiState = NoiseVoteUiState(),
+    onClickPost: (Long) -> Unit = { }
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Slate900)
+            .statusBarsPadding()
             .padding(bottom = 64.dp)
     ) {
         // 헤더
@@ -53,12 +46,12 @@ fun NoiseVoteScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(
-                items = posts,
+                items = uiState.posts,
                 key = { it.id }
             ) { report ->
                 NoiseVoteBoardCard(
                     authorLocation = report.authorLocation,
-                    title = report.summary,
+                    title = report.title,
                     onClick = { onClickPost(report.id) }
                 )
             }

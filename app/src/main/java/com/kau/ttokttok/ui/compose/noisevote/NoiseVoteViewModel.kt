@@ -1,21 +1,31 @@
 package com.kau.ttokttok.ui.compose.noisevote
 
+import android.util.Log
+import androidx.compose.runtime.currentComposer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.data.local.repository.NoiseVoteRepositoryImpl
+import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
+import com.kau.ttokttok.domain.usecase.noisevote.LoadPostsNoiseVoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class NoiseVoteUiState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+
+    val posts: List<NoiseVoteBoard> = emptyList()
+)
+
 @HiltViewModel
 class NoiseVoteViewModel @Inject constructor(
-    private val repository: NoiseVoteRepositoryImpl
+    private val useCase: LoadPostsNoiseVoteUseCase
 ): ViewModel() {
-    private val _posts = MutableStateFlow<List<NoiseReport>>(emptyList())
-    val posts: StateFlow<List<NoiseReport>> = _posts
+    private val _uiState = MutableStateFlow(NoiseVoteUiState())
+    val uiState: StateFlow<NoiseVoteUiState> = _uiState
 
     init {
         loadPosts()
@@ -23,23 +33,32 @@ class NoiseVoteViewModel @Inject constructor(
 
     fun loadPosts() {
         viewModelScope.launch {
-            when (val result = repository.getPosts()) {
-                is NetworkResult.Success -> {
-                    val uiPosts = result.data.reports.map { dto ->
-                        NoiseReport(
-                            id = dto.reportId,
-                            authorLocation = String.format("%s동", dto.authorDong),
-                            summary = dto.summary
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
+
+            useCase.invoke()
+                .onSuccess { posts ->
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            posts = posts
+                        )
+                    }
+                }
+
+                .onFailure { e ->
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            errorMessage = e.message
                         )
                     }
 
-                    _posts.value = uiPosts
+                    // TODO: 다이얼로그 추가
                 }
-
-                is NetworkResult.Error -> {
-                    _posts.value = emptyList()
-                }
-            }
         }
     }
 }

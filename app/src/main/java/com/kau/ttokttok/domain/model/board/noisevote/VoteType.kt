@@ -1,4 +1,4 @@
-package com.kau.ttokttok.domain.model.board
+package com.kau.ttokttok.domain.model.board.noisevote
 
 enum class VoteType {
     HEARD,

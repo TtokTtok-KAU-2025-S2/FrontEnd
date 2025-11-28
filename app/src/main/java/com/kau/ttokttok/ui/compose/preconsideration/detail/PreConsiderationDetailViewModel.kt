@@ -46,7 +46,6 @@ class PreConsiderationDetailViewModel @Inject constructor(
                     val title = result.data.title
                     val content = result.data.content
                     val buildingNumber = result.data.authorDong
-                    val unitNumber = result.data.authorHosu
                     val noticeDate = result.data.eventDate
                     val noticeTime = result.data.eventTime
                     val noticeReason = result.data.eventReason
@@ -56,7 +55,6 @@ class PreConsiderationDetailViewModel @Inject constructor(
                         title = title,
                         content = content,
                         buildingNumber = buildingNumber,
-                        unitNumber = unitNumber,
                         noticeDate = noticeDate,
                         noticeTime = noticeTime,
                         noticeReason = noticeReason,

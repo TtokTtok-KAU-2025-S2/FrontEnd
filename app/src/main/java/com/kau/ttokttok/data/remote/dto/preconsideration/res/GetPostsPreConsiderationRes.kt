@@ -1,12 +1,7 @@
 package com.kau.ttokttok.data.remote.dto.preconsideration.res
 
 data class GetPostsPreConsiderationRes(
-    val preNotices: List<PreNotice>,
-    val listSize: Int,
-    val totalPage: Int,
-    val totalElements: Int,
-    val isFirst: Boolean,
-    val isLast: Boolean
+    val preNotices: List<PreNotice>
 )
 
 data class PreNotice(

@@ -10,10 +10,10 @@ fun NoiseVoteRoute(
     viewModel: NoiseVoteViewModel = hiltViewModel(),
     onClickPost: (Long) -> Unit
 ) {
-    val posts by viewModel.posts.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NoiseVoteScreen(
-        onClickPost = onClickPost,
-        posts = posts
+        uiState = uiState,
+        onClickPost = onClickPost
     )
 }

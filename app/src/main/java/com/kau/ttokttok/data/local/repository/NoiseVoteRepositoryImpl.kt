@@ -13,6 +13,8 @@ import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostDetailNoiseBoardRe
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.GetPostsNoiseBoardRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.ModifyCommentRes
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.PostCommentRes
+import com.kau.ttokttok.data.remote.dto.noiseboard.res.toNoiseVoteBoard
+import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
 import com.kau.ttokttok.domain.repository.NoiseVoteRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,8 +23,19 @@ import javax.inject.Singleton
 class NoiseVoteRepositoryImpl @Inject constructor(
     private val api: NoiseStatusBoardApiService
 ): NoiseVoteRepository {
-    override suspend fun getPosts(): NetworkResult<GetPostsNoiseBoardRes> =
-        safeApiCall { api.getPosts() }
+    override suspend fun getPosts(): List<NoiseVoteBoard> {
+        return when (val response = safeApiCall { api.getPosts() }) {
+            is NetworkResult.Success -> {
+                response.data.reports.map {
+                    it.toNoiseVoteBoard()
+                }
+            }
+
+            is NetworkResult.Error -> {
+                throw Exception(response.message ?: "게시글 불러오기에 실패했습니다.")
+            }
+        }
+    }
 
     override suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailNoiseBoardRes> =
         safeApiCall { api.getPostDetail(id) }
