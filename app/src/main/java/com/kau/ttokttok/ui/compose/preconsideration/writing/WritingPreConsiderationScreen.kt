@@ -22,37 +22,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kau.ttokttok.domain.model.board.preconsideration.PreConsiderationBoardDetail
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
+import com.kau.ttokttok.ui.compose.community.detail.Gray200
 import com.kau.ttokttok.ui.compose.community.writing.PostBottomActions
 import com.kau.ttokttok.ui.compose.community.writing.PostContentField
 import com.kau.ttokttok.ui.compose.community.writing.PostTitleField
-import java.time.LocalDate
-import java.time.LocalDateTime
+import com.kau.ttokttok.ui.theme.*
 
-private val Gray700 = Color(0xFF374151)
-private val Gray200 = Color(0xFFE5E7EB)
-private val White = Color.White
-private val Gray400 = Color(0xFF9CA3AF)
-private val Blue600 = Color(0xFF2563EB)
-private val Orange50  = Color(0xFFFFF7ED) // bg-orange-50
-private val Orange200 = Color(0xFFFECBA1) // border-orange-200
-private val Orange900 = Color(0xFF7C2D12) // text-orange-900
+enum class PreConsiderationWritingMode { CREATE, EDIT }
+
 @Preview
 @Composable
 fun WritingPreConsiderationScreen(
     modifier: Modifier = Modifier,
+    existing: PreConsiderationBoardDetail? = null, // 🔥 수정일 때 들어오는 값
+    mode: PreConsiderationWritingMode = PreConsiderationWritingMode.CREATE,
     onClickCreate: (String, String, String, String, String) -> Unit = {_, _, _, _, _ -> },
+    onClickEdit: (String, String, String, String, String) -> Unit = {_, _, _, _, _ -> },
     onClickBack: () -> Unit = { }
 ) {
-    var title by remember { mutableStateOf("")}
-    var content by remember { mutableStateOf("")}
-    var noticeDate by remember { mutableStateOf("연도-월-일")}
-    var noticeTime by remember { mutableStateOf("00:00 - 00:00")}
-    var noticeReason by remember { mutableStateOf("")}
+    var title by remember { mutableStateOf(existing?.title ?:"")}
+    var content by remember { mutableStateOf(existing?.content ?: "")}
+    var noticeDate by remember { mutableStateOf(existing?.noticeDate ?: "연도-월-일")}
+    var noticeTime by remember { mutableStateOf(existing?.noticeTime ?: "00:00 - 00:00")}
+    var noticeReason by remember { mutableStateOf(existing?.noticeReason ?: "")}
 
     Column(
         modifier = modifier
@@ -61,6 +60,7 @@ fun WritingPreConsiderationScreen(
     ) {
         // 헤더
         WhiteHeader(
+            title = if (mode == PreConsiderationWritingMode.CREATE) "게시글 작성" else "게시글 수정",
             onBack = onClickBack
         )
 
@@ -95,7 +95,11 @@ fun WritingPreConsiderationScreen(
         PostBottomActions(
             enabled = title.isNotBlank() && content.isNotBlank() && noticeDate.isNotBlank() && noticeTime.isNotBlank() && noticeReason.isNotBlank(),
             onSubmit = {
-                onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+                if (mode == PreConsiderationWritingMode.CREATE)
+                    onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+
+                else
+                    onClickEdit(title, content, noticeDate, noticeTime, noticeReason)
             }
         )
     }

@@ -29,6 +29,7 @@ import com.kau.ttokttok.ui.compose.community.detail.Gray500
 import com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailUiState
 import com.kau.ttokttok.ui.theme.Gray50Bg
 import com.kau.ttokttok.ui.theme.Gray900
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,12 +68,14 @@ fun PreConsiderationBoardDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = String.format("%s", uiState.buildingNumber),
+                        text = String.format("%s", uiState.preConsiderationBoardDetail?.buildingNumber),
                         color = Gray500,
                         fontSize = 12.sp
                     )
                     Text(
-                        text = uiState.createdAt,
+                        text = uiState.preConsiderationBoardDetail?.createdAt?.format(
+                            DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                        ) ?: "",
                         color = Gray400,
                         fontSize = 11.sp
                     )
@@ -80,14 +83,14 @@ fun PreConsiderationBoardDetailContent(
 
                 // 제목
                 Text(
-                    text = uiState.title,
+                    text = uiState.preConsiderationBoardDetail?.title ?: "",
                     color = Gray900,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
                 Text(
-                    text = uiState.content,
+                    text = uiState.preConsiderationBoardDetail?.content ?: "",
                     color = Gray900,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(bottom = 12.dp)

@@ -10,12 +10,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class PreConsiderationUiState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+
+    val posts: List<PreConsiderationPost>? = null
+)
+
 @HiltViewModel
 class PreConsiderationViewModel @Inject constructor(
     private val repository: PreConsiderationRepositoryImpl
 ): ViewModel() {
-    private val _posts = MutableStateFlow<List<PreConsiderationPost>>(emptyList())
-    val posts: StateFlow<List<PreConsiderationPost>> = _posts
+    private val _uiState = MutableStateFlow(PreConsiderationUiState())
+    val uiState: StateFlow<PreConsiderationUiState> = _uiState
 
     init {
         loadPosts()
@@ -33,11 +40,15 @@ class PreConsiderationViewModel @Inject constructor(
                         )
                     }
 
-                    _posts.value = uiPosts
+                    _uiState.value = _uiState.value.copy(
+                        posts = uiPosts
+                    )
                 }
 
                 is NetworkResult.Error -> {
-                    _posts.value = emptyList()
+                    _uiState.value = _uiState.value.copy(
+                        posts = emptyList()
+                    )
                 }
             }
         }

@@ -11,11 +11,14 @@ fun PreConsiderationRoute(
     onClickCreatePost: () -> Unit,
     onClickPost: (Long) -> Unit
 ) {
-    val posts by viewModel.posts.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     PreConsiderationScreen(
+        uiState = uiState,
         onClickCreatePost = onClickCreatePost,
         onClickPost = onClickPost,
-        posts = posts
+        onRefresh = {
+            viewModel.loadPosts()
+        }
     )
 }
