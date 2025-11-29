@@ -29,7 +29,8 @@ data class DailyCalendarRecord(
     val dbHigh: Double,
     val dbAvg: Double,
     val description: String?,  // 사용자가 작성한 메모 (소음일기용)
-    val summary: String?       // AI가 자동 생성한 요약 (소음현황판용)
+    val summary: String?,      // AI가 자동 생성한 요약 (소음현황판용)
+    val hasReport: Boolean = false // ✅ 서버에서 리포트 생성 여부를 내려줄 경우 사용, 없으면 기본값 false
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
@@ -38,7 +39,7 @@ data class DailyCalendarRecord(
     fun toDomain(): NoiseLog {
         val measuredDate = parseStringToDate(occuredAt)
 
-        // 소음일기는 사용자가 작성한 description을 표시
+        // 소음일기는 사용자가 작성한 description을 메모로 사용
         val memoText = description ?: ""
 
         return NoiseLog(
@@ -48,7 +49,7 @@ data class DailyCalendarRecord(
             avgDecibel = dbAvg,
             memo = memoText,
             measuredAt = measuredDate,
-            hasReport = false
+            hasReport = hasReport
         )
     }
 

@@ -18,7 +18,8 @@ data class ModifyNoiseRecordRes(
     val dbAvg: Double,
     val description: String?,  // 사용자가 작성한 메모 (소음일기용)
     val summary: String?,      // AI가 자동 생성한 요약 (소음현황판용, 전송 시 생성됨)
-    val updatedAt: String
+    val updatedAt: String,
+    val hasReport: Boolean = false // ✅ 서버에서 리포트 여부를 내려줄 수 있도록 필드 추가 (기본값 false)
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
@@ -34,7 +35,7 @@ data class ModifyNoiseRecordRes(
             avgDecibel = dbAvg,
             memo = description ?: "",
             measuredAt = measuredDate,
-            hasReport = false
+            hasReport = hasReport
         )
     }
 

@@ -221,11 +221,19 @@ class NoiseMeasurementFragment : Fragment() {
     private suspend fun processAudioBuffer(buffer: ShortArray, read: Int) { // 오디오 버퍼 분석 및 데시벨 계산
         val rmsRaw = computeRms(buffer, read)
         rmsEma = rmsEma?.let { RMS_EMA_ALPHA * rmsRaw + (1 - RMS_EMA_ALPHA) * it } ?: rmsRaw
+
         if (baselineRms == null) {
             performCalibration(rmsEma!!)
+            android.util.Log.d("NoiseMeasurement", "📏 Calibration... rmsEma=${rmsEma}")
             return
         }
+
         val displayDb = calculateAndSmoothDb(rmsEma!!)
+        android.util.Log.d(
+            "NoiseMeasurement",
+            "🎧 Frame: effRms=${String.format("%.2f", rmsEma)} baseline=${String.format("%.2f", baselineRms)} dB=${String.format("%.1f", displayDb)}"
+        )
+
         synchronized(dbList) {
             dbList.add(displayDb)
             if (displayDb > maxDb) maxDb = displayDb
@@ -239,16 +247,25 @@ class NoiseMeasurementFragment : Fragment() {
         if (++calibrationCount >= CALIBRATION_FRAMES) {
             calibrationRmsList.sort()
             val idx = (calibrationRmsList.size * 0.25).toInt().coerceIn(0, calibrationRmsList.lastIndex)
-            baselineRms = calibrationRmsList[idx].coerceAtLeast(10.0)
+            // 너무 큰 기준이 잡혀버리면 항상 5dB로 깔리는 현상이 있으니 상/하한을 둔다.
+            baselineRms = calibrationRmsList[idx]
+                .coerceAtLeast(1.0)      // 0에 너무 가깝지 않게
+                .coerceAtMost(2000.0)    // 과도하게 큰 값 방지
+            android.util.Log.d(
+                "NoiseMeasurement",
+                "✅ Calibration done: baselineRms=${String.format("%.2f", baselineRms)} (idx=$idx, size=${calibrationRmsList.size})"
+            )
         }
     }
 
     private fun calculateAndSmoothDb(effRms: Double): Double { // RMS를 실제 데시벨로 변환
-        val ratio = (effRms / baselineRms!!).coerceAtLeast(0.01)
+        // ratio가 항상 0.01로 깔리지 않도록 하한/상한을 완화
+        val ratio = (effRms / baselineRms!!).coerceIn(0.1, 50.0)
         val relativeDb = 20.0 * log10(ratio)
-        val scaleFactor = 1.5 // 민감도 조정
+        val scaleFactor = 1.3 // 민감도 약간 완화
         val rawDb = BASE_DB + (relativeDb * scaleFactor)
-        val clampedDb = rawDb.coerceIn(5.0, 85.0) // 실제 측정 가능한 범위로 제한
+        val clampedDb = rawDb.coerceIn(10.0, 85.0) // 바닥값을 10dB로 약간 올림
+
         smoothedDb = smoothedDb?.let { prev -> // 급격한 변화를 부드럽게 처리
             val diff = clampedDb - prev
             when {
@@ -257,6 +274,7 @@ class NoiseMeasurementFragment : Fragment() {
                 else -> kotlin.math.max(clampedDb, prev - RELEASE_RATE_PER_TICK)
             }
         } ?: clampedDb
+
         return smoothedDb!!
     }
 
@@ -328,12 +346,14 @@ class NoiseMeasurementFragment : Fragment() {
             }
         } else {
             // 녹음 파일이 없으면 바로 이동
-            moveToNoiseLogForm()
+            navigateWithRecordId(null)
         }
     }
 
     private suspend fun uploadRecordingFileAndNavigate(recordingFile: File) {
         try {
+            var uploadedRecordId: Long? = null
+
             // 1️⃣ 로컬에 영구 저장
             saveRecordingToLocalStorage(recordingFile)
 
@@ -344,17 +364,20 @@ class NoiseMeasurementFragment : Fragment() {
             // 2️⃣ 서버에 업로드
             val result = recordingRepository.uploadRecording(recordingFile)
             result.onSuccess { response ->
-                recordingFilePath = response.fileUrl // 업로드된 URL로 교체
+                uploadedRecordId = response.recordingId
+                android.util.Log.d("NoiseMeasurementFragment", "✅ 녹음 파일 업로드 성공!")
+                android.util.Log.d("NoiseMeasurementFragment", "  - recordId: ${response.recordingId}")
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "업로드 완료! (로컬 저장됨)", Toast.LENGTH_SHORT).show()
-                    moveToNoiseLogForm()
+                    navigateWithRecordId(uploadedRecordId)
                 }
             }.onFailure { e ->
+                android.util.Log.e("NoiseMeasurementFragment", "❌ 업로드 실패: ${e.message}", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "업로드 실패: ${e.message} (로컬 저장됨)", Toast.LENGTH_SHORT).show()
-                    // 실패해도 로컬에는 저장됨
-                    moveToNoiseLogForm()
+                    // 실패해도 화면은 이동
+                    navigateWithRecordId(null)
                 }
             }
         } catch (e: Exception) {
@@ -362,20 +385,23 @@ class NoiseMeasurementFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 if (isAdded) {
                     Toast.makeText(requireContext(), "오류 발생: ${e.message}", Toast.LENGTH_SHORT).show()
-                    moveToNoiseLogForm()
+                    navigateWithRecordId(null)
                 }
             }
         }
     }
 
-    private fun moveToNoiseLogForm() {
+    private fun navigateWithRecordId(recordId: Long?) {
         val bundle = Bundle().apply {
             putDouble("max_db", maxDb)
             putDouble("avg_db", avgDb)
             putLong("duration", (System.currentTimeMillis() - startTime) / 1000)
             putLong("measured_at", startTime)
-            recordingFilePath?.let { putString("recording_url", it) }
+            recordId?.let { putLong("record_id", it) }
         }
+
+        android.util.Log.d("NoiseMeasurementFragment", "📋 소음일기 작성 화면으로 이동")
+        android.util.Log.d("NoiseMeasurementFragment", "  - recordId: $recordId")
 
         findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)
     }

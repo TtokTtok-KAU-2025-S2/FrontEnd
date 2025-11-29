@@ -309,15 +309,35 @@ class NoiseLogViewModel @Inject constructor(
     // 리포트 생성
     fun createReport(selectedIds: List<String>) {
         viewModelScope.launch {
-            val ids = selectedIds.mapNotNull { it.toLongOrNull() }
+            // 현재 선택된 로그들 중 실제 객체 조회
+            val selectedLogs = _selectedLogs.value.filter { it.id in selectedIds }
+
+            // 이미 리포트를 보낸 로그 필터링
+            val logsForReport = selectedLogs.filter { !it.hasReport }
+            val alreadyReportedCount = selectedLogs.size - logsForReport.size
+
+            if (logsForReport.isEmpty()) {
+                Log.w("NoiseLogViewModel", "createReport 호출되었지만, 이미 리포트가 생성된 일기만 선택됨")
+                _uiMessage.value = "이미 소음현황판으로 전송된 일기입니다. 다시 전송할 수 없습니다."
+                return@launch
+            }
+
+            if (alreadyReportedCount > 0) {
+                Log.w(
+                    "NoiseLogViewModel",
+                    "createReport: ${alreadyReportedCount}개는 이미 리포트가 생성된 일기라 건너뜀"
+                )
+            }
+
+            val ids = logsForReport.mapNotNull { it.id?.toLongOrNull() }
             if (ids.isEmpty()) {
-                Log.w("NoiseLogViewModel", "createReport 호출됐지만 유효한 ID가 없음")
+                Log.w("NoiseLogViewModel", "createReport 호출되었지만 유효한 ID가 없음")
                 return@launch
             }
 
             Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             Log.d("NoiseLogViewModel", "리포트 생성 API 호출 시작")
-            Log.d("NoiseLogViewModel", "선택된 소음 일기 개수: ${ids.size}개")
+            Log.d("NoiseLogViewModel", "선택된 소음 일기 개수: ${ids.size}개 (실제 전송 대상)")
             Log.d("NoiseLogViewModel", "요청 URL: POST /noise/records/{recordId}/send")
             Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
@@ -326,7 +346,6 @@ class NoiseLogViewModel @Inject constructor(
 
             // 각 소음 일기에 대해 개별적으로 소음현황판 전송
             ids.forEach { recordId ->
-                // 전송할 소음 일기 정보 조회
                 val noiseLog = _selectedLogs.value.find { it.id == recordId.toString() }
 
                 Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -348,6 +367,10 @@ class NoiseLogViewModel @Inject constructor(
                         Log.d("NoiseLogViewModel", "  - 생성된 소음현황판 게시글 ID: ${result.data}")
                         Log.d("NoiseLogViewModel", "  - AI가 description을 분석하여 summary 자동 생성됨")
                         Log.d("NoiseLogViewModel", "  💡 소음현황판에서 확인하세요!")
+
+                        // TODO: 서버 응답에 hasReport 상태가 포함되면, 해당 값을 기준으로 동기화 필요
+                        // 여기서는 일단 로컬 모델만 true로 토글
+                        toggleReportState(recordId.toString())
                     }
                     is NetworkResult.Error -> {
                         failCount++
@@ -369,7 +392,7 @@ class NoiseLogViewModel @Inject constructor(
                     }
                 }
                 successCount == 0 -> {
-                    "소음현황판 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                    "소음현황판 전송에 실패했습니다. 잠시 후 다시 시도해주세요."
                 }
                 else -> {
                     "${successCount}개 성공, ${failCount}개 실패했습니다"
@@ -379,17 +402,18 @@ class NoiseLogViewModel @Inject constructor(
             _uiMessage.value = resultMessage
 
             Log.d("NoiseLogViewModel", "")
-            Log.d("NoiseLogViewModel", "📊 전송 결과 요약:")
-            Log.d("NoiseLogViewModel", "  - 성공: ${successCount}개")
-            Log.d("NoiseLogViewModel", "  - 실패: ${failCount}개")
-            Log.d("NoiseLogViewModel", "  - 사용자 메시지: $resultMessage")
+        }
+    }
 
-            // 전송 후 헤더/리스트 갱신
-            if (successCount > 0) {
-                Log.d("NoiseLogViewModel", "  🔄 소음일기 데이터 새로고침 중...")
-                refreshHeaderCounters()
-                selectDate(_selectedDate.value)
-            }
+    // 이미 정의된 함수: hasReport 토글
+    fun toggleReportState(id: String) {
+        val current = _selectedLogs.value.toMutableList()
+        val index = current.indexOfFirst { it.id == id }
+        if (index != -1) {
+            val log = current[index]
+            val updated = log.copy(hasReport = !log.hasReport)
+            current[index] = updated
+            _selectedLogs.value = current
         }
     }
 

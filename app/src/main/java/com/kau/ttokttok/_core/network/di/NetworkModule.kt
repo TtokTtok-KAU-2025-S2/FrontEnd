@@ -1,6 +1,7 @@
 package com.kau.ttokttok._core.network.di
 
 import com.kau.ttokttok._core.network.auth.TokenProvider
+import com.kau.ttokttok.data.remote.api.AIApiService
 import com.kau.ttokttok.data.remote.api.AuthApiService
 import com.kau.ttokttok.data.remote.api.CommunityApiService
 import com.kau.ttokttok.data.remote.api.NoiseCalendarApiService
@@ -165,4 +166,10 @@ object NetworkModule {
     fun provideRecordingApiService(
         retrofit: Retrofit
     ): RecordingApiService = retrofit.create(RecordingApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAIApiService(
+        retrofit: Retrofit
+    ): AIApiService = retrofit.create(AIApiService::class.java)
 }
