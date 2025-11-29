@@ -14,18 +14,19 @@ data class CreateNoiseRecordRes(
     val dbAvg: Double,
     val category: String,
     val grade: String,
-    val description: String?,
-    val summary: String?,
+    val description: String?,  // 사용자가 작성한 메모 (소음일기용)
+    val summary: String?,      // AI가 자동 생성한 요약 (소음현황판용, 전송 시 생성됨)
     // 서버에서 LocalDateTime 문자열을 내려주므로, Moshi 커스텀 어댑터 없이 String으로 수신
     val occuredAt: String,
     val updateAt: String
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
+     * 소음일기에서는 description 우선 표시
      */
     fun toDomain(): NoiseLog {
         val measuredDate = parseStringToDate(occuredAt)
-        val memoText = summary ?: description ?: ""
+        val memoText = description ?: ""
 
         return NoiseLog(
             id = id.toString(),

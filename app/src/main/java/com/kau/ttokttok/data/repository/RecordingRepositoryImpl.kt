@@ -19,8 +19,14 @@ class RecordingRepositoryImpl @Inject constructor(
             val requestFile = file.asRequestBody("audio/aac".toMediaTypeOrNull())
             val multipartBody = MultipartBody.Part.createFormData("voiceFile", file.name, requestFile)
 
-            val response = recordingApiService.uploadRecording(multipartBody)
-            Result.success(response)
+            val apiResponse = recordingApiService.uploadRecording(multipartBody)
+
+            // ApiResponse 래퍼를 벗겨서 처리
+            if (apiResponse.isSuccess && apiResponse.result != null) {
+                Result.success(apiResponse.result)
+            } else {
+                Result.failure(Exception("업로드 실패: ${apiResponse.message}"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }

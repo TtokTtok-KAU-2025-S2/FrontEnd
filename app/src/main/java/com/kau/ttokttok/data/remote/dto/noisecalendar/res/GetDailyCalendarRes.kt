@@ -28,21 +28,18 @@ data class DailyCalendarRecord(
     val grade: String,
     val dbHigh: Double,
     val dbAvg: Double,
-    val summary: String?,
-    val description: String?  // 등록 시 서버가 description으로 보낼 수 있으므로 추가
+    val description: String?,  // 사용자가 작성한 메모 (소음일기용)
+    val summary: String?       // AI가 자동 생성한 요약 (소음현황판용)
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
+     * 소음일기에서는 description 우선 표시
      */
     fun toDomain(): NoiseLog {
         val measuredDate = parseStringToDate(occuredAt)
 
-        // 메모 우선순위: summary(수정 시) > description(등록 시) > 빈 문자열
-        val memoText = when {
-            !summary.isNullOrBlank() -> summary
-            !description.isNullOrBlank() -> description
-            else -> ""
-        }
+        // 소음일기는 사용자가 작성한 description을 표시
+        val memoText = description ?: ""
 
         return NoiseLog(
             id = recordId.toString(),

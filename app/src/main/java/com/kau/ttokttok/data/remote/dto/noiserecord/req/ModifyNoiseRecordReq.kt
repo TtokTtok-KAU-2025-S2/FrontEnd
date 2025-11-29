@@ -12,7 +12,7 @@ data class ModifyNoiseRecordReq(
     val noiseGrade: String,
     val dbHigh: Double,
     val dbAvg: Double,
-    val summary: String?
+    val description: String?  // 사용자가 작성한 메모 (소음일기용)
 ) {
     companion object {
         /**
@@ -25,7 +25,7 @@ data class ModifyNoiseRecordReq(
                 noiseGrade = mapGrade(noiseLog.avgDecibel),
                 dbHigh = noiseLog.maxDecibel,
                 dbAvg = noiseLog.avgDecibel,
-                summary = noiseLog.memo
+                description = noiseLog.memo
             )
         }
 

@@ -16,11 +16,13 @@ data class ModifyNoiseRecordRes(
     val noiseGrade: String,
     val dbHigh: Double,
     val dbAvg: Double,
-    val summary: String,
+    val description: String?,  // 사용자가 작성한 메모 (소음일기용)
+    val summary: String?,      // AI가 자동 생성한 요약 (소음현황판용, 전송 시 생성됨)
     val updatedAt: String
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
+     * 소음일기에서는 description 우선 표시
      */
     fun toDomain(): NoiseLog {
         val measuredDate = parseStringToDate(occuredAt)
@@ -30,7 +32,7 @@ data class ModifyNoiseRecordRes(
             noiseType = category,
             maxDecibel = dbHigh,
             avgDecibel = dbAvg,
-            memo = summary,
+            memo = description ?: "",
             measuredAt = measuredDate,
             hasReport = false
         )

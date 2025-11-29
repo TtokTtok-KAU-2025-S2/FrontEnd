@@ -181,21 +181,8 @@ class NoiseLogViewModel @Inject constructor(
                     // 서버 응답 확인용 로그
                     Log.d(
                         "NoiseLogViewModel",
-                        "createNoiseRecord 성공 - id=${result.data.id}, description=${result.data.description}, summary=${result.data.summary}"
+                        "createNoiseRecord 성공 - id=${result.data.id}, description=${result.data.description}"
                     )
-
-                    // 서버가 등록 시 description만 저장하고 summary는 null로 주는 문제 해결:
-                    // 즉시 수정 API를 호출해서 summary에도 메모를 저장
-                    if (result.data.summary.isNullOrBlank() && !log.memo.isNullOrBlank()) {
-                        // Request DTO의 from() 팩토리 함수 사용
-                        val patchReq = ModifyNoiseRecordReq.from(log)
-
-                        // 백그라운드로 수정 API 호출 (실패해도 무시)
-                        viewModelScope.launch {
-                            safeApiCall { noiseRecordApiService.modifyNoiseRecord(result.data.id, patchReq) }
-                            Log.d("NoiseLogViewModel", "등록 직후 summary 업데이트 완료")
-                        }
-                    }
 
                     // 로컬 목록도 갱신해 화면 반영
                     repository.saveNoiseLog(log)
@@ -337,36 +324,52 @@ class NoiseLogViewModel @Inject constructor(
             var successCount = 0
             var failCount = 0
 
-            // 각 소음 일기에 대해 개별적으로 리포트 생성
+            // 각 소음 일기에 대해 개별적으로 소음현황판 전송
             ids.forEach { recordId ->
-                Log.d("NoiseLogViewModel", "리포트 전송 중... recordId=$recordId")
+                // 전송할 소음 일기 정보 조회
+                val noiseLog = _selectedLogs.value.find { it.id == recordId.toString() }
+
+                Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d("NoiseLogViewModel", "소음현황판 전송 중... recordId=$recordId")
+                noiseLog?.let {
+                    Log.d("NoiseLogViewModel", "📋 전송할 소음일기 정보:")
+                    Log.d("NoiseLogViewModel", "  - 소음 종류: ${it.noiseType}")
+                    Log.d("NoiseLogViewModel", "  - 최대 데시벨: ${it.maxDecibel}dB")
+                    Log.d("NoiseLogViewModel", "  - 평균 데시벨: ${it.avgDecibel}dB")
+                    Log.d("NoiseLogViewModel", "  - 측정 시간: ${it.duration}초")
+                    Log.d("NoiseLogViewModel", "  - Description(사용자 메모): ${it.memo}")
+                    Log.d("NoiseLogViewModel", "  ⬇️ 이 description을 AI가 분석하여 summary 자동 생성")
+                }
 
                 when (val result = safeApiCall { reportApiService.createReport(recordId) }) {
                     is NetworkResult.Success -> {
                         successCount++
-                        Log.d("NoiseLogViewModel", "✅ 리포트 전송 성공! (recordId=$recordId)")
-                        Log.d("NoiseLogViewModel", "  - 생성된 소음현황 게시글 ID: ${result.data}")
+                        Log.d("NoiseLogViewModel", "✅ 소음현황판 전송 성공! (recordId=$recordId)")
+                        Log.d("NoiseLogViewModel", "  - 생성된 소음현황판 게시글 ID: ${result.data}")
+                        Log.d("NoiseLogViewModel", "  - AI가 description을 분석하여 summary 자동 생성됨")
+                        Log.d("NoiseLogViewModel", "  💡 소음현황판에서 확인하세요!")
                     }
                     is NetworkResult.Error -> {
                         failCount++
-                        Log.e("NoiseLogViewModel", "❌ 리포트 전송 실패! (recordId=$recordId)")
+                        Log.e("NoiseLogViewModel", "❌ 소음현황판 전송 실패! (recordId=$recordId)")
                         Log.e("NoiseLogViewModel", "  - HTTP 코드: ${result.code}")
                         Log.e("NoiseLogViewModel", "  - 에러 메시지: ${result.message}")
                     }
                 }
+                Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             }
 
             // 결과 메시지 표시
             val resultMessage = when {
                 failCount == 0 -> {
                     if (successCount == 1) {
-                        "리포트가 소음현황 페이지로 전송되었습니다"
+                        "소음현황판으로 전송되었습니다 (AI 요약 자동 생성)"
                     } else {
-                        "${successCount}개의 리포트가 소음현황 페이지로 전송되었습니다"
+                        "${successCount}개가 소음현황판으로 전송되었습니다 (AI 요약 자동 생성)"
                     }
                 }
                 successCount == 0 -> {
-                    "리포트 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                    "소음현황판 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
                 }
                 else -> {
                     "${successCount}개 성공, ${failCount}개 실패했습니다"
@@ -375,8 +378,15 @@ class NoiseLogViewModel @Inject constructor(
 
             _uiMessage.value = resultMessage
 
-            // 리포트 생성 후 헤더/리스트 갱신
+            Log.d("NoiseLogViewModel", "")
+            Log.d("NoiseLogViewModel", "📊 전송 결과 요약:")
+            Log.d("NoiseLogViewModel", "  - 성공: ${successCount}개")
+            Log.d("NoiseLogViewModel", "  - 실패: ${failCount}개")
+            Log.d("NoiseLogViewModel", "  - 사용자 메시지: $resultMessage")
+
+            // 전송 후 헤더/리스트 갱신
             if (successCount > 0) {
+                Log.d("NoiseLogViewModel", "  🔄 소음일기 데이터 새로고침 중...")
                 refreshHeaderCounters()
                 selectDate(_selectedDate.value)
             }

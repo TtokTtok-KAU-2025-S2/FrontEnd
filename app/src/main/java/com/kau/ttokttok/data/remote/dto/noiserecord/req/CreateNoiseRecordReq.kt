@@ -13,9 +13,7 @@ data class CreateNoiseRecordReq(
     val dbAvg: Double,
     val category: String,    // FOOTSTEPS, HAMMERING, FURNITURE, MUSIC, UNKNOWN
     val grade: String,       // QUIET, NORMAL, LOUD
-    val description: String,
-    // 서버가 텍스트 메모를 summary로 저장할 수 있도록 등록 시에도 함께 전달
-    val summary: String?
+    val description: String  // 사용자가 작성한 메모 (소음일기용)
 ) {
     companion object {
         /**
@@ -29,8 +27,7 @@ data class CreateNoiseRecordReq(
                 dbAvg = noiseLog.avgDecibel,
                 category = mapCategory(noiseLog.noiseType),
                 grade = mapGrade(noiseLog.avgDecibel),
-                description = noiseLog.memo,
-                summary = noiseLog.memo
+                description = noiseLog.memo
             )
         }
 
