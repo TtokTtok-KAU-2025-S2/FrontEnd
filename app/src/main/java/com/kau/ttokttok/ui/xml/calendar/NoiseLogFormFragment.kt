@@ -127,12 +127,7 @@ class NoiseLogFormFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        binding.btnGenerateAiDiary.setOnClickListener {
-            if (validateInput()) {
-                generateAiDiary()
-            }
-        }
-
+        // 저장 버튼
         binding.btnSave.setOnClickListener {
             if (validateInput()) {
                 saveNoiseLog()
@@ -181,22 +176,6 @@ class NoiseLogFormFragment : Fragment() {
         return true
     }
 
-    // AI 일기 생성 - AI 서버에 요청하여 자동 일기 생성
-    private fun generateAiDiary() {
-        val memo = binding.etMemo.text.toString()
-
-        // 임시 AI 일기 생성 로직 (실제로는 서버 응답 사용)
-        val aiGeneratedDiary = buildString {
-            append("[$selectedNoiseType] $memo\n\n")
-            append("측정 시간: ${duration}초 동안 ")
-            append("최대 ${maxDb.toInt()}dB, 평균 ${avgDb.toInt()}dB의 소음이 감지되었습니다. ")
-            append("이러한 수준의 소음은 일상생활에 불편을 초래할 수 있으며, ")
-            append("지속적으로 발생할 경우 층간소음 문제로 발전할 가능성이 있습니다.")
-        }
-
-        binding.etMemo.setText(aiGeneratedDiary)
-        Toast.makeText(requireContext(), "AI 일기가 생성되었습니다", Toast.LENGTH_SHORT).show()
-    }
 
     private fun saveNoiseLog() {
         val noiseLog = NoiseLog(
