@@ -234,6 +234,46 @@
 
         </LinearLayout>
 
+        <!-- 녹음 파일 재생 및 완료 버튼 (측정 완료 후 표시) -->
+        <LinearLayout
+            android:id="@+id/recording_actions_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <!-- 녹음 파일 재생 버튼 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlayRecording"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="녹음 재생"
+                android:textColor="@color/colorPrimary"
+                app:icon="@android:drawable/ic_media_play"
+                app:iconTint="@color/colorPrimary"
+                app:backgroundTint="@android:color/white"
+                app:cornerRadius="24dp"
+                android:contentDescription="녹음 파일 재생" />
+
+            <!-- 측정 완료 버튼 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnComplete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="측정 완료"
+                android:textColor="@android:color/white"
+                app:icon="@android:drawable/ic_menu_send"
+                app:iconTint="@android:color/white"
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="24dp"
+                android:contentDescription="측정 완료하고 일기 작성" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

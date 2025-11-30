@@ -16,15 +16,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.Date
 import javax.inject.Inject
-import com.kau.ttokttok.data.remote.dto.noisecalendar.res.GetDailyCalendarRes
-import com.kau.ttokttok.data.remote.dto.noisecalendar.res.DailyCalendarRecord
-import java.time.LocalDateTime
 import android.util.Log
 
 /**
@@ -176,43 +173,16 @@ class NoiseLogViewModel @Inject constructor(
     // 새로운 소음 일기 저장 - Repository를 통해 서버에 저장
     fun saveLog(log: NoiseLog) {
         viewModelScope.launch {
-            val req = CreateNoiseRecordReq(
-                occuredAt = log.measuredAt.toIsoStringZ(),
-                duration = log.duration.toInt(), // 측정 duration(초)을 서버로 전달
-                dbHigh = log.maxDecibel,
-                dbAvg = log.avgDecibel,
-                category = mapCategory(log.noiseType),
-                grade = mapGrade(log.avgDecibel),
-                description = log.memo,
-                summary = log.memo   // 등록 시에도 summary에 메모를 함께 전달
-            )
+            // Request DTO의 from() 팩토리 함수 사용 (Date → String 변환)
+            val req = CreateNoiseRecordReq.from(log)
 
             when (val result = safeApiCall { noiseRecordApiService.createNoiseRecord(req) }) {
                 is NetworkResult.Success -> {
                     // 서버 응답 확인용 로그
                     Log.d(
                         "NoiseLogViewModel",
-                        "createNoiseRecord 성공 - id=${result.data.id}, description=${result.data.description}, summary=${result.data.summary}"
+                        "createNoiseRecord 성공 - id=${result.data.id}, description=${result.data.description}"
                     )
-
-                    // 서버가 등록 시 description만 저장하고 summary는 null로 주는 문제 해결:
-                    // 즉시 수정 API를 호출해서 summary에도 메모를 저장
-                    if (result.data.summary.isNullOrBlank() && !log.memo.isNullOrBlank()) {
-                        val patchReq = ModifyNoiseRecordReq(
-                            category = mapCategory(log.noiseType),
-                            occuredAt = log.measuredAt.toIsoStringZ(),
-                            noiseGrade = mapGrade(log.avgDecibel),
-                            dbHigh = log.maxDecibel,
-                            dbAvg = log.avgDecibel,
-                            summary = log.memo
-                        )
-
-                        // 백그라운드로 수정 API 호출 (실패해도 무시)
-                        viewModelScope.launch {
-                            safeApiCall { noiseRecordApiService.modifyNoiseRecord(result.data.id, patchReq) }
-                            Log.d("NoiseLogViewModel", "등록 직후 summary 업데이트 완료")
-                        }
-                    }
 
                     // 로컬 목록도 갱신해 화면 반영
                     repository.saveNoiseLog(log)
@@ -235,15 +205,8 @@ class NoiseLogViewModel @Inject constructor(
     fun updateLog(log: NoiseLog) {
         viewModelScope.launch {
             val id = log.id?.toLongOrNull() ?: return@launch
-            val req = ModifyNoiseRecordReq(
-                category = mapCategory(log.noiseType),
-                // 생성 API와 동일하게 UTC 기준 ISO_OFFSET_DATE_TIME 포맷 사용
-                occuredAt = log.measuredAt.toIsoStringZ(),
-                noiseGrade = mapGrade(log.avgDecibel),
-                dbHigh = log.maxDecibel,
-                dbAvg = log.avgDecibel,
-                summary = log.memo
-            )
+            // Request DTO의 from() 팩토리 함수 사용 (Date → String 변환)
+            val req = ModifyNoiseRecordReq.from(log)
 
             when (val result = safeApiCall { noiseRecordApiService.modifyNoiseRecord(id, req) }) {
                 is NetworkResult.Success -> {
@@ -346,51 +309,90 @@ class NoiseLogViewModel @Inject constructor(
     // 리포트 생성
     fun createReport(selectedIds: List<String>) {
         viewModelScope.launch {
-            val ids = selectedIds.mapNotNull { it.toLongOrNull() }
+            // 현재 선택된 로그들 중 실제 객체 조회
+            val selectedLogs = _selectedLogs.value.filter { it.id in selectedIds }
+
+            // 이미 리포트를 보낸 로그 필터링
+            val logsForReport = selectedLogs.filter { !it.hasReport }
+            val alreadyReportedCount = selectedLogs.size - logsForReport.size
+
+            if (logsForReport.isEmpty()) {
+                Log.w("NoiseLogViewModel", "createReport 호출되었지만, 이미 리포트가 생성된 일기만 선택됨")
+                _uiMessage.value = "이미 소음현황판으로 전송된 일기입니다. 다시 전송할 수 없습니다."
+                return@launch
+            }
+
+            if (alreadyReportedCount > 0) {
+                Log.w(
+                    "NoiseLogViewModel",
+                    "createReport: ${alreadyReportedCount}개는 이미 리포트가 생성된 일기라 건너뜀"
+                )
+            }
+
+            val ids = logsForReport.mapNotNull { it.id?.toLongOrNull() }
             if (ids.isEmpty()) {
-                Log.w("NoiseLogViewModel", "createReport 호출됐지만 유효한 ID가 없음")
+                Log.w("NoiseLogViewModel", "createReport 호출되었지만 유효한 ID가 없음")
                 return@launch
             }
 
             Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             Log.d("NoiseLogViewModel", "리포트 생성 API 호출 시작")
-            Log.d("NoiseLogViewModel", "선택된 소음 일기 개수: ${ids.size}개")
+            Log.d("NoiseLogViewModel", "선택된 소음 일기 개수: ${ids.size}개 (실제 전송 대상)")
             Log.d("NoiseLogViewModel", "요청 URL: POST /noise/records/{recordId}/send")
             Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
             var successCount = 0
             var failCount = 0
 
-            // 각 소음 일기에 대해 개별적으로 리포트 생성
+            // 각 소음 일기에 대해 개별적으로 소음현황판 전송
             ids.forEach { recordId ->
-                Log.d("NoiseLogViewModel", "리포트 전송 중... recordId=$recordId")
+                val noiseLog = _selectedLogs.value.find { it.id == recordId.toString() }
+
+                Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d("NoiseLogViewModel", "소음현황판 전송 중... recordId=$recordId")
+                noiseLog?.let {
+                    Log.d("NoiseLogViewModel", "📋 전송할 소음일기 정보:")
+                    Log.d("NoiseLogViewModel", "  - 소음 종류: ${it.noiseType}")
+                    Log.d("NoiseLogViewModel", "  - 최대 데시벨: ${it.maxDecibel}dB")
+                    Log.d("NoiseLogViewModel", "  - 평균 데시벨: ${it.avgDecibel}dB")
+                    Log.d("NoiseLogViewModel", "  - 측정 시간: ${it.duration}초")
+                    Log.d("NoiseLogViewModel", "  - Description(사용자 메모): ${it.memo}")
+                    Log.d("NoiseLogViewModel", "  ⬇️ 이 description을 AI가 분석하여 summary 자동 생성")
+                }
 
                 when (val result = safeApiCall { reportApiService.createReport(recordId) }) {
                     is NetworkResult.Success -> {
                         successCount++
-                        Log.d("NoiseLogViewModel", "✅ 리포트 전송 성공! (recordId=$recordId)")
-                        Log.d("NoiseLogViewModel", "  - 생성된 소음현황 게시글 ID: ${result.data}")
+                        Log.d("NoiseLogViewModel", "✅ 소음현황판 전송 성공! (recordId=$recordId)")
+                        Log.d("NoiseLogViewModel", "  - 생성된 소음현황판 게시글 ID: ${result.data}")
+                        Log.d("NoiseLogViewModel", "  - AI가 description을 분석하여 summary 자동 생성됨")
+                        Log.d("NoiseLogViewModel", "  💡 소음현황판에서 확인하세요!")
+
+                        // TODO: 서버 응답에 hasReport 상태가 포함되면, 해당 값을 기준으로 동기화 필요
+                        // 여기서는 일단 로컬 모델만 true로 토글
+                        toggleReportState(recordId.toString())
                     }
                     is NetworkResult.Error -> {
                         failCount++
-                        Log.e("NoiseLogViewModel", "❌ 리포트 전송 실패! (recordId=$recordId)")
+                        Log.e("NoiseLogViewModel", "❌ 소음현황판 전송 실패! (recordId=$recordId)")
                         Log.e("NoiseLogViewModel", "  - HTTP 코드: ${result.code}")
                         Log.e("NoiseLogViewModel", "  - 에러 메시지: ${result.message}")
                     }
                 }
+                Log.d("NoiseLogViewModel", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             }
 
             // 결과 메시지 표시
             val resultMessage = when {
                 failCount == 0 -> {
                     if (successCount == 1) {
-                        "리포트가 소음현황 페이지로 전송되었습니다"
+                        "소음현황판으로 전송되었습니다 (AI 요약 자동 생성)"
                     } else {
-                        "${successCount}개의 리포트가 소음현황 페이지로 전송되었습니다"
+                        "${successCount}개가 소음현황판으로 전송되었습니다 (AI 요약 자동 생성)"
                     }
                 }
                 successCount == 0 -> {
-                    "리포트 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                    "소음현황판 전송에 실패했습니다. 잠시 후 다시 시도해주세요."
                 }
                 else -> {
                     "${successCount}개 성공, ${failCount}개 실패했습니다"
@@ -399,11 +401,19 @@ class NoiseLogViewModel @Inject constructor(
 
             _uiMessage.value = resultMessage
 
-            // 리포트 생성 후 헤더/리스트 갱신
-            if (successCount > 0) {
-                refreshHeaderCounters()
-                selectDate(_selectedDate.value)
-            }
+            Log.d("NoiseLogViewModel", "")
+        }
+    }
+
+    // 이미 정의된 함수: hasReport 토글
+    fun toggleReportState(id: String) {
+        val current = _selectedLogs.value.toMutableList()
+        val index = current.indexOfFirst { it.id == id }
+        if (index != -1) {
+            val log = current[index]
+            val updated = log.copy(hasReport = !log.hasReport)
+            current[index] = updated
+            _selectedLogs.value = current
         }
     }
 
@@ -413,48 +423,5 @@ class NoiseLogViewModel @Inject constructor(
         fetchAverageNoiseDb()
         val cal = java.util.Calendar.getInstance()
         fetchMonthlyCalendar(cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH) + 1)
-    }
-
-    private fun mapCategory(noiseType: String): String = when (noiseType.uppercase()) {
-        "FOOTSTEPS", "발걸음" -> "FOOTSTEPS"
-        "HAMMERING", "망치질" -> "HAMMERING"
-        "FURNITURE", "가구" -> "FURNITURE"
-        "MUSIC", "음악" -> "MUSIC"
-        else -> "UNKNOWN"
-    }
-
-    private fun mapGrade(avg: Double): String = when {
-        avg >= 65 -> "LOUD"
-        avg >= 45 -> "NORMAL"
-        else -> "QUIET"
-    }
-
-    private fun Date.toIsoStringZ(): String =
-        Instant.ofEpochMilli(time).atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-
-    private fun Date.toIsoStringNoZ(): String =
-        Instant.ofEpochMilli(time).atOffset(ZoneOffset.systemDefault().rules.getOffset(Instant.ofEpochMilli(time)))
-            .toLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-
-    private fun DailyCalendarRecord.toDomain(): NoiseLog {
-        val occured = LocalDateTime.parse(occuredAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        val measuredDate = Date.from(occured.atZone(ZoneOffset.systemDefault()).toInstant())
-
-        // 메모 우선순위: summary(수정 시) > description(등록 시) > 빈 문자열
-        val memoText = when {
-            !summary.isNullOrBlank() -> summary
-            !description.isNullOrBlank() -> description
-            else -> ""
-        }
-
-        return NoiseLog(
-            id = recordId.toString(),
-            noiseType = category,
-            maxDecibel = dbHigh,
-            avgDecibel = dbAvg,
-            memo = memoText,
-            measuredAt = measuredDate,
-            hasReport = false
-        )
     }
 }
