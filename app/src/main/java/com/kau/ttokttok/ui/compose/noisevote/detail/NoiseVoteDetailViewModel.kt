@@ -1,5 +1,6 @@
 package com.kau.ttokttok.ui.compose.noisevote.detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -189,12 +190,12 @@ class NoiseVoteDetailViewModel @Inject constructor(
                 )
             }
 
-            postVoteUseCase.invoke(noiseVoteId, voteType)
+            val result = postVoteUseCase.invoke(noiseVoteId, voteType)
                 .onSuccess { data ->
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            selectedVote = data.noiseVoteType
+                            selectedVote = data.voteType
                         )
                     }
 
@@ -220,7 +221,7 @@ class NoiseVoteDetailViewModel @Inject constructor(
                 )
             }
 
-            cancelVoteUseCase.invoke(noiseVoteId)
+            val result = cancelVoteUseCase.invoke(noiseVoteId)
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
@@ -240,6 +241,8 @@ class NoiseVoteDetailViewModel @Inject constructor(
                         )
                     }
                 }
+
+            Log.d("viewModel", "$result")
         }
     }
 }

@@ -66,9 +66,7 @@ fun VoteSectionCard(
                     selectedBorder = Blue600,
                     selectedText = Blue600,
                     icon = Icons.Default.ThumbUp,
-                    onButtonClick = {
-                        onVote(NoiseVoteType.HEARD)
-                    }
+                    onButtonClick = { onVote(NoiseVoteType.HEARD)}
                 )
 
                 VoteButton(

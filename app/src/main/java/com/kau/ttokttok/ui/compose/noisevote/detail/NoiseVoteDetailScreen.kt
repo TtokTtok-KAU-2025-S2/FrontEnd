@@ -24,10 +24,10 @@ fun NoiseVoteDetailScreen(
     modifier: Modifier = Modifier,
     uiState: NoiseVoteDetailUiState = NoiseVoteDetailUiState(),
     onClickBack: () -> Unit = {},
-    onVoteClick: (NoiseVoteType) -> Unit,
-    onAddComment: (String) -> Unit,
-    onEditComment: (Comment) -> Unit,
-    onDeleteComment: (Comment) -> Unit
+    onVoteClick: (NoiseVoteType) -> Unit = {},
+    onAddComment: (String) -> Unit = {},
+    onEditComment: (Comment) -> Unit = {},
+    onDeleteComment: (Comment) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -64,24 +64,27 @@ fun NoiseVoteDetailScreen(
                 userVote = uiState.selectedVote,
                 votes = uiState.noiseVoteBoardDetail?.voteCount ?: emptyMap(),
                 totalVotes = uiState.noiseVoteBoardDetail?.voteCount?.values?.sum() ?: 0,
-                onVote = { type ->
-                    onVoteClick(type)
+                onVote = { voteType ->
+                    onVoteClick(voteType)
                 }
             )
 
             // 3) 댓글 리스트
             CommentListCard(
                 comments = uiState.noiseVoteBoardDetail?.comments ?: emptyList(),
-                onEditComment = onEditComment,
-                onDeleteComment = onDeleteComment
+                onEditComment = { comment ->
+                    onEditComment(comment)
+                },
+                onDeleteComment = { comment ->
+                    onDeleteComment(comment)
+                }
             )
         }
 
         // 하단 댓글 입력 바
         CommentInputBar(
             onSend = { content ->
-                if (content.isNotBlank())
-                    onAddComment(content)
+                onAddComment(content)
             }
         )
     }

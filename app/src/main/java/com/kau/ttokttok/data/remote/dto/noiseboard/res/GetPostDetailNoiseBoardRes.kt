@@ -16,7 +16,7 @@ data class GetPostDetailNoiseBoardRes(
     val maxDb: Double,
     val avgDb: Double,
 
-    val voteCount: Map<String, Int>?,
+    val voteCounts: Map<String, Int>?,
 
     val comments: List<CommentDTO>?
 )
@@ -31,7 +31,7 @@ fun GetPostDetailNoiseBoardRes.toNoiseVoteBoardDetail(): NoiseVoteBoardDetail {
         maxDb = maxDb.toInt(),
         avgDb = avgDb.toInt(),
 
-        voteCount = voteCount?.mapKeys { (key, _ ) -> NoiseVoteType.from(key) } ?: emptyMap(),
+        voteCount = voteCounts?.mapKeys { (key, _ ) -> NoiseVoteType.from(key) } ?: emptyMap(),
         comments = comments?.map { dto ->
             dto.toDomain()
         } ?: emptyList()

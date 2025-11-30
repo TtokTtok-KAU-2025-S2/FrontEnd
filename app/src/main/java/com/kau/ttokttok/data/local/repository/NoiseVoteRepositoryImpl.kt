@@ -3,16 +3,8 @@ package com.kau.ttokttok.data.local.repository
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok._core.network.result.safeApiCall
 import com.kau.ttokttok.data.remote.api.NoiseStatusBoardApiService
-import com.kau.ttokttok.data.remote.dto.noiseboard.req.FirstVoteReq
-import com.kau.ttokttok.data.remote.dto.noiseboard.req.ModifyCommentReq
-import com.kau.ttokttok.data.remote.dto.noiseboard.req.PostCommentReq
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.CancelVoteRes
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.DeleteCommentRes
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.FirstVoteRes
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.ModifyCommentRes
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.PostCommentRes
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.toNoiseVoteBoard
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.toNoiseVoteBoardDetail
+import com.kau.ttokttok.data.remote.dto.noiseboard.req.*
+import com.kau.ttokttok.data.remote.dto.noiseboard.res.*
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
@@ -55,7 +47,7 @@ class NoiseVoteRepositoryImpl @Inject constructor(
         voteType: NoiseVoteType
     ): Result<FirstVoteRes> {
         val req = FirstVoteReq(
-            noiseVoteType = voteType
+            voteType = voteType
         )
 
         return when (val response = safeApiCall { api.firstVote(id, req) }) {
@@ -108,7 +100,7 @@ class NoiseVoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun cancelVote(id: Long): Result<CancelVoteRes> {
+    override suspend fun cancelVote(id: Long): Result<String> {
         return when (val response = safeApiCall { api.cancelVote(id) }) {
             is NetworkResult.Success -> {
                 Result.success(response.data)

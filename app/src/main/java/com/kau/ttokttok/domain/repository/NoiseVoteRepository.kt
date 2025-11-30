@@ -26,7 +26,7 @@ interface NoiseVoteRepository {
 
     suspend fun cancelVote(
         id: Long
-    ): Result<CancelVoteRes>
+    ): Result<String>
 
     suspend fun deleteComment(
         id: Long

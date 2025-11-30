@@ -33,7 +33,7 @@ fun VoteButton(
 ) {
     androidx.compose.material3.OutlinedButton(
         onClick = {
-            onButtonClick
+            onButtonClick()
         },
         modifier = modifier
             .height(90.dp),
