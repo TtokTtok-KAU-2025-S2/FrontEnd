@@ -21,7 +21,7 @@ class MonthReportFragment : Fragment() {
         )
 
         setContent {
-            MonthReportScreen(
+            MonthReportRoute(
                 onClickMoreInformation = {
                     findNavController().navigate(
                         R.id.action_monthReportFragment_to_nationalApartmentFragment

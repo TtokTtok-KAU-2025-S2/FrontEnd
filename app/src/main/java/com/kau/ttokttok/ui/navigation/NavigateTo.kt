@@ -61,6 +61,7 @@ fun NavController.navigateTo(
      */
 
     when (dest) {
+        Destination.SPLASH -> navigate(R.id.splashFragment, args, options)
         Destination.LOGIN -> navigate(R.id.loginFragment, args, options)
         Destination.REGISTER -> navigate(R.id.registerFragment, args, options)
 
@@ -97,7 +98,7 @@ fun NavController.onSuccessLogin() {
         R.id.mainFragment,
         null,
         navOptions {
-            popUpTo(R.id.loginFragment) {
+            popUpTo(graph.startDestinationId) {
                 inclusive = true
             }
 

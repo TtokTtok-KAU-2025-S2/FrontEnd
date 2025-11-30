@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.kau.ttokttok.ui.navigation.Destination
+import com.kau.ttokttok.ui.navigation.navigateTo
 
 class PreConsiderationDetailFragment : Fragment() {
     override fun onCreateView(
@@ -21,7 +23,8 @@ class PreConsiderationDetailFragment : Fragment() {
 
         setContent {
             PreConsiderationDetailRoute(
-                onClickBack = { findNavController().popBackStack() }
+                onClickBack = { findNavController().popBackStack() },
+                onEdit = { findNavController().navigateTo(Destination.WRITING_PRECONSIDERATION)}
             )
         }
     }

@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.kau.ttokttok.ui.navigation.onSuccessLogin
+import com.kau.ttokttok.ui.navigation.resetToLogin
 
 class RegisterFragment : Fragment() {
     override fun onCreateView(
@@ -22,7 +22,7 @@ class RegisterFragment : Fragment() {
 
         setContent {
             RegisterRoute(
-                onSuccess = { findNavController().onSuccessLogin() }
+                onSuccess = { findNavController().resetToLogin() }
             )
         }
     }

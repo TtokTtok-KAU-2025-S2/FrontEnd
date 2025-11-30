@@ -12,16 +12,14 @@ fun MainRoute(
     viewModel: MainViewModel = hiltViewModel(),
     onNavigate: (Destination) -> Unit
 ) {
-    val buildingNumber by viewModel.buildingNumber.collectAsStateWithLifecycle()
-    val unitNumber by viewModel.unitNumber.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
         viewModel.getUserInformation()
     }
 
     MainScreen(
-        onNavigate = onNavigate,
-        buildingNumber = buildingNumber ?: 0,
-        unitNumber = unitNumber ?: 0
+        uiState = uiState,
+        onNavigate = onNavigate
     )
 }

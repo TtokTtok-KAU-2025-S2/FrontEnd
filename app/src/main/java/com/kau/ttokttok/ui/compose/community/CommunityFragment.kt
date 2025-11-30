@@ -24,7 +24,16 @@ class CommunityFragment : Fragment() {
         setContent {
             CommunityRoute(
                 onClickCreatePost = { findNavController().navigateTo(Destination.WRITING_COMMUNITY)},
-                onClickPost = { findNavController().navigateTo(Destination.COMMUNITY_DETAIL)}
+                onClickPost = { id ->
+                    val args = Bundle().apply {
+                        putLong("communityId", id)
+                    }
+
+                    findNavController().navigateTo(
+                        dest = Destination.COMMUNITY_DETAIL,
+                        args = args
+                    )
+                }
             )
         }
     }

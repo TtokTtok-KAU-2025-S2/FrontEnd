@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok.domain.usecase.AuthUseCase
+import com.kau.ttokttok.domain.usecase.auth.RequestTempPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,13 +23,13 @@ data class LoginUiState(
 sealed interface LoginEvent {
     data object NavigateHome : LoginEvent
     data object NavigateSignup : LoginEvent
-    data class ShowMessage(val message: String) : LoginEvent
     data class ShowAlert(val title: String, val message: String) : LoginEvent
 }
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val authUseCase: AuthUseCase,
+    private val requestTempPasswordUseCase: RequestTempPasswordUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -67,6 +69,50 @@ class LoginViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
                 emit(LoginEvent.ShowAlert("로그인 실패", e.message ?: "알 수 없는 오류입니다."))
             }
+        }
+    }
+
+    fun onRequestTempPassword(email: String) {
+        viewModelScope.launch {
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
+
+            requestTempPasswordUseCase.invoke(email)
+                .onSuccess {
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false
+                        )
+                    }
+
+                    emit(
+                        LoginEvent.ShowAlert(
+                            title = "임시 비밀번호 발급 성공",
+                            message = "이메일을 확인해주세요!"
+                        )
+                    )
+                }
+
+                .onFailure { throwable ->
+                    val errorMessage = throwable.message ?: "ERROR"
+
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    emit(
+                        LoginEvent.ShowAlert(
+                            title = "임시 비밀번호 발급 실패",
+                            message = errorMessage
+                        )
+                    )
+                }
         }
     }
 

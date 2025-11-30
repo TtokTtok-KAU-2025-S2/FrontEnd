@@ -40,7 +40,7 @@ interface NoiseStatusBoardApiService {
     @DELETE("api/noise-reports/{reportId}/votes")
     suspend fun cancelVote(
         @Path("reportId") id: Long
-    ): ApiResponse<CancelVoteRes>
+    ): ApiResponse<String>
 
     @DELETE("api/comment/{commentId}")
     suspend fun deleteComment(

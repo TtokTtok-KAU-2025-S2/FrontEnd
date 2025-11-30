@@ -3,13 +3,9 @@ package com.kau.ttokttok.data.local.repository
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok._core.network.result.safeApiCall
 import com.kau.ttokttok.data.remote.api.PreNoticeApiService
-import com.kau.ttokttok.data.remote.dto.preconsideration.req.CreatePostPreConsiderationReq
-import com.kau.ttokttok.data.remote.dto.preconsideration.req.ModifyPostPreConsiderationReq
-import com.kau.ttokttok.data.remote.dto.preconsideration.res.CreatePostPreConsiderationRes
-import com.kau.ttokttok.data.remote.dto.preconsideration.res.DeletePostPreConsiderationRes
-import com.kau.ttokttok.data.remote.dto.preconsideration.res.GetPostDetailPreConsiderationRes
-import com.kau.ttokttok.data.remote.dto.preconsideration.res.GetPostsPreConsiderationRes
-import com.kau.ttokttok.data.remote.dto.preconsideration.res.ModifyPostPreConsiderationRes
+import com.kau.ttokttok.data.remote.dto.preconsideration.req.*
+import com.kau.ttokttok.data.remote.dto.preconsideration.res.*
+import com.kau.ttokttok.domain.model.board.preconsideration.PreConsiderationBoardDetail
 import com.kau.ttokttok.domain.repository.PreConsiderationRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,8 +17,17 @@ class PreConsiderationRepositoryImpl @Inject constructor(
     override suspend fun getPosts(): NetworkResult<GetPostsPreConsiderationRes> =
         safeApiCall { api.getPosts() }
 
-    override suspend fun getPostDetail(id: Long): NetworkResult<GetPostDetailPreConsiderationRes> =
-        safeApiCall { api.getPostDetail(id) }
+    override suspend fun getPostDetail(id: Long): Result<PreConsiderationBoardDetail> {
+        return when (val response = safeApiCall { api.getPostDetail(id) }) {
+            is NetworkResult.Success -> {
+                Result.success(response.data.toPreConsiderationBoardDetail())
+            }
+
+            is NetworkResult.Error -> {
+                Result.failure(Exception(response.message))
+            }
+        }
+    }
 
     override suspend fun createPost(req: CreatePostPreConsiderationReq): NetworkResult<CreatePostPreConsiderationRes> =
         safeApiCall { api.createPost(req) }
@@ -33,6 +38,15 @@ class PreConsiderationRepositoryImpl @Inject constructor(
     ): NetworkResult<ModifyPostPreConsiderationRes> =
         safeApiCall { api.modifyPost(id, req) }
 
-    override suspend fun deletePost(id: Long): NetworkResult<DeletePostPreConsiderationRes> =
-        safeApiCall { api.deletePost(id) }
+    override suspend fun deletePost(id: Long): Result<String> {
+        return when (val response = safeApiCall { api.deletePost(id) } ) {
+            is NetworkResult.Success -> {
+                Result.success(response.data.result)
+            }
+
+            is NetworkResult.Error -> {
+                Result.failure(Exception(response.message))
+            }
+        }
+    }
 }

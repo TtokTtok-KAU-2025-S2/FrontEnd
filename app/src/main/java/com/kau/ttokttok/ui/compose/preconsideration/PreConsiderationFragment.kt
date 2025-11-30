@@ -30,9 +30,10 @@ class PreConsiderationFragment : Fragment() {
                     }
 
                     findNavController().navigateTo(
-                    dest = Destination.PRECONSIDERATION_DETAIL,
-                    args = args
-                ) }
+                        dest = Destination.PRECONSIDERATION_DETAIL,
+                        args = args
+                    )
+                }
             )
         }
     }

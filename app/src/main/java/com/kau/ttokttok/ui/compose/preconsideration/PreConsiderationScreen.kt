@@ -4,6 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.header.BoardHeader
 import com.kau.ttokttok.ui.component.common.board.PreConsiderationBoardCard
+import com.kau.ttokttok.ui.theme.Gray50Bg
 
 private val Slate900 = Color(0xFF0F172A) // bg-slate-900
 
@@ -20,14 +26,18 @@ data class PreConsiderationPost(
     val authorLocation: String
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun PreConsiderationScreen(
     modifier: Modifier = Modifier,
+    uiState: PreConsiderationUiState = PreConsiderationUiState(),
     onClickCreatePost: () -> Unit = { },
     onClickPost: (Long) -> Unit = { },
-    posts: List<PreConsiderationPost> = emptyList()
+    onRefresh: () -> Unit = {}
 ) {
+    val pullToRefreshState = rememberPullToRefreshState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,23 +53,30 @@ fun PreConsiderationScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // ✅ 리스트
-        LazyColumn(
+        PullToRefreshBox(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(bottom = 80.dp)
+                .fillMaxSize(),
+            state = pullToRefreshState,
+            isRefreshing = uiState.isLoading,
+            onRefresh = onRefresh
         ) {
-            items(
-                items = posts,
-                key = { it.id }
-            ) { post ->
-                PreConsiderationBoardCard(
-                    title = post.title,
-                    authorLocation = post.authorLocation,
-                    onClick = { onClickPost(post.id) }
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(bottom = 80.dp)
+            ) {
+                items(
+                    items = uiState.posts ?: emptyList(),
+                    key = { it.id }
+                ) { post ->
+                    PreConsiderationBoardCard(
+                        title = post.title,
+                        authorLocation = post.authorLocation,
+                        onClick = { onClickPost(post.id) }
+                    )
+                }
             }
         }
     }
