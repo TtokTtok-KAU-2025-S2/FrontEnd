@@ -432,17 +432,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="간단한 메모 *"
+            android:text="메모 *"
             android:textColor="#f1f5f9"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💡 소음현황판 전송 시 AI가 자동으로 요약해드립니다"
+            android:textColor="#94a3b8"
+            android:textSize="12sp"
             android:layout_marginBottom="12dp" />
 
         <EditText
             android:id="@+id/etMemo"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:layout_marginBottom="16dp"
             android:background="@drawable/bg_input"
             android:gravity="top|start"
             android:hint="소음의 특징이나 상황을 간단히 기록해주세요 (필수)\n예: 무거운 물건을 끄는 소리가 반복적으로 들림"
@@ -450,28 +457,8 @@
             android:padding="16dp"
             android:textSize="14sp"
             android:textColor="#f1f5f9"
-            android:textColorHint="#94a3b8" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AI가 메모를 바탕으로 상세한 일기를 작성해드립니다"
-            android:textColor="#94a3b8"
-            android:textSize="12sp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- AI 일기 자동 생성 버튼 -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnGenerateAiDiary"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginBottom="16dp"
-            android:text="✨ AI로 일기 자동 생성하기"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:backgroundTint="@color/ai_purple"
-            app:cornerRadius="12dp" />
+            android:textColorHint="#94a3b8"
+            android:layout_marginBottom="16dp" />
 
         <!-- 저장 버튼 -->
         <com.google.android.material.button.MaterialButton
