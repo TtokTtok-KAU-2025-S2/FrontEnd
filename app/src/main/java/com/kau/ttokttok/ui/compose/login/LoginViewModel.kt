@@ -2,8 +2,7 @@ package com.kau.ttokttok.ui.compose.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.domain.usecase.AuthUseCase
+import com.kau.ttokttok.domain.usecase.auth.LoginUseCase
 import com.kau.ttokttok.domain.usecase.auth.RequestTempPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,7 +27,7 @@ sealed interface LoginEvent {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
+    private val loginUseCase: LoginUseCase,
     private val requestTempPasswordUseCase: RequestTempPasswordUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -39,36 +38,36 @@ class LoginViewModel @Inject constructor(
 
     fun onClickLogin(email: String, password: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
 
-            try {
-                when (val result = authUseCase.login(email, password)) {
-                    is NetworkResult.Success -> {
-                        emit(LoginEvent.NavigateHome)
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                    }
-
-                    is NetworkResult.Error -> {
-                        val message = result.message ?: result.exception?.message
-
-                        _uiState.value =
-                            _uiState.value.copy(isLoading = false, errorMessage = message)
-
-                        emit(
-                            LoginEvent.ShowAlert(
-                                title = "로그인 실패",
-                                message = message ?: "알 수 없는 오류입니다."
-                            )
+            loginUseCase.invoke(email, password)
+                .onSuccess {
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false
                         )
                     }
+
+                    emit(LoginEvent.NavigateHome)
                 }
-            } catch (e: IllegalArgumentException) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
-                emit(LoginEvent.ShowAlert("입력 오류", e.message ?: "잘못된 입력입니다."))
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
-                emit(LoginEvent.ShowAlert("로그인 실패", e.message ?: "알 수 없는 오류입니다."))
-            }
+
+                .onFailure { e ->
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = e.message
+                        )
+                    }
+
+                    emit(LoginEvent.ShowAlert(
+                        title = "로그인 실패",
+                        message = e.message ?: "알 수 없는 오류입니다."
+                    ))
+                }
         }
     }
 

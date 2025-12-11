@@ -2,14 +2,14 @@ package com.kau.ttokttok.ui.compose.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.domain.usecase.AuthUseCase
+import com.kau.ttokttok.domain.usecase.auth.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ sealed interface RegisterEvent {
 }
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
@@ -43,7 +43,11 @@ class RegisterViewModel @Inject constructor(
         unitNumber: String
     ) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
 
             try {
                 // 동/호수 입력 검증 및 파싱
@@ -51,24 +55,31 @@ class RegisterViewModel @Inject constructor(
                 val parsedBuildingNumber = parseBuildingNumber(buildingNumber)
                 val parsedUnitNumber = parseUnitNumber(unitNumber)
 
-                // BE 연결
-                when (val r = authUseCase.register(parsedAptId, email, password, parsedBuildingNumber, parsedUnitNumber)) {
-                    is NetworkResult.Success -> {
+                registerUseCase.invoke(parsedAptId, email, password, parsedBuildingNumber, parsedUnitNumber)
+                    .onSuccess {
+                        _uiState.update { after ->
+                            after.copy(
+                                isLoading = false
+                            )
+                        }
 
                         emit(RegisterEvent.NavigateHome)
-                        _uiState.value = _uiState.value.copy(isLoading = false)
                     }
 
-                    is NetworkResult.Error -> {
-                        val message = r.message ?: r.exception?.message ?: "회원가입에 실패했습니다."
+                    .onFailure { e ->
+                        _uiState.update { after ->
+                            after.copy(
+                                isLoading = false,
+                                errorMessage = e.message
+                            )
+                        }
 
-                        _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = message)
-                        emit(RegisterEvent.ShowAlert("회원가입 실패", message))
+                        emit(RegisterEvent.ShowAlert(
+                            title = "회원가입 실패",
+                            message = e.message ?: "알 수 없는 오류입니다."
+                        ))
                     }
-                }
-            } catch (e: IllegalArgumentException) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
-                emit(RegisterEvent.ShowAlert("회원가입 실패", e.message ?: "잘못된 입력입니다."))
+
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
                 emit(RegisterEvent.ShowAlert("회원가입 실패", e.message ?: "알 수 없는 오류입니다."))
@@ -81,7 +92,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun parseApartmentId(aptId: String): Long {
-        return aptId.toLongOrNull() ?: throw java.lang.IllegalArgumentException("숫자 형식이 아닙니다.")
+        return aptId.toLongOrNull() ?: throw IllegalArgumentException("숫자 형식이 아닙니다.")
     }
 
     private fun parseBuildingNumber(buildingNumber: String) : Int {

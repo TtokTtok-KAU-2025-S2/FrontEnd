@@ -16,11 +16,48 @@ import javax.inject.Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApiService
 ) : AuthRepository {
-    override suspend fun login(loginReq: LoginReq): NetworkResult<LoginRes> =
-        safeApiCall { api.login(loginReq) }
+    override suspend fun login(email: String, password: String): LoginRes {
+        val req = LoginReq(
+            email = email,
+            password = password
+        )
 
-    override suspend fun register(registerReq: RegisterReq): NetworkResult<RegisterRes> =
-        safeApiCall { api.register(registerReq) }
+        return when (val response = safeApiCall { api.login(req) }) {
+            is NetworkResult.Success -> {
+                response.data
+            }
+
+            is NetworkResult.Error -> {
+                throw Throwable(response.message)
+            }
+        }
+    }
+
+    override suspend fun register(
+        aptId: Long,
+        email: String,
+        password: String,
+        buildingNumber: Int,
+        unitNumber: Int
+    ): RegisterRes {
+        val req = RegisterReq(
+            aptId = aptId,
+            email = email,
+            password = password,
+            buildingNumber = buildingNumber,
+            unitNumber = unitNumber
+        )
+
+        return when (val response = safeApiCall { api.register(req) }) {
+            is NetworkResult.Success -> {
+                response.data
+            }
+
+            is NetworkResult.Error -> {
+                throw Throwable(response.message ?: "회원가입에 실패했습니다.")
+            }
+        }
+    }
 
     override suspend fun requestTempPassword(email: String): String {
         val req = RequestTempPasswordReq(

@@ -7,6 +7,7 @@ import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok.domain.model.User
 import com.kau.ttokttok.domain.usecase.AuthUseCase
 import com.kau.ttokttok.domain.usecase.SettingUseCase
+import com.kau.ttokttok.domain.usecase.auth.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -98,7 +99,8 @@ class SettingViewModel @Inject constructor(
 // private val repository: SettingRepository,
     private val userProvider: UserProvider,
     private val authUseCase: AuthUseCase,
-    private val settingUseCase: SettingUseCase
+    private val settingUseCase: SettingUseCase,
+    private val logoutUseCase: LogoutUseCase
 ): ViewModel() {
 
     // 화면 상태를 보관하는 StateFlow
@@ -194,7 +196,7 @@ class SettingViewModel @Inject constructor(
 
     fun performLogout() {
         viewModelScope.launch {
-            authUseCase.logout()
+            logoutUseCase.invoke()
         }
     }
 
