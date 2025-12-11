@@ -56,7 +56,7 @@ fun NoiseVoteDetailScreen(
                 reportedAt = (uiState.noiseVoteBoardDetail?.reportedAt ?: LocalDateTime.now()) as LocalDateTime,
                 maxDb = uiState.noiseVoteBoardDetail?.maxDb ?: 0,
                 avgDb = uiState.noiseVoteBoardDetail?.avgDb ?: 0,
-                category = uiState.noiseVoteBoardDetail?.category ?: ""
+                category = uiState.noiseVoteBoardDetail?.category?.label ?: "ERROR"
             )
 
             // 2) 투표 카드

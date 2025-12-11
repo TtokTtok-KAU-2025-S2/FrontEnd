@@ -3,6 +3,7 @@ package com.kau.ttokttok.data.remote.dto.noiseboard.res
 import com.kau.ttokttok.domain.model.board.Comment
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
+import com.kau.ttokttok.domain.model.common.enum.toNoiseType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -25,7 +26,7 @@ fun GetPostDetailNoiseBoardRes.toNoiseVoteBoardDetail(): NoiseVoteBoardDetail {
     return NoiseVoteBoardDetail(
         buildingNumber = authorDong,
         reportedAt = LocalDateTime.parse(reportedAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-        category = category,
+        category = category.toNoiseType(),
         title = summary ?: "",
 
         maxDb = maxDb.toInt(),
