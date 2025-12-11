@@ -35,7 +35,6 @@ class NoiseVoteDetailViewModel @Inject constructor(
     private val postVoteUseCase: PostVoteUseCase,
     private val cancelVoteUseCase: CancelVoteUseCase,
     private val addCommentUseCase: AddCommentUseCase,
-    private val modifyCommentUseCase: ModifyCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
@@ -105,36 +104,6 @@ class NoiseVoteDetailViewModel @Inject constructor(
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false
-                        )
-                    }
-
-                    loadPostDetail()
-                }
-
-                .onFailure { error ->
-                    _uiState.update { after ->
-                        after.copy(
-                            isLoading = false,
-                            errorMessage = error.message
-                        )
-                    }
-                }
-        }
-    }
-
-    fun modifyComment(comment: Comment) {
-        viewModelScope.launch {
-            _uiState.update { current->
-                current.copy(
-                    isLoading = true
-                )
-            }
-
-            modifyCommentUseCase.invoke(comment)
-                .onSuccess {
-                    _uiState.update { after ->
-                        after.copy(
-                            isLoading = true
                         )
                     }
 

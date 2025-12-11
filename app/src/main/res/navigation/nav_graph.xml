@@ -46,6 +46,23 @@
     </fragment>
 
     <fragment
+        android:id="@+id/noiseVoteCommentModifyFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.comment.modify.NoiseVoteCommentModifyFragment"
+        android:label="NoiseVoteCommentModify">
+
+        <argument
+            android:name="noiseVoteCommentId"
+            app:argType="long"
+            />
+
+        <argument
+            android:name="noiseVoteCommentContent"
+            app:argType="string"
+            />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/monthReportFragment"
         android:name="com.kau.ttokttok.ui.compose.monthreport.MonthReportFragment"
         android:label="MonthReport">

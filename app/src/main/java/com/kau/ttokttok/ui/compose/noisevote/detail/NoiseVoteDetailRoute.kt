@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun NoiseVoteDetailRoute(
     viewModel: NoiseVoteDetailViewModel = hiltViewModel(),
     onClickBack: () -> Unit,
+    onClickCommentModify: (Long, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -22,7 +23,7 @@ fun NoiseVoteDetailRoute(
             viewModel.addComment(content)
         },
         onEditComment = { comment ->
-            viewModel.modifyComment(comment)
+            onClickCommentModify(comment.id, comment.content)
         },
         onDeleteComment = { comment ->
             viewModel.deleteComment(comment)

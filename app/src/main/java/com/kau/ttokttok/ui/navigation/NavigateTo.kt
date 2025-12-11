@@ -73,6 +73,7 @@ fun NavController.navigateTo(
 
         Destination.NOISE_VOTE -> navigate(R.id.noiseVoteFragment, args, options)
         Destination.NOISE_VOTE_DETAIL -> navigate(R.id.noiseVoteDetailFragment, args, options)
+        Destination.NOISE_VOTE_COMMENT_MODIFY -> navigate(R.id.noiseVoteCommentModifyFragment, args, options)
 
         Destination.MONTH_REPORT -> navigate(R.id.monthReportFragment, args, options)
 

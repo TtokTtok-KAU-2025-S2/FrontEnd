@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.kau.ttokttok.ui.navigation.Destination
+import com.kau.ttokttok.ui.navigation.navigateTo
 
 class NoiseVoteDetailFragment : Fragment() {
     override fun onCreateView(
@@ -21,7 +23,18 @@ class NoiseVoteDetailFragment : Fragment() {
 
         setContent {
             NoiseVoteDetailRoute(
-                onClickBack = { findNavController().popBackStack() }
+                onClickBack = { findNavController().popBackStack() },
+                onClickCommentModify = { id, content ->
+                    val args = Bundle().apply {
+                        putLong("noiseVoteCommentId", id)
+                        putString("noiseVoteCommentContent", content)
+                    }
+
+                    findNavController().navigateTo(
+                        dest = Destination.NOISE_VOTE_COMMENT_MODIFY,
+                        args = args
+                    )
+                }
             )
         }
     }

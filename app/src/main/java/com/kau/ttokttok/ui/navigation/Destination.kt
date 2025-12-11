@@ -10,6 +10,7 @@ enum class Destination(val fragmentName: String) {
 
     NOISE_VOTE("noiseVote"),
     NOISE_VOTE_DETAIL("noiseVoteDetail"),
+    NOISE_VOTE_COMMENT_MODIFY("noiseVoteCommentModify"),
 
     MONTH_REPORT("monthReport"),
 

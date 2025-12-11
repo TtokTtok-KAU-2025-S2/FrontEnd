@@ -9,7 +9,7 @@ import javax.inject.Singleton
 class ModifyCommentUseCase(
     private val repository: NoiseVoteRepository
 ) {
-    suspend operator fun invoke(comment: Comment): Result<ModifyCommentRes> {
-        return repository.modifyComment(comment.id, comment.content)
+    suspend operator fun invoke(id: Long, content: String): Result<ModifyCommentRes> {
+        return repository.modifyComment(id, content)
     }
 }
