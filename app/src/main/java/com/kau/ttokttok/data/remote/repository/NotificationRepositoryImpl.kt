@@ -1,4 +1,4 @@
-package com.kau.ttokttok.data.local.repository
+package com.kau.ttokttok.data.remote.repository
 
 import com.kau.ttokttok.domain.model.NotificationItem
 import com.kau.ttokttok.domain.repository.NotificationRepository

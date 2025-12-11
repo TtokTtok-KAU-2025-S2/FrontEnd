@@ -3,7 +3,7 @@ package com.kau.ttokttok.ui.compose.preconsideration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.data.local.repository.PreConsiderationRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.PreConsiderationRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

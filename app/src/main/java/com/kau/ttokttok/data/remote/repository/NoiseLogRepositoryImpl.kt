@@ -1,4 +1,4 @@
-package com.kau.ttokttok.data.local.repository
+package com.kau.ttokttok.data.remote.repository
 
 import com.kau.ttokttok.domain.model.NoiseLog
 import com.kau.ttokttok.domain.repository.NoiseLogRepository

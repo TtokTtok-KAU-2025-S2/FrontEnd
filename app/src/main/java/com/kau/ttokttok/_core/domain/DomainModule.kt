@@ -1,9 +1,9 @@
 package com.kau.ttokttok._core.domain
 
-import com.kau.ttokttok.data.local.repository.CommunityRepositoryImpl
-import com.kau.ttokttok.data.local.repository.NoiseVoteRepositoryImpl
-import com.kau.ttokttok.data.local.repository.PreConsiderationRepositoryImpl
-import com.kau.ttokttok.data.local.repository.ReportRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.CommunityRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.NoiseVoteRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.PreConsiderationRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.ReportRepositoryImpl
 import com.kau.ttokttok.domain.usecase.community.CreatePostUseCase
 import com.kau.ttokttok.domain.usecase.community.GetPostDetailUseCase
 import com.kau.ttokttok.domain.usecase.community.LoadPostsUseCase

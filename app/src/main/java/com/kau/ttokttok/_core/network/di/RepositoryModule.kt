@@ -1,15 +1,15 @@
 package com.kau.ttokttok._core.network.di
 
-import com.kau.ttokttok.data.local.repository.AIRepositoryImpl
-import com.kau.ttokttok.data.local.repository.AuthRepositoryImpl
-import com.kau.ttokttok.data.local.repository.CommunityRepositoryImpl
-import com.kau.ttokttok.data.local.repository.NoiseVoteRepositoryImpl
-import com.kau.ttokttok.data.local.repository.NoiseLogRepositoryImpl
-import com.kau.ttokttok.data.local.repository.NotificationRepositoryImpl
-import com.kau.ttokttok.data.local.repository.PreConsiderationRepositoryImpl
-import com.kau.ttokttok.data.local.repository.ReportRepositoryImpl
-import com.kau.ttokttok.data.local.repository.SettingRepositoryImpl
-import com.kau.ttokttok.data.repository.RecordingRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.AIRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.AuthRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.CommunityRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.NoiseVoteRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.NoiseLogRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.NotificationRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.PreConsiderationRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.ReportRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.SettingRepositoryImpl
+import com.kau.ttokttok.data.remote.repository.RecordingRepositoryImpl
 import com.kau.ttokttok.domain.repository.AIRepository
 import com.kau.ttokttok.domain.repository.AuthRepository
 import com.kau.ttokttok.domain.repository.CommunityRepository
