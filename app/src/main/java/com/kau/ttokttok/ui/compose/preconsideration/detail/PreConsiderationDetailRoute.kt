@@ -10,7 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun PreConsiderationDetailRoute(
     viewModel: PreConsiderationDetailViewModel = hiltViewModel(),
     onClickBack: () -> Unit,
-    onEdit: () -> Unit
+    onEdit: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -27,7 +27,7 @@ fun PreConsiderationDetailRoute(
     PreConsiderationDetailScreen(
         uiState = uiState,
         onClickBack = onClickBack,
-        onEdit = onEdit,
+        onEdit = { onEdit(viewModel.preConsiderationId) },
         onDelete = { viewModel.deletePostDetail() }
     )
 }

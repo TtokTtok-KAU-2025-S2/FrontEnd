@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kau.ttokttok.domain.model.board.preconsideration.PreConsiderationBoardDetail
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
 import com.kau.ttokttok.ui.compose.community.detail.Gray200
 import com.kau.ttokttok.ui.compose.community.writing.PostBottomActions
@@ -35,23 +35,31 @@ import com.kau.ttokttok.ui.compose.community.writing.PostContentField
 import com.kau.ttokttok.ui.compose.community.writing.PostTitleField
 import com.kau.ttokttok.ui.theme.*
 
-enum class PreConsiderationWritingMode { CREATE, EDIT }
-
 @Preview
 @Composable
 fun WritingPreConsiderationScreen(
     modifier: Modifier = Modifier,
-    existing: PreConsiderationBoardDetail? = null, // 🔥 수정일 때 들어오는 값
-    mode: PreConsiderationWritingMode = PreConsiderationWritingMode.CREATE,
+    uiState: WritingPreConsiderationUiState = WritingPreConsiderationUiState(),
+    isEdit: Boolean = false,
     onClickCreate: (String, String, String, String, String) -> Unit = {_, _, _, _, _ -> },
-    onClickEdit: (String, String, String, String, String) -> Unit = {_, _, _, _, _ -> },
+    onClickModify: (String, String, String, String, String) -> Unit = {_, _, _, _, _ -> },
     onClickBack: () -> Unit = { }
 ) {
-    var title by remember { mutableStateOf(existing?.title ?:"")}
-    var content by remember { mutableStateOf(existing?.content ?: "")}
-    var noticeDate by remember { mutableStateOf(existing?.noticeDate ?: "연도-월-일")}
-    var noticeTime by remember { mutableStateOf(existing?.noticeTime ?: "00:00 - 00:00")}
-    var noticeReason by remember { mutableStateOf(existing?.noticeReason ?: "")}
+    var title by remember { mutableStateOf("")}
+    var content by remember { mutableStateOf("")}
+    var noticeDate by remember { mutableStateOf("연도.월.일")}
+    var noticeTime by remember { mutableStateOf("00:00 ~ 00:00")}
+    var noticeReason by remember { mutableStateOf("")}
+
+    LaunchedEffect(uiState.preConsiderationBoardDetail) {
+        val detail = uiState.preConsiderationBoardDetail ?: return@LaunchedEffect
+
+        title = detail.title
+        content = detail.content
+        noticeDate = detail.noticeDate
+        noticeTime = detail.noticeTime
+        noticeReason = detail.noticeReason
+    }
 
     Column(
         modifier = modifier
@@ -60,7 +68,7 @@ fun WritingPreConsiderationScreen(
     ) {
         // 헤더
         WhiteHeader(
-            title = if (mode == PreConsiderationWritingMode.CREATE) "게시글 작성" else "게시글 수정",
+            title = if (isEdit) "게시글 수정" else "게시글 작성",
             onBack = onClickBack
         )
 
@@ -95,11 +103,14 @@ fun WritingPreConsiderationScreen(
         PostBottomActions(
             enabled = title.isNotBlank() && content.isNotBlank() && noticeDate.isNotBlank() && noticeTime.isNotBlank() && noticeReason.isNotBlank(),
             onSubmit = {
-                if (mode == PreConsiderationWritingMode.CREATE)
-                    onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+                if (isEdit) {
+                    onClickModify(title, content, noticeDate, noticeTime, noticeReason)
+                }
 
-                else
-                    onClickEdit(title, content, noticeDate, noticeTime, noticeReason)
+                else {
+                    onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+                }
+
             }
         )
     }
@@ -164,7 +175,6 @@ fun AdvanceNoticeSection(
     }
 }
 
-/** 공통 라벨 + OutlinedTextField */
 @Composable
 private fun LabeledField(
     label: String,

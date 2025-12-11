@@ -73,6 +73,11 @@
         android:label="writingPreConsideration"
         />
 
+        <argument
+            android:name="preConsiderationId"
+            app:argType="long"
+            />
+
     <fragment
         android:id="@+id/preConsiderationDetailFragment"
         android:name="com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailFragment"

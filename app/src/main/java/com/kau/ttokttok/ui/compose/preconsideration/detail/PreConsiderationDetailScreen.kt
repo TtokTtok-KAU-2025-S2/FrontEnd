@@ -48,9 +48,9 @@ fun PreConsiderationDetailScreen(
         )
 
         AdvanceNoticeDisplayCard(
-            noticeDate = uiState.preConsiderationBoardDetail?.noticeDate ?: "",
-            noticeTime = uiState.preConsiderationBoardDetail?.noticeTime ?: "",
-            noticeReason = uiState.preConsiderationBoardDetail?.noticeReason ?: "",
+            noticeDate = uiState.preConsiderationBoardDetail?.noticeDate ?: "ERROR",
+            noticeTime = uiState.preConsiderationBoardDetail?.noticeTime ?: "ERROR",
+            noticeReason = uiState.preConsiderationBoardDetail?.noticeReason ?: "ERROR",
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         )

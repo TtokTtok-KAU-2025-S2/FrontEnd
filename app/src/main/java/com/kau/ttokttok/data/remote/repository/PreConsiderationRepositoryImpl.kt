@@ -34,9 +34,31 @@ class PreConsiderationRepositoryImpl @Inject constructor(
 
     override suspend fun modifyPost(
         id: Long,
-        req: ModifyPostPreConsiderationReq
-    ): NetworkResult<ModifyPostPreConsiderationRes> =
-        safeApiCall { api.modifyPost(id, req) }
+        title: String,
+        content: String,
+        noticeDate: String,
+        noticeTime: String,
+        noticeReason: String
+    ): ModifyPostPreConsiderationRes {
+        val req = ModifyPostPreConsiderationReq(
+            title = title,
+            content = content,
+            eventDate = noticeDate,
+            eventTime = noticeTime,
+            eventReason = noticeReason
+        )
+
+        return when (val response = safeApiCall { api.modifyPost(id, req) }) {
+            is NetworkResult.Success -> {
+                response.data
+            }
+
+            is NetworkResult.Error -> {
+                throw Throwable(response.message)
+            }
+        }
+
+    }
 
     override suspend fun deletePost(id: Long): Result<String> {
         return when (val response = safeApiCall { api.deletePost(id) } ) {

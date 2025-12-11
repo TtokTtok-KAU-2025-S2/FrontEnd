@@ -11,7 +11,11 @@ interface PreConsiderationRepository {
     suspend fun createPost(req: CreatePostPreConsiderationReq): NetworkResult<CreatePostPreConsiderationRes>
     suspend fun modifyPost(
         id: Long,
-        req: ModifyPostPreConsiderationReq
-    ): NetworkResult<ModifyPostPreConsiderationRes>
+        title: String,
+        content: String,
+        noticeDate: String,
+        noticeTime: String,
+        noticeReason: String
+    ): ModifyPostPreConsiderationRes
     suspend fun deletePost(id: Long): Result<String>
 }
