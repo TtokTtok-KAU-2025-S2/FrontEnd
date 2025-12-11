@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kau.ttokttok._core.util.DateUtils.formatDateTime
 import com.kau.ttokttok.ui.theme.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -62,7 +63,7 @@ fun NoiseVoteBoardCard(
                 Spacer(modifier.weight(1f))
 
                 Text(
-                    text = reportedAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")),
+                    text = reportedAt.formatDateTime(),
                     color = Gray400,
                     fontSize = 12.sp
                 )

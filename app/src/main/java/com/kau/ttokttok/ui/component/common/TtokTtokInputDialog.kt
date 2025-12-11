@@ -1,6 +1,5 @@
 package com.kau.ttokttok.ui.component.common
 
-import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-
 
 @Composable
 fun TtokTtokInputDialog(
