@@ -53,3 +53,6 @@ val Blue50   = Color(0xFFEFF6FF)
 val Blue700  = Color(0xFF1D4ED8)
 val Green50  = Color(0xFFECFDF5)
 val Green600 = Color(0xFF16A34A)
+
+val DeepIndigo = Color(0xFF1A237E)
+val DeepBlue = Color(0xFF0D47A1)
