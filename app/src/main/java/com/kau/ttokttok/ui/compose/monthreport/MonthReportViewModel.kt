@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.usecase.monthreport.GetMonthReportUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,12 +20,19 @@ data class MonthReportUiState(
     val categoryStats: Map<String, Int> = emptyMap()
 )
 
+sealed interface MonthReportEvent {
+    data class ShowAlert(val title: String, val message: String) : MonthReportEvent
+}
+
 @HiltViewModel
 class MonthReportViewModel @Inject constructor(
     private val useCase: GetMonthReportUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(MonthReportUiState())
     val uiState: StateFlow<MonthReportUiState> = _uiState
+
+    private val _events = MutableSharedFlow<MonthReportEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<MonthReportEvent> = _events.asSharedFlow()
 
     init {
         getMonthReport()
@@ -54,16 +59,25 @@ class MonthReportViewModel @Inject constructor(
                     }
                 }
 
-                .onFailure {
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { current ->
                         current.copy(
                             isLoading = false,
-                            errorMessage = null
+                            errorMessage = errorMessage
                         )
-
-                        // TODO: 다이얼로그 추가
                     }
+
+                    emit(MonthReportEvent.ShowAlert(
+                        title = "조회 실패",
+                        message = errorMessage ?: "알 수 없는 오류입니다."
+                    ))
                 }
         }
+    }
+
+    private fun emit(event: MonthReportEvent) {
+        _events.tryEmit(event)
     }
 }

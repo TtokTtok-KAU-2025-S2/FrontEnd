@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok.data.remote.repository.PreConsiderationRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

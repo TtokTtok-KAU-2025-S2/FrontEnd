@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.model.board.community.CommunityBoard
 import com.kau.ttokttok.domain.usecase.community.LoadPostsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,8 +13,12 @@ data class CommunityUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
 
-    val posts: List<CommunityBoard> = emptyList(),
+    val posts: List<CommunityBoard> = emptyList()
 )
+
+sealed interface CommunityEvent {
+    data class ShowAlert(val title: String, val message: String): CommunityEvent
+}
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
@@ -24,6 +26,9 @@ class CommunityViewModel @Inject constructor(
 ): ViewModel() {
     private val _uiState = MutableStateFlow(CommunityUiState())
     val uiState: StateFlow<CommunityUiState> = _uiState
+
+    private val _events = MutableSharedFlow<CommunityEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<CommunityEvent> = _events.asSharedFlow()
 
     init {
         loadPosts()
@@ -39,24 +44,35 @@ class CommunityViewModel @Inject constructor(
 
             loadPostsUseCase.invoke()
                 .onSuccess { posts ->
-                    _uiState.update { current ->
-                        current.copy(
+                    _uiState.update { after ->
+                        after.copy(
                             isLoading = false,
                             posts = posts
                         )
                     }
                 }
 
-                .onFailure {
-                    _uiState.update { current ->
-                        current.copy(
+                .onFailure { e ->
+                    val errorMessage = e.message ?: "ERROR"
+
+                    _uiState.update { after ->
+                        after.copy(
                             isLoading = false,
-                            errorMessage = null
+                            errorMessage = errorMessage
                         )
                     }
 
-                    // TODO: 다이얼로그 추가
+                    emit(
+                        CommunityEvent.ShowAlert(
+                            title = "글 조회 실패",
+                            message = errorMessage
+                        )
+                    )
                 }
         }
+    }
+
+    private fun emit(event: CommunityEvent) {
+        _events.tryEmit(event)
     }
 }

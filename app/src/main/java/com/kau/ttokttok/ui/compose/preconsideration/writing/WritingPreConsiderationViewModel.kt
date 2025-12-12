@@ -27,8 +27,7 @@ data class WritingPreConsiderationUiState(
 )
 
 sealed interface WritingPreconsiderationEvent {
-    data object onSuccess: WritingPreconsiderationEvent
-    data class ShowMessage(val message: String) : WritingPreconsiderationEvent
+    data object Success: WritingPreconsiderationEvent
     data class ShowAlert(val title: String, val message: String) : WritingPreconsiderationEvent
 }
 
@@ -74,7 +73,7 @@ class WritingPreConsiderationViewModel @Inject constructor(
 
             when (val result = repository.createPost(req)) {
                 is NetworkResult.Success -> {
-                    emit(WritingPreconsiderationEvent.onSuccess)
+                    emit(WritingPreconsiderationEvent.Success)
                     _uiState.value = _uiState.value.copy(isLoading = false)
                 }
 
@@ -126,7 +125,7 @@ class WritingPreConsiderationViewModel @Inject constructor(
                         )
                     }
 
-                    emit(WritingPreconsiderationEvent.onSuccess)
+                    emit(WritingPreconsiderationEvent.Success)
                 }
 
                 .onFailure { response ->

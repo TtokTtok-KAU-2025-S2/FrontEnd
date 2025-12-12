@@ -1,6 +1,7 @@
 package com.kau.ttokttok.ui.compose.preconsideration
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,6 +13,10 @@ fun PreConsiderationRoute(
     onClickPost: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+
+    }
 
     PreConsiderationScreen(
         uiState = uiState,

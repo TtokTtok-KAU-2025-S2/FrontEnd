@@ -5,12 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.usecase.auth.LoginUseCase
 import com.kau.ttokttok.domain.usecase.auth.RequestTempPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,16 +51,18 @@ class LoginViewModel @Inject constructor(
                 }
 
                 .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = e.message
+                            errorMessage = errorMessage
                         )
                     }
 
                     emit(LoginEvent.ShowAlert(
                         title = "로그인 실패",
-                        message = e.message ?: "알 수 없는 오류입니다."
+                        message = errorMessage ?: "알 수 없는 오류입니다."
                     ))
                 }
         }
@@ -95,11 +92,11 @@ class LoginViewModel @Inject constructor(
                     )
                 }
 
-                .onFailure { throwable ->
-                    val errorMessage = throwable.message ?: "ERROR"
+                .onFailure { e ->
+                    val errorMessage = e.message
 
-                    _uiState.update { current ->
-                        current.copy(
+                    _uiState.update { after ->
+                        after.copy(
                             isLoading = false,
                             errorMessage = errorMessage
                         )
@@ -108,7 +105,7 @@ class LoginViewModel @Inject constructor(
                     emit(
                         LoginEvent.ShowAlert(
                             title = "임시 비밀번호 발급 실패",
-                            message = errorMessage
+                            message = errorMessage ?: "알 수 없는 오류입니다."
                         )
                     )
                 }

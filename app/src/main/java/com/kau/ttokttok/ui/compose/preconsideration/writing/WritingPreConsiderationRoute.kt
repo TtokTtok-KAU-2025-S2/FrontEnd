@@ -1,13 +1,9 @@
 package com.kau.ttokttok.ui.compose.preconsideration.writing
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kau.ttokttok.ui.component.common.AppDialog
 
 @Composable
 fun WritingPreConsiderationRoute(
@@ -16,9 +12,6 @@ fun WritingPreConsiderationRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackBar = remember { SnackbarHostState() }
-
-    // 다이얼로그 상태
     val showDialog = remember { mutableStateOf(false)}
     val dialogTitle = remember { mutableStateOf("")}
     val dialogMessage = remember { mutableStateOf("")}
@@ -26,21 +19,25 @@ fun WritingPreConsiderationRoute(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is WritingPreconsiderationEvent.ShowMessage -> {
-                    snackBar.showSnackbar(event.message)
-                }
-
                 is WritingPreconsiderationEvent.ShowAlert -> {
                     dialogTitle.value = event.title
                     dialogMessage.value = event.message
                     showDialog.value = true
                 }
 
-                WritingPreconsiderationEvent.onSuccess -> {
+                WritingPreconsiderationEvent.Success -> {
                     onClickBack()
                 }
             }
         }
+    }
+
+    if (showDialog.value) {
+        AppDialog(
+            title = dialogTitle.value,
+            message = dialogMessage.value,
+            onDismiss = { showDialog.value = false }
+        )
     }
 
     WritingPreConsiderationScreen(

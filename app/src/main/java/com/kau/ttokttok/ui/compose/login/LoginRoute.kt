@@ -1,10 +1,6 @@
 package com.kau.ttokttok.ui.compose.login
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kau.ttokttok.ui.component.common.AppDialog
@@ -17,7 +13,6 @@ fun LoginRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // 다이얼로그 상태
     val showDialog = remember { mutableStateOf(false)}
     val dialogTitle = remember { mutableStateOf("")}
     val dialogMessage = remember { mutableStateOf("")}
@@ -42,7 +37,6 @@ fun LoginRoute(
         }
     }
 
-    // 화면 다이얼로그 표시
     if (showDialog.value) {
         AppDialog(
             title = dialogTitle.value,
@@ -51,7 +45,6 @@ fun LoginRoute(
         )
     }
 
-    // 콜백 연결
     LoginScreen(
         onClickLogin = {
             email, pw -> viewModel.onClickLogin(email, pw)
