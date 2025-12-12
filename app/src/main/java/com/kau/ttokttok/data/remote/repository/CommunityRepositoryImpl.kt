@@ -22,7 +22,7 @@ class CommunityRepositoryImpl @Inject constructor(
     private val api: CommunityApiService,
     @ApplicationContext private val context: Context
 ) : CommunityRepository {
-    override suspend fun createPost(title: String, content: String, imageUri: String?): String {
+    override suspend fun createPost(title: String, content: String, imageUri: String?): Result<Unit> {
         val noticePicturePart = imageUri?.let { uriString ->
             uriStringToImagePart(uriString, partName = "noticePicture")
         }
@@ -33,37 +33,37 @@ class CommunityRepositoryImpl @Inject constructor(
             noticePicture = noticePicturePart
         ) }) {
             is NetworkResult.Success -> {
-                response.data.title
+                Result.success(Unit)
             }
 
             is NetworkResult.Error -> {
-                throw Throwable(response.message ?: "게시글 작성에 실패했습니다.")
+                Result.failure(Throwable(response.message))
             }
         }
     }
 
-    override suspend fun getPosts(): List<CommunityBoard> {
+    override suspend fun getPosts(): Result<List<CommunityBoard>> {
         return when (val response = safeApiCall { api.getPosts() }) {
             is NetworkResult.Success -> {
-                response.data.notices.map {
+                Result.success(response.data.notices.map {
                     it.toCommunityBoard()
-                }
+                })
             }
 
             is NetworkResult.Error -> {
-                throw Throwable(response.message ?: "게시글 불러오기에 실패했습니다.")
+                Result.failure(Throwable(response.message))
             }
         }
     }
 
-    override suspend fun getPostDetail(id: Long): CommunityBoardDetail {
+    override suspend fun getPostDetail(id: Long): Result<CommunityBoardDetail> {
         return when (val response = safeApiCall { api.getPostDetail(id) }) {
             is NetworkResult.Success -> {
-                response.data.toCommunityBoardDetail()
+                Result.success(response.data.toCommunityBoardDetail())
             }
 
             is NetworkResult.Error -> {
-               throw Throwable(response.message ?: "불러오기에 실패했습니다.")
+               Result.failure(Throwable(response.message))
             }
         }
     }

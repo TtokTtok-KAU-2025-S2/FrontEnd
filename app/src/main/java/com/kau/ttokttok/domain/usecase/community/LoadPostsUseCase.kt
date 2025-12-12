@@ -9,7 +9,5 @@ import javax.inject.Singleton
 class LoadPostsUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(): Result<List<CommunityBoard>> = runCatching {
-        repository.getPosts()
-    }
+    suspend operator fun invoke(): Result<List<CommunityBoard>> = repository.getPosts()
 }

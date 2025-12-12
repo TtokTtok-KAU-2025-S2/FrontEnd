@@ -41,16 +41,29 @@ class CommunityDetailViewModel @Inject constructor(
     val events: SharedFlow<CommunityDetailEvent> = _events.asSharedFlow()
 
     init {
-        getCommunityDetail(communityId)
+        getCommunityDetail()
+
+        savedStateHandle
+            .getStateFlow("needRefresh", false)
+            .onEach { needRefresh ->
+                if (needRefresh) {
+                    getCommunityDetail()
+                    savedStateHandle["needRefresh"] = false
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun getCommunityDetail(id: Long) {
+    fun getCommunityDetail() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true
-            )
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
 
-            useCase.invoke(id)
+            useCase.invoke(communityId)
                 .onSuccess { data ->
                     _uiState.update { after ->
                         after.copy(

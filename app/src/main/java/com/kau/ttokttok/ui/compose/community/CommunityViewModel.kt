@@ -1,7 +1,6 @@
 package com.kau.ttokttok.ui.compose.community
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.community.CommunityBoard
 import com.kau.ttokttok.domain.usecase.community.LoadPostsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,8 @@ sealed interface CommunityEvent {
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
-    private val loadPostsUseCase: LoadPostsUseCase
+    private val loadPostsUseCase: LoadPostsUseCase,
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val _uiState = MutableStateFlow(CommunityUiState())
     val uiState: StateFlow<CommunityUiState> = _uiState
@@ -32,13 +32,24 @@ class CommunityViewModel @Inject constructor(
 
     init {
         loadPosts()
+
+        savedStateHandle
+            .getStateFlow("needRefresh", false)
+            .onEach { needRefresh ->
+                if (needRefresh) {
+                    loadPosts()
+                    savedStateHandle["needRefresh"] = false
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadPosts() {
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -47,13 +58,15 @@ class CommunityViewModel @Inject constructor(
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
+                            errorMessage = null,
+
                             posts = posts
                         )
                     }
                 }
 
                 .onFailure { e ->
-                    val errorMessage = e.message ?: "ERROR"
+                    val errorMessage = e.message
 
                     _uiState.update { after ->
                         after.copy(
@@ -65,7 +78,7 @@ class CommunityViewModel @Inject constructor(
                     emit(
                         CommunityEvent.ShowAlert(
                             title = "글 조회 실패",
-                            message = errorMessage
+                            message = errorMessage ?: "ERROR"
                         )
                     )
                 }

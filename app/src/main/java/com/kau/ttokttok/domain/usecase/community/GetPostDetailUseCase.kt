@@ -9,7 +9,5 @@ import javax.inject.Singleton
 class GetPostDetailUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<CommunityBoardDetail> = runCatching {
-        repository.getPostDetail(id)
-    }
+    suspend operator fun invoke(id: Long): Result<CommunityBoardDetail> = repository.getPostDetail(id)
 }

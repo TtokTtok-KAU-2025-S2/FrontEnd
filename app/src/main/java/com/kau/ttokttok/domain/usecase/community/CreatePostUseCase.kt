@@ -8,7 +8,5 @@ import javax.inject.Singleton
 class CreatePostUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(title: String, content: String, imageUri: String?): Result<String> = runCatching {
-        repository.createPost(title, content, imageUri)
-    }
+    suspend operator fun invoke(title: String, content: String, imageUri: String?): Result<Unit> = repository.createPost(title, content, imageUri)
 }

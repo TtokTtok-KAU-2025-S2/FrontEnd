@@ -31,8 +31,9 @@ fun CommunityScreen(
         modifier = modifier
             .fillMaxSize()
             .background(Slate900)
-            .statusBarsPadding()
             .padding(bottom = 64.dp)       // pb-16
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         // Header
         BoardHeader(

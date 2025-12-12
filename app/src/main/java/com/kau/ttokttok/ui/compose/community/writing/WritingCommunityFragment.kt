@@ -21,7 +21,12 @@ class WritingCommunityFragment : Fragment() {
 
         setContent {
             WritingCommunityRoute(
-                onClickBack = { findNavController().popBackStack() }
+                onClickBack = {
+                    findNavController().previousBackStackEntry?.
+                    savedStateHandle?.set("needRefresh", true)
+
+                    findNavController().popBackStack()
+                }
             )
         }
     }

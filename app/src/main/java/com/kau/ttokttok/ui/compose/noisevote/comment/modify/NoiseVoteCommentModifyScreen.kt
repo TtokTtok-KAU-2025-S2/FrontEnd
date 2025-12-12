@@ -16,9 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kau.ttokttok.ui.component.common.button.PostBottomActions
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
-import com.kau.ttokttok.ui.compose.community.writing.PostBottomActions
-import com.kau.ttokttok.ui.compose.community.writing.PostContentField
+import com.kau.ttokttok.ui.component.common.textfield.PostContentField
 import com.kau.ttokttok.ui.theme.White
 
 @Preview
