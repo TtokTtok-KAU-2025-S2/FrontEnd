@@ -29,6 +29,8 @@ navigation = "2.8.4"
 foundation = "1.9.4"
 media3Effect = "1.8.0"
 
+coil = "2.7.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -82,6 +84,9 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-media3-effect = { group = "androidx.media3", name = "media3-effect", version.ref = "media3Effect" }
+
+# coil
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
