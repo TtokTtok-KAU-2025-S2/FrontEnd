@@ -2,8 +2,7 @@ package com.kau.ttokttok.ui.compose.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok.domain.usecase.auth.LoginUseCase
-import com.kau.ttokttok.domain.usecase.auth.RequestTempPasswordUseCase
+import com.kau.ttokttok.domain.usecase.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,7 +15,7 @@ data class LoginUiState(
 
 sealed interface LoginEvent {
     data object NavigateHome : LoginEvent
-    data object NavigateSignup : LoginEvent
+
     data class ShowAlert(val title: String, val message: String) : LoginEvent
 }
 
@@ -35,7 +34,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -43,7 +43,8 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 
@@ -72,7 +73,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -80,7 +82,8 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.update { current ->
                         current.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 

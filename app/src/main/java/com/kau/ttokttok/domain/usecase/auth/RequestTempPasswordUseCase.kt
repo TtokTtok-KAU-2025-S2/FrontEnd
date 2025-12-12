@@ -8,7 +8,5 @@ import javax.inject.Singleton
 class RequestTempPasswordUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String): Result<String> = runCatching {
-        repository.requestTempPassword(email)
-    }
+    suspend operator fun invoke(email: String): Result<Unit> = repository.requestTempPassword(email)
 }

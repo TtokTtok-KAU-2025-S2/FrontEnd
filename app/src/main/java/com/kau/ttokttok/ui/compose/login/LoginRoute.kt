@@ -29,10 +29,6 @@ fun LoginRoute(
                 LoginEvent.NavigateHome -> {
                     onSuccess()
                 }
-
-                LoginEvent.NavigateSignup -> {
-                    onRegister()
-                }
             }
         }
     }
