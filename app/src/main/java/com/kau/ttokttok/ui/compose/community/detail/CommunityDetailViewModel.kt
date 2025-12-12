@@ -19,7 +19,8 @@ data class CommunityDetailUiState(
     val communityBoardDetail: CommunityBoardDetail = CommunityBoardDetail(
         title = "제목 NULL",
         createdAt = LocalDateTime.now(),
-        content = "내용 NULL"
+        content = "내용 NULL",
+        pictureUrl = null
     )
 )
 

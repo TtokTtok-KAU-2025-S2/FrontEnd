@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,19 +22,16 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.kau.ttokttok._core.util.DateUtils.formatDateTime
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
-
-private val White   = Color.White       // bg-white
-private val Gray900 = Color(0xFF111827) // text-gray-900
-val Gray500 = Color(0xFF6B7280) // text-gray-500
-val Gray400 = Color(0xFF9CA3AF) // text-gray-400
-val Gray200 = Color(0xFFE5E7EB) // border-gray-200
-private val Gray50Bg = Color(0xFFF9FAFB)
+import com.kau.ttokttok.ui.theme.*
 
 @Preview
 @Composable
@@ -115,6 +113,20 @@ fun BoardDetailContent(
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
+
+                val imageUrl = uiState.communityBoardDetail.pictureUrl
+                if (!imageUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "게시글 이미지",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .heightIn(max = 240.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
             }
         }
     }

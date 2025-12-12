@@ -1,12 +1,10 @@
 package com.kau.ttokttok.data.remote.repository
 
 import android.content.Context
-import android.net.Uri
 import com.kau.ttokttok._core.network.auth.toPlainRequestBody
 import com.kau.ttokttok._core.network.result.NetworkResult
 import com.kau.ttokttok._core.network.result.safeApiCall
 import com.kau.ttokttok.data.remote.api.CommunityApiService
-import com.kau.ttokttok.data.remote.dto.community.req.*
 import com.kau.ttokttok.data.remote.dto.community.res.*
 import com.kau.ttokttok.domain.model.board.community.CommunityBoard
 import com.kau.ttokttok.domain.model.board.community.CommunityBoardDetail

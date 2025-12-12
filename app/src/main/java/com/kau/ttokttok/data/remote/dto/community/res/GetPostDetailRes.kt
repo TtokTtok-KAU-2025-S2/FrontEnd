@@ -8,13 +8,15 @@ data class GetPostDetailRes(
     val noticeId: Long,
     val title: String,
     val content: String,
-    val createdAt: String
+    val createdAt: String,
+    val imageUrl: String?
 )
 
 fun GetPostDetailRes.toCommunityBoardDetail() : CommunityBoardDetail {
     return CommunityBoardDetail(
         title = title,
         createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME),
-        content = content
+        content = content,
+        pictureUrl = imageUrl
     )
 }
