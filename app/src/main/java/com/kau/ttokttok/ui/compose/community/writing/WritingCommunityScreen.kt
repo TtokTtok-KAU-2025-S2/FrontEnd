@@ -1,5 +1,9 @@
 package com.kau.ttokttok.ui.compose.community.writing
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,29 +33,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
-
-private val Gray700 = Color(0xFF374151)
-private val Gray200 = Color(0xFFE5E7EB)
-private val White = Color.White
-private val Gray400 = Color(0xFF9CA3AF)
-private val Blue600 = Color(0xFF2563EB)
+import com.kau.ttokttok.ui.theme.*
 
 @Preview
 @Composable
 fun WritingCommunityScreen(
     modifier: Modifier = Modifier,
-    onClickCreate: (String, String) -> Unit = { _, _ -> },
+    onClickCreate: (String, String, Uri?) -> Unit = { _, _, _ -> },
     onClickBack: () -> Unit = { },
 ) {
 
     var title by remember { mutableStateOf("")}
     var content by remember { mutableStateOf("")}
+    
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri: Uri? ->
+            selectedImageUri = uri
+        }
 
     Column(
         modifier = modifier
@@ -81,7 +94,12 @@ fun WritingCommunityScreen(
         Spacer(Modifier.height(32.dp))
 
         PostImagePickerButton(
-            // TODO: 이미지 선택 로직 추가
+            selectedImageUri = selectedImageUri,
+            onClickAddImage = {
+                imagePickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }
         )
 
         Spacer(Modifier.height(32.dp))
@@ -89,7 +107,7 @@ fun WritingCommunityScreen(
         PostBottomActions(
             enabled = title.isNotBlank() && content.isNotBlank(),
             onSubmit = {
-                onClickCreate(title, content)
+                onClickCreate(title, content, selectedImageUri)
             }
         )
     }
@@ -184,7 +202,9 @@ fun PostContentField(
 @Composable
 fun PostImagePickerButton(
     modifier: Modifier = Modifier,
-    onClickAddImage: () -> Unit = {}
+    selectedImageUri: Uri? = null,
+    onClickAddImage: () -> Unit = {},
+    onClickRemoveImage: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -196,22 +216,54 @@ fun PostImagePickerButton(
             .clickable { onClickAddImage() },
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.AddAPhoto,
-                contentDescription = "사진 추가",
-                tint = Blue600,
-                modifier = Modifier.size(28.dp)
+        if (selectedImageUri == null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AddAPhoto,
+                    contentDescription = "사진 추가",
+                    tint = Blue600,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "사진 추가",
+                    color = Gray400,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+
+        else {
+            AsyncImage(
+                model = selectedImageUri, // Uri 그대로 전달
+                contentDescription = "선택된 이미지",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                contentScale = ContentScale.Crop
             )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = "사진 추가",
-                color = Gray400,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
-            )
+
+            Box(
+                modifier = modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+                    .background(
+                        Color.Black.copy(alpha = 0.5f),
+                        RoundedCornerShape(999.dp)
+                    )
+                    .clickable { onClickRemoveImage() }
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = "삭제",
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }

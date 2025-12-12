@@ -20,7 +20,7 @@ interface CommunityApiService {
     suspend fun createPost(
         @Part("title") title: RequestBody,
         @Part("content") content: RequestBody,
-        @Part noticePicture: MultipartBody.Part? = null
+        @Part noticePicture: MultipartBody.Part?
     ): ApiResponse<CreatePostCommunityRes>
 
     @GET("api/notice")

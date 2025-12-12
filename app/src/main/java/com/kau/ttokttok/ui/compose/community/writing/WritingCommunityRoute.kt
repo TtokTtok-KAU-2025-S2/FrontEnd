@@ -1,6 +1,5 @@
 package com.kau.ttokttok.ui.compose.community.writing
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,12 +17,11 @@ fun WritingCommunityRoute(
         viewModel.event.collect { event ->
             when (event) {
                 is WritingCommunityEvent.Success -> {
-                    onClickBack
+                    onClickBack()
                 }
 
                 is WritingCommunityEvent.Error -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                    Log.d("route", event.message)
                 }
             }
         }
@@ -31,7 +29,7 @@ fun WritingCommunityRoute(
 
     WritingCommunityScreen(
         onClickCreate = {
-            title, content -> viewModel.createPost(title, content)
+            title, content, imageUri -> viewModel.createPost(title, content, imageUri)
         },
         onClickBack = onClickBack
     )

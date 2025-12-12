@@ -1,15 +1,20 @@
 package com.kau.ttokttok.ui.compose.community.writing
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.usecase.community.CreatePostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 data class WritingCommunityUiState(
@@ -32,14 +37,19 @@ class WritingCommunityViewModel @Inject constructor(
     private val _event = MutableSharedFlow<WritingCommunityEvent>()
     val event: SharedFlow<WritingCommunityEvent> = _event.asSharedFlow()
 
-    fun createPost(title: String, content: String) {
+    fun createPost(title: String, content: String, imageUri: Uri?) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                errorMessage = null
-            )
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
 
-            useCase.invoke(title = title, content = content)
+            useCase.invoke(
+                title = title,
+                content = content,
+                imageUri = imageUri?.toString()
+            )
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false
