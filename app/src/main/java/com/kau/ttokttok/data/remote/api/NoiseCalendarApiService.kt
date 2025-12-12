@@ -1,8 +1,7 @@
 package com.kau.ttokttok.data.remote.api
 
 import com.kau.ttokttok._core.network.model.ApiResponse
-import com.kau.ttokttok.data.remote.dto.noisecalendar.res.GetDailyCalendarRes
-import com.kau.ttokttok.data.remote.dto.noisecalendar.res.GetMonthlyNoiseCalendarRes
+import com.kau.ttokttok.data.remote.dto.noisecalendar.res.*
 import retrofit2.http.GET
 import retrofit2.http.Query
 

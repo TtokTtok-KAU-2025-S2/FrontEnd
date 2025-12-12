@@ -3,13 +3,7 @@ package com.kau.ttokttok.data.remote.api
 import com.kau.ttokttok._core.network.model.ApiResponse
 import com.kau.ttokttok.data.remote.dto.preconsideration.req.*
 import com.kau.ttokttok.data.remote.dto.preconsideration.res.*
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface PreNoticeApiService {
     @Headers("No-Auth: false")

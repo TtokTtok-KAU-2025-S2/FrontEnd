@@ -1,6 +1,5 @@
 package com.kau.ttokttok.domain.repository
 
-import com.kau.ttokttok.data.remote.dto.noiseboard.req.*
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.*
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
 import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail

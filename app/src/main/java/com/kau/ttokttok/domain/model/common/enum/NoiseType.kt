@@ -1,7 +1,5 @@
 package com.kau.ttokttok.domain.model.common.enum
 
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
-
 enum class NoiseType(val label: String) {
     FOOTSTEP("발걸음 소리"),
     HAMMERING("망치질 소리"),

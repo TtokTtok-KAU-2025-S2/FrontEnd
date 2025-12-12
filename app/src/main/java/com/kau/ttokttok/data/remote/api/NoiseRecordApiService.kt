@@ -1,21 +1,9 @@
 package com.kau.ttokttok.data.remote.api
 
 import com.kau.ttokttok._core.network.model.ApiResponse
-import com.kau.ttokttok.data.remote.dto.noiserecord.req.CreateNoiseRecordReq
-import com.kau.ttokttok.data.remote.dto.noiserecord.req.ModifyNoiseRecordReq
-import com.kau.ttokttok.data.remote.dto.noiserecord.res.CreateNoiseRecordRes
-import com.kau.ttokttok.data.remote.dto.noiserecord.res.DeleteNoiseRecordRes
-import com.kau.ttokttok.data.remote.dto.noiserecord.res.GetAllNoiseRecordCountRes
-import com.kau.ttokttok.data.remote.dto.noiserecord.res.GetAverageNoiseDBRes
-import com.kau.ttokttok.data.remote.dto.noiserecord.res.GetMonthlyNoiseRecordCountRes
-import com.kau.ttokttok.data.remote.dto.noiserecord.res.ModifyNoiseRecordRes
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import com.kau.ttokttok.data.remote.dto.noiserecord.req.*
+import com.kau.ttokttok.data.remote.dto.noiserecord.res.*
+import retrofit2.http.*
 
 interface NoiseRecordApiService {
     @GET("noise/records/total-count")
