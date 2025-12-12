@@ -5,12 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,7 +39,8 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -66,7 +62,8 @@ class SplashViewModel @Inject constructor(
 
             _uiState.update {
                 it.copy(
-                    isLoading = false
+                    isLoading = false,
+                    errorMessage = null
                 )
             }
         }
