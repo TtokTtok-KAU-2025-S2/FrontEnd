@@ -1,10 +1,8 @@
 package com.kau.ttokttok.data.remote.repository
 
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok._core.network.result.safeApiCall
+import com.kau.ttokttok._core.network.result.*
 import com.kau.ttokttok.data.remote.api.AuthApiService
 import com.kau.ttokttok.data.remote.dto.auth.req.*
-import com.kau.ttokttok.data.remote.dto.auth.res.RegisterRes
 import com.kau.ttokttok.domain.repository.AuthRepository
 import com.kau.ttokttok.domain.usecase.auth.LoginResult
 import javax.inject.Inject
@@ -37,7 +35,7 @@ class AuthRepositoryImpl @Inject constructor(
         password: String,
         buildingNumber: Int,
         unitNumber: Int
-    ): RegisterRes {
+    ): Result<Unit> {
         val req = RegisterReq(
             aptId = aptId,
             email = email,
@@ -48,11 +46,11 @@ class AuthRepositoryImpl @Inject constructor(
 
         return when (val response = safeApiCall { api.register(req) }) {
             is NetworkResult.Success -> {
-                response.data
+                Result.success(Unit)
             }
 
             is NetworkResult.Error -> {
-                throw Throwable(response.message ?: "회원가입에 실패했습니다.")
+                Result.failure(Throwable(response.message))
             }
         }
     }
@@ -68,7 +66,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             is NetworkResult.Error -> {
-                Result.failure(Throwable(response.message ?: "ERROR"))
+                Result.failure(Throwable(response.message))
             }
         }
     }

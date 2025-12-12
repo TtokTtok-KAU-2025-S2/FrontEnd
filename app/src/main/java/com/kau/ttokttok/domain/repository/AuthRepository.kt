@@ -1,6 +1,5 @@
 package com.kau.ttokttok.domain.repository
 
-import com.kau.ttokttok.data.remote.dto.auth.res.*
 import com.kau.ttokttok.domain.usecase.auth.LoginResult
 
 interface AuthRepository {
@@ -11,6 +10,6 @@ interface AuthRepository {
         password: String,
         buildingNumber: Int,
         unitNumber: Int
-    ): RegisterRes
+    ): Result<Unit>
     suspend fun requestTempPassword(email: String): Result<Unit>
 }
