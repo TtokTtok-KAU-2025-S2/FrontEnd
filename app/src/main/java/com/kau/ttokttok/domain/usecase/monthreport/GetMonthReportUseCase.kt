@@ -10,9 +10,9 @@ import javax.inject.Singleton
 class GetMonthReportUseCase @Inject constructor(
     private val repository: ReportRepository
 ) {
-    suspend operator fun invoke() = runCatching {
+    suspend operator fun invoke(): Result<GetMonthReportResult> {
         val now = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ISO_DATE)
 
-        repository.getMonthlyReport(now)
+        return repository.getMonthlyReport(now)
     }
 }

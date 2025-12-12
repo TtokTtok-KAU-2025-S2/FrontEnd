@@ -42,7 +42,8 @@ class MonthReportViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -50,6 +51,9 @@ class MonthReportViewModel @Inject constructor(
                 .onSuccess { data ->
                     _uiState.update { current ->
                         current.copy(
+                            isLoading = false,
+                            errorMessage = null,
+
                             totalReports = data.totalReportCount,
                             comparedToPrevious = data.changeRate.toInt(),
                             summaryText = data.aiAnalysisText,
