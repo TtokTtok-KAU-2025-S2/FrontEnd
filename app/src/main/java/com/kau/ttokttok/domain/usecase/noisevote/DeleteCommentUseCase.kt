@@ -2,10 +2,11 @@ package com.kau.ttokttok.domain.usecase.noisevote
 
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.DeleteCommentRes
 import com.kau.ttokttok.domain.repository.NoiseVoteRepository
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DeleteCommentUseCase(
+class DeleteCommentUseCase @Inject constructor(
     private val repository: NoiseVoteRepository
 ) {
     suspend operator fun invoke(id: Long): Result<DeleteCommentRes> {

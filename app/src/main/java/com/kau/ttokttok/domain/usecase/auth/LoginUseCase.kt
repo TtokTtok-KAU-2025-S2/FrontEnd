@@ -6,7 +6,6 @@ import com.kau.ttokttok.domain.repository.AuthRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class LoginUseCase @Inject constructor(
     private val repository: AuthRepository,
