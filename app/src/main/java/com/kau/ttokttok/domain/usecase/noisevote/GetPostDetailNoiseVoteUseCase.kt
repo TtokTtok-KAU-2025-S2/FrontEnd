@@ -9,7 +9,5 @@ import javax.inject.Singleton
 class GetPostDetailNoiseVoteUseCase @Inject constructor(
     private val repository: NoiseVoteRepository
 ){
-    suspend operator fun invoke(id: Long): Result<NoiseVoteBoardDetail> {
-        return repository.getPostDetail(id)
-    }
+    suspend operator fun invoke(id: Long): Result<NoiseVoteBoardDetail> = repository.getPostDetail(id)
 }

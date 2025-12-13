@@ -1,14 +1,12 @@
 package com.kau.ttokttok.data.remote.repository
 
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok._core.network.result.safeApiCall
+import com.kau.ttokttok._core.network.result.*
 import com.kau.ttokttok.data.remote.api.NoiseStatusBoardApiService
 import com.kau.ttokttok.data.remote.dto.noiseboard.req.*
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.*
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
+import com.kau.ttokttok.domain.model.board.noisevote.*
 import com.kau.ttokttok.domain.repository.NoiseVoteRepository
+import com.kau.ttokttok.domain.usecase.noisevote.PostVoteResult
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,14 +43,14 @@ class NoiseVoteRepositoryImpl @Inject constructor(
     override suspend fun firstVote(
         id: Long,
         voteType: NoiseVoteType
-    ): Result<FirstVoteRes> {
+    ): Result<PostVoteResult> {
         val req = FirstVoteReq(
             voteType = voteType
         )
 
         return when (val response = safeApiCall { api.firstVote(id, req) }) {
             is NetworkResult.Success -> {
-                Result.success(response.data)
+                Result.success(response.data.toResult())
             }
 
             is NetworkResult.Error -> {
@@ -65,14 +63,14 @@ class NoiseVoteRepositoryImpl @Inject constructor(
     override suspend fun postComment(
         id: Long,
         content: String
-    ): Result<PostCommentRes> {
+    ): Result<Unit> {
         val req = PostCommentReq(
             content = content
         )
 
         return when (val response = safeApiCall {api.postComment(id, req)}) {
             is NetworkResult.Success -> {
-                Result.success(response.data)
+                Result.success(Unit)
             }
 
             is NetworkResult.Error -> {
@@ -84,14 +82,14 @@ class NoiseVoteRepositoryImpl @Inject constructor(
     override suspend fun modifyComment(
         id: Long,
         content: String
-    ): Result<ModifyCommentRes> {
+    ): Result<Unit> {
         val req = ModifyCommentReq(
             content = content
         )
 
         return when (val response = safeApiCall {api.modifyComment(id, req)}) {
             is NetworkResult.Success -> {
-                Result.success(response.data)
+                Result.success(Unit)
             }
 
             is NetworkResult.Error -> {
@@ -100,10 +98,10 @@ class NoiseVoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun cancelVote(id: Long): Result<String> {
+    override suspend fun cancelVote(id: Long): Result<Unit> {
         return when (val response = safeApiCall { api.cancelVote(id) }) {
             is NetworkResult.Success -> {
-                Result.success(response.data)
+                Result.success(Unit)
             }
 
             is NetworkResult.Error -> {
@@ -112,10 +110,10 @@ class NoiseVoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteComment(id: Long): Result<DeleteCommentRes> {
+    override suspend fun deleteComment(id: Long): Result<Unit> {
         return when (val response = safeApiCall { api.deleteComment(id) }) {
             is NetworkResult.Success -> {
-                Result.success(response.data)
+                Result.success(Unit)
             }
 
             is NetworkResult.Error -> {

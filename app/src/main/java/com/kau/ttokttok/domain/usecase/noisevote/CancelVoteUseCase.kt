@@ -8,7 +8,5 @@ import javax.inject.Singleton
 class CancelVoteUseCase @Inject constructor(
     private val repository: NoiseVoteRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<String> {
-        return repository.cancelVote(id)
-    }
+    suspend operator fun invoke(id: Long): Result<Unit> = repository.cancelVote(id)
 }

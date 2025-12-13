@@ -23,7 +23,13 @@ class NoiseVoteDetailFragment : Fragment() {
 
         setContent {
             NoiseVoteDetailRoute(
-                onClickBack = { findNavController().popBackStack() },
+                onClickBack = {
+                    findNavController().previousBackStackEntry?.
+                    savedStateHandle?.set("needRefresh", true)
+
+                    findNavController().popBackStack()
+                },
+
                 onClickCommentModify = { id, content ->
                     val args = Bundle().apply {
                         putLong("noiseVoteCommentId", id)

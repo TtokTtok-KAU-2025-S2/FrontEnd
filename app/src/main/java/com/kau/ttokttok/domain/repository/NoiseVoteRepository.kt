@@ -1,9 +1,7 @@
 package com.kau.ttokttok.domain.repository
 
-import com.kau.ttokttok.data.remote.dto.noiseboard.res.*
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoard
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
+import com.kau.ttokttok.domain.model.board.noisevote.*
+import com.kau.ttokttok.domain.usecase.noisevote.PostVoteResult
 
 interface NoiseVoteRepository {
     suspend fun getPosts(): Result<List<NoiseVoteBoard>>
@@ -11,23 +9,23 @@ interface NoiseVoteRepository {
     suspend fun firstVote(
         id: Long,
         voteType: NoiseVoteType
-    ): Result<FirstVoteRes>
+    ): Result<PostVoteResult>
 
     suspend fun postComment(
         id: Long,
         content: String
-    ): Result<PostCommentRes>
+    ): Result<Unit>
 
     suspend fun modifyComment(
         id: Long,
         content: String
-    ): Result<ModifyCommentRes>
+    ): Result<Unit>
 
     suspend fun cancelVote(
         id: Long
-    ): Result<String>
+    ): Result<Unit>
 
     suspend fun deleteComment(
         id: Long
-    ): Result<DeleteCommentRes>
+    ): Result<Unit>
 }

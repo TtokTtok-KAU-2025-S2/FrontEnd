@@ -1,16 +1,9 @@
 package com.kau.ttokttok.ui.compose.noisevote.comment.modify
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.usecase.noisevote.ModifyCommentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +17,8 @@ data class NoiseVoteCommentModifyUiState(
 
 sealed interface NoiseVoteCommentModifyEvent {
     data object OnSuccess : NoiseVoteCommentModifyEvent
+
+    data class ShowAlert(val title: String, val message: String) : NoiseVoteCommentModifyEvent
 }
 
 @HiltViewModel
@@ -48,7 +43,8 @@ class NoiseVoteCommentModifyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -59,22 +55,28 @@ class NoiseVoteCommentModifyViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 
                     emit(NoiseVoteCommentModifyEvent.OnSuccess)
                 }
 
-                .onFailure { response ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = response.message
+                            errorMessage = errorMessage
                         )
                     }
 
-                    // TODO: 다이얼로그 추가
+                    emit(NoiseVoteCommentModifyEvent.ShowAlert(
+                        title = "변경 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }
@@ -83,13 +85,16 @@ class NoiseVoteCommentModifyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
             _uiState.update { after ->
                 after.copy(
                     isLoading = false,
+                    errorMessage = null,
+
                     commentContent = noiseVoteCommentContent
                 )
             }
