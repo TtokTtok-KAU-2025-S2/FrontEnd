@@ -44,7 +44,6 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
             binding.tvApartmentName.text = apartment.apartmentName
 
             setupBadge(apartment.status)
-            setupStats(apartment.noiseDistribution)
             setupChart(apartment.noiseDistribution)
             setupLegend(apartment.noiseDistribution)
         }
@@ -65,31 +64,22 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
             }
         }
 
-        // 통계 정보 (총 건수, 소음 레벨) - 실제 리포트 건수 기반으로 소음 정도 판단
-        private fun setupStats(distribution: NoiseDistribution) {
-            val total = getTotalCount(distribution)
-
-            // 실제 리포트 건수를 기반으로 소음 레벨 판단
-            val (levelText, colorRes) = when {
-                total >= 50 -> "시끄러움" to R.color.db_high
-                total >= 20 -> "보통" to R.color.db_moderate
-                else -> "조용함" to R.color.db_safe
-            }
-
-            binding.tvTotalReports.text = "${total}건"
-            binding.tvNoiseLevel.text = levelText
-            binding.tvNoiseLevel.setTextColor(binding.root.context.getColor(colorRes))
-        }
-
         // 파이 차트 설정
         private fun setupChart(distribution: NoiseDistribution) {
             val entries = mutableListOf<PieEntry>()
             val colors = mutableListOf<Int>()
             val context = binding.root.context
+            val total = getTotalCount(distribution)
+
+            if (total == 0) {
+                binding.pieChart.visibility = View.GONE
+                return
+            }
 
             getNoiseTypes(distribution).forEach { type ->
                 if (type.count > 0) {
-                    entries.add(PieEntry(type.count.toFloat(), type.label))
+                    val percentage = (type.count.toFloat() / total * 100)
+                    entries.add(PieEntry(percentage, type.label))
                     colors.add(context.getColor(type.colorRes))
                 }
             }
@@ -107,6 +97,11 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
                 valueTextSize = 12f
                 sliceSpace = 3f
                 selectionShift = 5f
+                valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        return "${value.toInt()}%"
+                    }
+                }
             }
 
             binding.pieChart.apply {
@@ -127,15 +122,19 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
             binding.legendContainer.removeAllViews()
             val context = binding.root.context
             val inflater = LayoutInflater.from(context)
+            val total = getTotalCount(distribution)
+
+            if (total == 0) return
 
             getNoiseTypes(distribution).forEach { type ->
                 if (type.count > 0) {
+                    val percentage = (type.count.toFloat() / total * 100).toInt()
                     val legendBinding = ItemLegendBinding.inflate(
                         inflater,
                         binding.legendContainer,
                         false
                     )
-                    legendBinding.tvLegendLabel.text = "${type.label} (${type.count})"
+                    legendBinding.tvLegendLabel.text = "${type.label} (${percentage}%)"
                     legendBinding.colorIndicator.setBackgroundColor(context.getColor(type.colorRes))
                     binding.legendContainer.addView(legendBinding.root)
                 }

@@ -264,7 +264,7 @@
                 android:clipToPadding="false"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="80dp" />
 
         </LinearLayout>
 
@@ -276,7 +276,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="48dp"
         android:contentDescription="@string/add_noise_record"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="#2563eb"

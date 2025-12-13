@@ -31,7 +31,7 @@
             android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/ic_arrow_left"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="뒤로가기"
             app:tint="@android:color/white" />
@@ -270,6 +270,19 @@
                     app:strokeColor="@android:color/white"
                     app:strokeWidth="1dp" />
 
+                <!-- AI 분석 이유 표시 -->
+                <TextView
+                    android:id="@+id/tvAiReason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_ai_reason"
+                    android:padding="12dp"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
@@ -465,6 +478,7 @@
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:layout_marginBottom="32dp"
             android:text="일기 저장"
             android:textColor="@android:color/white"
             android:textSize="16sp"

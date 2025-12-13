@@ -1,6 +1,7 @@
 package com.kau.ttokttok.data.remote.api
 
 import com.kau.ttokttok._core.network.model.ApiResponse
+import com.kau.ttokttok.data.remote.dto.recording.res.RecordingItem
 import com.kau.ttokttok.data.remote.dto.recording.res.UploadRecordingRes
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -11,5 +12,8 @@ interface RecordingApiService {
     suspend fun uploadRecording(
         @Part voiceFile: MultipartBody.Part
     ): ApiResponse<UploadRecordingRes>
+
+    @GET("api/recordings")
+    suspend fun getAllRecordings(): ApiResponse<List<RecordingItem>>
 }
 

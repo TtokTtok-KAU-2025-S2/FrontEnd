@@ -125,9 +125,9 @@ class NoiseLogAdapter(
         }
 
         private fun getNoiseLevel(db: Double): Pair<String, Int> = when {
-            db >= 85.0 -> "매우 시끄러움" to R.drawable.bg_level_red
-            db >= 70.0 -> "시끄러움" to R.drawable.bg_level_orange
-            db >= 50.0 -> "보통" to R.drawable.bg_level_yellow
+            db >= 55.0 -> "매우 시끄러움" to R.drawable.bg_level_red
+            db >= 40.0 -> "시끄러움" to R.drawable.bg_level_orange
+            db >= 30.0 -> "보통" to R.drawable.bg_level_yellow
             else -> "조용함" to R.drawable.bg_level_green
         }
     }

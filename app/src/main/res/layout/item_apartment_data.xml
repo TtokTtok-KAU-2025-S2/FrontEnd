@@ -30,16 +30,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge_green"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
             android:text="앱 활성도 : 상"
             android:textColor="@android:color/white"
-            android:textSize="10sp"
+            android:textSize="14sp"
+            android:textStyle="bold"
             android:visibility="visible" />
 
     </LinearLayout>
+
 
 
     <!-- Divider -->
@@ -51,43 +53,13 @@
         android:background="#3D4F64" />
 
     <!-- Stats row -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:text="한달 소음 유형 분포"
+        android:textColor="@color/text_light"
+        android:textSize="12sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="한달 소음 유형 분포"
-            android:textColor="@color/text_light"
-            android:textSize="12sp" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/tvNoiseLevel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="조용함"
-            android:textColor="@color/db_safe"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvTotalReports"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="23건"
-            android:textColor="@color/text_light"
-            android:textSize="12sp" />
-
-    </LinearLayout>
 
     <!-- Pie chart placeholder -->
     <FrameLayout
