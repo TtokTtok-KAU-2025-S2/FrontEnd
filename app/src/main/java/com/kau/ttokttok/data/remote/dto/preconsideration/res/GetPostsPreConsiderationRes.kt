@@ -1,5 +1,7 @@
 package com.kau.ttokttok.data.remote.dto.preconsideration.res
 
+import com.kau.ttokttok.ui.compose.preconsideration.PreConsiderationPost
+
 data class GetPostsPreConsiderationRes(
     val preNotices: List<PreNotice>
 )
@@ -13,4 +15,12 @@ data class PreNotice(
     val eventTime: String,
     val eventReason: String,
     val createdAt: String,
-)
+) {
+    fun toPreConsiderationPost() : PreConsiderationPost {
+        return PreConsiderationPost(
+            id = preNoticeId,
+            title = title,
+            authorLocation = authorHosu.toString()
+        )
+    }
+}

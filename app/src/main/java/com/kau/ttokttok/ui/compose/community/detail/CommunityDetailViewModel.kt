@@ -1,8 +1,6 @@
 package com.kau.ttokttok.ui.compose.community.detail
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.community.CommunityBoardDetail
 import com.kau.ttokttok.domain.usecase.community.GetPostDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

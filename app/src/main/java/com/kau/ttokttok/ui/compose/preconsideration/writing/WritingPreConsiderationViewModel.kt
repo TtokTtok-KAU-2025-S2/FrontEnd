@@ -1,21 +1,10 @@
 package com.kau.ttokttok.ui.compose.preconsideration.writing
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.data.remote.repository.PreConsiderationRepositoryImpl
-import com.kau.ttokttok.data.remote.dto.preconsideration.req.CreatePostPreConsiderationReq
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.preconsideration.PreConsiderationBoardDetail
-import com.kau.ttokttok.domain.usecase.preconsideration.LoadPostDetailPreConsiderationUseCase
-import com.kau.ttokttok.domain.usecase.preconsideration.ModifyPostDetailPreConsiderationUseCase
+import com.kau.ttokttok.domain.usecase.preconsideration.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,12 +17,13 @@ data class WritingPreConsiderationUiState(
 
 sealed interface WritingPreconsiderationEvent {
     data object Success: WritingPreconsiderationEvent
+
     data class ShowAlert(val title: String, val message: String) : WritingPreconsiderationEvent
 }
 
 @HiltViewModel
 class WritingPreConsiderationViewModel @Inject constructor(
-    private val repository: PreConsiderationRepositoryImpl,
+    private val createPostPreConsiderationUseCase: CreatePostPreConsiderationUseCase,
     private val loadPostDetailUseCase: LoadPostDetailPreConsiderationUseCase,
     private val modifyPostDetailUseCase: ModifyPostDetailPreConsiderationUseCase,
     savedStateHandle: SavedStateHandle
@@ -61,36 +51,46 @@ class WritingPreConsiderationViewModel @Inject constructor(
         noticeReason: String
     ) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
 
-            val req = CreatePostPreConsiderationReq(
+            createPostPreConsiderationUseCase.invoke(
                 title = title,
                 content = content,
-                eventDate = noticeDate,
-                eventTime = noticeTime,
-                eventReason = noticeReason
+                noticeDate = noticeDate,
+                noticeTime = noticeTime,
+                noticeReason = noticeReason
             )
-
-            when (val result = repository.createPost(req)) {
-                is NetworkResult.Success -> {
-                    emit(WritingPreconsiderationEvent.Success)
-                    _uiState.value = _uiState.value.copy(isLoading = false)
-                }
-
-                is NetworkResult.Error -> {
-                    val message = result.message ?: result.exception?.message
-
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = message)
-
-                    emit(
-                        WritingPreconsiderationEvent.ShowAlert(
-                            title = "작성 실패",
-                            message = message ?: "알 수 없는 오류입니다."
+                .onSuccess {
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = null
                         )
-                    )
+                    }
+
+                    emit(WritingPreconsiderationEvent.Success)
                 }
 
-            }
+                .onFailure { e ->
+                    val errorMessage = e.message
+
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    emit(WritingPreconsiderationEvent.ShowAlert(
+                        title = "작성 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
+                }
         }
     }
 
@@ -108,7 +108,7 @@ class WritingPreConsiderationViewModel @Inject constructor(
                 )
             }
 
-            val result = modifyPostDetailUseCase.invoke(
+            modifyPostDetailUseCase.invoke(
                 id = preConsiderationId!!,
                 title = title,
                 content = content,
@@ -116,30 +116,31 @@ class WritingPreConsiderationViewModel @Inject constructor(
                 noticeTime = noticeTime,
                 noticeReason = noticeReason
             )
-
-            result
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 
                     emit(WritingPreconsiderationEvent.Success)
                 }
 
-                .onFailure { response ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = response.message
+                            errorMessage = errorMessage
                         )
                     }
 
                     emit(
                         WritingPreconsiderationEvent.ShowAlert(
                             title = "작성 실패",
-                            message = response.message ?: "알 수 없는 오류입니다."
+                            message = errorMessage ?: "ERROR"
                         )
                     )
                 }
@@ -150,31 +151,39 @@ class WritingPreConsiderationViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
             val id = preConsiderationId!!
 
             loadPostDetailUseCase.invoke(id)
-                .onSuccess { response ->
+                .onSuccess { data ->
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            preConsiderationBoardDetail = response
+                            errorMessage = null,
+
+                            preConsiderationBoardDetail = data
                         )
                     }
                 }
 
-                .onFailure { response ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = response.message
+                            errorMessage = errorMessage
                         )
                     }
 
-                    // TODO: 다이얼로그 추가하기
+                    emit(WritingPreconsiderationEvent.ShowAlert(
+                        title = "조회 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }

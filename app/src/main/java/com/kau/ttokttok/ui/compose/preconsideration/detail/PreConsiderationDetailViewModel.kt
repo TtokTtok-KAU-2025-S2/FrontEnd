@@ -1,11 +1,8 @@
 package com.kau.ttokttok.ui.compose.preconsideration.detail
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.preconsideration.PreConsiderationBoardDetail
-import com.kau.ttokttok.domain.usecase.preconsideration.DeletePostPreConsiderationUseCase
-import com.kau.ttokttok.domain.usecase.preconsideration.LoadPostDetailPreConsiderationUseCase
+import com.kau.ttokttok.domain.usecase.preconsideration.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -40,6 +37,16 @@ class PreConsiderationDetailViewModel @Inject constructor(
 
     init {
         loadPostDetail()
+
+        savedStateHandle
+            .getStateFlow("needRefresh", false)
+            .onEach { needRefresh ->
+                if (needRefresh) {
+                    loadPostDetail()
+                    savedStateHandle["needRefresh"] = false
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadPostDetail() {
@@ -84,29 +91,39 @@ class PreConsiderationDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
             deletePostUseCase.invoke(preConsiderationId)
-                .onSuccess { response ->
+                .onSuccess {
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = response
+                            errorMessage = null
                         )
                     }
 
                     _events.emit(PreConsiderationDetailEvent.DeleteSuccess)
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
+                            errorMessage = e.message
                         )
+
+
                     }
+
+                    emit(PreConsiderationDetailEvent.ShowAlert(
+                        title = "삭제 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }

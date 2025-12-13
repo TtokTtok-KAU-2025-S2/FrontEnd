@@ -9,7 +9,5 @@ import javax.inject.Singleton
 class LoadPostDetailPreConsiderationUseCase @Inject constructor(
     private val repository: PreConsiderationRepository
 ){
-    suspend operator fun invoke(id: Long): Result<PreConsiderationBoardDetail> {
-        return repository.getPostDetail(id)
-    }
+    suspend operator fun invoke(id: Long): Result<PreConsiderationBoardDetail> = repository.getPostDetail(id)
 }

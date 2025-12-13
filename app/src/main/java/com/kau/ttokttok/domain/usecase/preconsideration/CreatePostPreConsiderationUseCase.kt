@@ -5,19 +5,17 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ModifyPostDetailPreConsiderationUseCase @Inject constructor(
+class CreatePostPreConsiderationUseCase @Inject constructor(
     private val repository: PreConsiderationRepository
 ) {
     suspend operator fun invoke(
-        id: Long,
         title: String,
         content: String,
         noticeDate: String,
         noticeTime: String,
         noticeReason: String
     ): Result<Unit> {
-        return repository.modifyPost(
-            id = id,
+         return repository.createPost(
             title = title,
             content = content,
             noticeDate = noticeDate,

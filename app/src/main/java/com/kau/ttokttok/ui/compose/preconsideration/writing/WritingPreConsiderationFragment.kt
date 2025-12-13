@@ -21,7 +21,12 @@ class WritingPreConsiderationFragment : Fragment() {
 
         setContent {
             WritingPreConsiderationRoute(
-                onClickBack = { findNavController().popBackStack() }
+                onClickBack = {
+                    findNavController().previousBackStackEntry?.
+                    savedStateHandle?.set("needRefresh", true)
+
+                    findNavController().popBackStack()
+                }
             )
         }
     }

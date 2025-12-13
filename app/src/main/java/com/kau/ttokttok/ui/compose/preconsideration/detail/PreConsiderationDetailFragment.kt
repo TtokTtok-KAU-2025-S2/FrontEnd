@@ -23,7 +23,12 @@ class PreConsiderationDetailFragment : Fragment() {
 
         setContent {
             PreConsiderationDetailRoute(
-                onClickBack = { findNavController().popBackStack() },
+                onClickBack = {
+                    findNavController().previousBackStackEntry?.
+                    savedStateHandle?.set("needRefresh", true)
+
+                    findNavController().popBackStack()
+                },
                 onEdit = { id ->
                     val args = Bundle().apply {
                         putLong("preConsiderationId", id)

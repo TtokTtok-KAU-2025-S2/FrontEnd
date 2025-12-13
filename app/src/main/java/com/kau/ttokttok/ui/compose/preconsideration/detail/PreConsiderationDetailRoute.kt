@@ -43,6 +43,7 @@ fun PreConsiderationDetailRoute(
 
     PreConsiderationDetailScreen(
         uiState = uiState,
+        onRefresh = { viewModel.loadPostDetail() },
         onClickBack = onClickBack,
         onEdit = { onEdit(viewModel.preConsiderationId) },
         onDelete = { viewModel.deletePostDetail() }

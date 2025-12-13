@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -16,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.header.BoardHeader
 import com.kau.ttokttok.ui.component.common.board.PreConsiderationBoardCard
-import com.kau.ttokttok.ui.theme.Gray50Bg
 
 private val Slate900 = Color(0xFF0F172A) // bg-slate-900
 
@@ -41,6 +38,8 @@ fun PreConsiderationScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .background(Slate900)
             .padding(bottom = 64.dp)
     ) {
