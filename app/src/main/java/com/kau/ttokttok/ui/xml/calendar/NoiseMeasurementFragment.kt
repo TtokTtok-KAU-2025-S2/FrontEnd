@@ -259,12 +259,12 @@ class NoiseMeasurementFragment : Fragment() {
     }
 
     private fun calculateAndSmoothDb(effRms: Double): Double { // RMS를 실제 데시벨로 변환
-        // ratio가 항상 0.01로 깔리지 않도록 하한/상한을 완화
-        val ratio = (effRms / baselineRms!!).coerceIn(0.1, 50.0)
+        // ratio 상한을 높여서 60dB까지 측정 가능하도록 함
+        val ratio = (effRms / baselineRms!!).coerceIn(0.1, 200.0)
         val relativeDb = 20.0 * log10(ratio)
-        val scaleFactor = 1.3 // 민감도 약간 완화
+        val scaleFactor = 1.1 // 민감도 조정
         val rawDb = BASE_DB + (relativeDb * scaleFactor)
-        val clampedDb = rawDb.coerceIn(10.0, 85.0) // 바닥값을 10dB로 약간 올림
+        val clampedDb = rawDb.coerceIn(10.0, 60.0) // 층간소음 규제 기준 범위 (0~60dB)
 
         smoothedDb = smoothedDb?.let { prev -> // 급격한 변화를 부드럽게 처리
             val diff = clampedDb - prev

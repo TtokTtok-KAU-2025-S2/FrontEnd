@@ -11,7 +11,7 @@ import android.view.animation.DecelerateInterpolator
 
 /**
  * 소음 측정을 위한 원형 게이지 커스텀 뷰
- * - 0~80dB 범위 표시
+ * - 0~60dB 범위 표시 (층간소음 규제 기준)
  * - dB 값에 따른 색상 변화 (초록 -> 노랑 -> 주황 -> 빨강)
  * - 부드러운 애니메이션 효과
  */
@@ -42,9 +42,9 @@ class CircularGaugeView @JvmOverloads constructor(
     private var targetProgress = 0f // 목표 dB 값
     private var animator: ValueAnimator? = null
 
-    // dB 범위 설정 (0 ~ 80dB) - 일반 생활 소음 기준
+    // dB 범위 설정 (0 ~ 60dB) - 층간소음 규제 기준
     private val minDb = 0f
-    private val maxDb = 80f
+    private val maxDb = 60f
 
     // 게이지 각도 설정 (270도 게이지)
     private val startAngle = 135f // 왼쪽 하단에서 시작 (7시 방향)
@@ -80,26 +80,24 @@ class CircularGaugeView @JvmOverloads constructor(
     }
 
     /**
-     * dB 값에 따른 색상 반환
-     * - 35dB 미만: 초록 (매우 조용, 야간 기준 이하)
-     * - 35~40dB: 연두 (조용, 주간 기준 이하)
-     * - 40~45dB: 노랑 (보통, 공기전달 소음 기준)
-     * - 45~60dB: 주황 (시끄러움, 일반 대화 수준)
-     * - 60dB 이상: 빨강 (매우 시끄러움)
+     * dB 값에 따른 색상 반환 (0~60dB 범위)
+     * - 30dB 미만: 초록 (조용함)
+     * - 30~40dB: 노랑 (보통)
+     * - 40~55dB: 주황 (시끄러움)
+     * - 55dB 이상: 빨강 (매우 시끄러움)
      */
     private fun getColorForDb(db: Float): Int {
         return when {
-            db < 35 -> 0xFF4CAF50.toInt() // 초록색
-            db < 40 -> 0xFF8BC34A.toInt() // 연두색
-            db < 45 -> 0xFFFFC107.toInt() // 노란색
-            db < 60 -> 0xFFFF9800.toInt() // 주황색
-            else -> 0xFFF44336.toInt() // 빨간색
+            db < 30 -> 0xFF4CAF50.toInt() // 초록색 (조용함)
+            db < 40 -> 0xFFFFC107.toInt() // 노란색 (보통)
+            db < 55 -> 0xFFFF9800.toInt() // 주황색 (시끄러움)
+            else -> 0xFFF44336.toInt() // 빨간색 (매우 시끄러움)
         }
     }
 
     /**
      * 게이지 진행 상태 설정
-     * @param db 표시할 데시벨 값 (0~80)
+     * @param db 표시할 데시벨 값 (0~60)
      * @param animate true면 애니메이션 적용, false면 즉시 변경
      */
     fun setProgress(db: Float, animate: Boolean = true) {
