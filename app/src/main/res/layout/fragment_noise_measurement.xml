@@ -44,6 +44,18 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <!-- 녹음 목록 보기 버튼 -->
+            <ImageButton
+                android:id="@+id/btnRecordingList"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="녹음 목록"
+                android:src="@android:drawable/ic_menu_recent_history"
+                app:tint="@android:color/white" />
+
         </RelativeLayout>
 
     </LinearLayout>

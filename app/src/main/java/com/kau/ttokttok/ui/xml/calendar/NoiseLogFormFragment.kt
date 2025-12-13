@@ -69,8 +69,7 @@ class NoiseLogFormFragment : Fragment() {
             // 수정 모드일 때 기존 데이터 불러오기
             if (isEditMode) {
                 selectedNoiseType = it.getString(ARG_NOISE_TYPE)
-                val memo = it.getString(ARG_MEMO)
-                // onViewCreated에서 UI에 설정됨
+                // memo는 onViewCreated에서 UI에 설정됨
             }
         }
     }
@@ -146,8 +145,8 @@ class NoiseLogFormFragment : Fragment() {
     }
 
     private fun setupNoiseTypeButtons() {
-        android.util.Log.d("NoiseLogFormFragment", "")
-        android.util.Log.d("NoiseLogFormFragment", "🔘 소음 유형 버튼 초기화")
+        Log.d("NoiseLogFormFragment", "")
+        Log.d("NoiseLogFormFragment", "🔘 소음 유형 버튼 초기화")
 
         // 버튼과 타입을 맵으로 관리
         noiseTypeButtonMap.apply {
@@ -160,21 +159,21 @@ class NoiseLogFormFragment : Fragment() {
             put("기타", binding.chipEtc)
         }
 
-        android.util.Log.d("NoiseLogFormFragment", "  - 등록된 버튼 수: ${noiseTypeButtonMap.size}개")
+        Log.d("NoiseLogFormFragment", "  - 등록된 버튼 수: ${noiseTypeButtonMap.size}개")
         noiseTypeButtonMap.keys.forEach { type ->
-            android.util.Log.d("NoiseLogFormFragment", "    · $type")
+            Log.d("NoiseLogFormFragment", "    · $type")
         }
 
         // 각 버튼에 클릭 리스너 설정
         noiseTypeButtonMap.forEach { (type, button) ->
             button.setOnClickListener {
-                android.util.Log.d("NoiseLogFormFragment", "")
-                android.util.Log.d("NoiseLogFormFragment", "👆 사용자가 \"$type\" 버튼 클릭")
+                Log.d("NoiseLogFormFragment", "")
+                Log.d("NoiseLogFormFragment", "👆 사용자가 \"$type\" 버튼 클릭")
                 selectNoiseType(type)
             }
         }
 
-        android.util.Log.d("NoiseLogFormFragment", "  - 클릭 리스너 설정 완료")
+        Log.d("NoiseLogFormFragment", "  - 클릭 리스너 설정 완료")
     }
 
     private fun setupListeners() {

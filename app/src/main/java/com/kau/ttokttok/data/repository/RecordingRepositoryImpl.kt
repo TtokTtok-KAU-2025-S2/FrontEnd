@@ -1,6 +1,7 @@
 package com.kau.ttokttok.data.repository
 
 import com.kau.ttokttok.data.remote.api.RecordingApiService
+import com.kau.ttokttok.data.remote.dto.recording.res.RecordingItem
 import com.kau.ttokttok.data.remote.dto.recording.res.UploadRecordingRes
 import com.kau.ttokttok.domain.repository.RecordingRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -26,6 +27,20 @@ class RecordingRepositoryImpl @Inject constructor(
                 Result.success(apiResponse.result)
             } else {
                 Result.failure(Exception("업로드 실패: ${apiResponse.message}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getAllRecordings(): Result<List<RecordingItem>> {
+        return try {
+            val apiResponse = recordingApiService.getAllRecordings()
+
+            if (apiResponse.isSuccess && apiResponse.result != null) {
+                Result.success(apiResponse.result)
+            } else {
+                Result.failure(Exception("녹음 목록 조회 실패: ${apiResponse.message}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
