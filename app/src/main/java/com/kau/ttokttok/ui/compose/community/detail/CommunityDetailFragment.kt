@@ -22,12 +22,7 @@ class CommunityDetailFragment : Fragment() {
 
         setContent {
             CommunityDetailRoute(
-                onClickBack = {
-                    findNavController().previousBackStackEntry?.
-                    savedStateHandle?.set("needRefresh", true)
-
-                    findNavController().popBackStack()
-                }
+                onClickBack = { findNavController().popBackStack() }
             )
         }
     }

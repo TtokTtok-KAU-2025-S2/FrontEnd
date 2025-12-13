@@ -25,7 +25,7 @@ sealed class PreConsiderationDetailEvent {
 class PreConsiderationDetailViewModel @Inject constructor(
     private val loadPostDetailUseCase: LoadPostDetailPreConsiderationUseCase,
     private val deletePostUseCase: DeletePostPreConsiderationUseCase,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val preConsiderationId: Long = checkNotNull(savedStateHandle.get<Long>("preConsiderationId"))
 
@@ -37,16 +37,6 @@ class PreConsiderationDetailViewModel @Inject constructor(
 
     init {
         loadPostDetail()
-
-        savedStateHandle
-            .getStateFlow("needRefresh", false)
-            .onEach { needRefresh ->
-                if (needRefresh) {
-                    loadPostDetail()
-                    savedStateHandle["needRefresh"] = false
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun loadPostDetail() {

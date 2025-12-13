@@ -21,8 +21,7 @@ sealed interface NoiseVoteEvent {
 
 @HiltViewModel
 class NoiseVoteViewModel @Inject constructor(
-    private val useCase: LoadPostsNoiseVoteUseCase,
-    savedStateHandle: SavedStateHandle
+    private val useCase: LoadPostsNoiseVoteUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(NoiseVoteUiState())
     val uiState: StateFlow<NoiseVoteUiState> = _uiState
@@ -32,16 +31,6 @@ class NoiseVoteViewModel @Inject constructor(
 
     init {
         loadPosts()
-
-        savedStateHandle
-            .getStateFlow("needRefresh", false)
-            .onEach { needRefresh ->
-                if (needRefresh) {
-                    loadPosts()
-                    savedStateHandle["needRefresh"] = false
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun loadPosts() {

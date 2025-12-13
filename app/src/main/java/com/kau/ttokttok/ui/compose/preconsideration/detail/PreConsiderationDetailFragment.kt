@@ -7,11 +7,15 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
 
 class PreConsiderationDetailFragment : Fragment() {
+    private val viewModel: PreConsiderationDetailViewModel by viewModels()
+    private var first = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,12 +27,7 @@ class PreConsiderationDetailFragment : Fragment() {
 
         setContent {
             PreConsiderationDetailRoute(
-                onClickBack = {
-                    findNavController().previousBackStackEntry?.
-                    savedStateHandle?.set("needRefresh", true)
-
-                    findNavController().popBackStack()
-                },
+                onClickBack = { findNavController().popBackStack() },
                 onEdit = { id ->
                     val args = Bundle().apply {
                         putLong("preConsiderationId", id)
@@ -40,6 +39,18 @@ class PreConsiderationDetailFragment : Fragment() {
                     )
                 }
             )
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (first) {
+            first = false
+        }
+
+        else {
+            viewModel.loadPostDetail()
         }
     }
 }

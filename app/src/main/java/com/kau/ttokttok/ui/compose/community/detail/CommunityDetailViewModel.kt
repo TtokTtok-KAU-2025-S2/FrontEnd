@@ -40,16 +40,6 @@ class CommunityDetailViewModel @Inject constructor(
 
     init {
         getCommunityDetail()
-
-        savedStateHandle
-            .getStateFlow("needRefresh", false)
-            .onEach { needRefresh ->
-                if (needRefresh) {
-                    getCommunityDetail()
-                    savedStateHandle["needRefresh"] = false
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun getCommunityDetail() {

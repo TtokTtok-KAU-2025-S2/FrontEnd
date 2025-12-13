@@ -21,12 +21,7 @@ class NoiseVoteCommentModifyFragment : Fragment() {
 
         setContent {
             NoiseVoteCommentModifyRoute(
-                onClickBack = {
-                    findNavController().previousBackStackEntry?.
-                    savedStateHandle?.set("needRefresh", true)
-
-                    findNavController().popBackStack()
-                }
+                onClickBack = { findNavController().popBackStack() }
             )
         }
     }

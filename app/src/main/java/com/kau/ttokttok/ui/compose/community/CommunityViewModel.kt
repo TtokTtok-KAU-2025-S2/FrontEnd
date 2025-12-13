@@ -21,8 +21,7 @@ sealed interface CommunityEvent {
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
-    private val loadPostsUseCase: LoadPostsUseCase,
-    savedStateHandle: SavedStateHandle
+    private val loadPostsUseCase: LoadPostsUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(CommunityUiState())
     val uiState: StateFlow<CommunityUiState> = _uiState
@@ -32,16 +31,6 @@ class CommunityViewModel @Inject constructor(
 
     init {
         loadPosts()
-
-        savedStateHandle
-            .getStateFlow("needRefresh", false)
-            .onEach { needRefresh ->
-                if (needRefresh) {
-                    loadPosts()
-                    savedStateHandle["needRefresh"] = false
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun loadPosts() {

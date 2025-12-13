@@ -51,17 +51,23 @@ fun PreConsiderationDetailScreen(
             isRefreshing = uiState.isLoading,
             onRefresh = onRefresh
         ) {
-            PreConsiderationBoardDetailContent(
-                uiState = uiState
-            )
-
-            AdvanceNoticeDisplayCard(
-                noticeDate = uiState.preConsiderationBoardDetail?.noticeDate ?: "ERROR",
-                noticeTime = uiState.preConsiderationBoardDetail?.noticeTime ?: "ERROR",
-                noticeReason = uiState.preConsiderationBoardDetail?.noticeReason ?: "ERROR",
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            )
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp)
+            ) {
+                PreConsiderationBoardDetailContent(
+                    uiState = uiState
+                )
+
+                AdvanceNoticeDisplayCard(
+                    noticeDate = uiState.preConsiderationBoardDetail?.noticeDate ?: "ERROR",
+                    noticeTime = uiState.preConsiderationBoardDetail?.noticeTime ?: "ERROR",
+                    noticeReason = uiState.preConsiderationBoardDetail?.noticeReason ?: "ERROR",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
         }
     }
 

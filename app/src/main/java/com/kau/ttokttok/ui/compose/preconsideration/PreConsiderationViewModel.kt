@@ -20,8 +20,7 @@ sealed interface PreConsiderationEvent {
 
 @HiltViewModel
 class PreConsiderationViewModel @Inject constructor(
-    private val useCase: GetPostsPreConsiderationUseCase,
-    savedStateHandle: SavedStateHandle
+    private val useCase: GetPostsPreConsiderationUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(PreConsiderationUiState())
     val uiState: StateFlow<PreConsiderationUiState> = _uiState
@@ -31,16 +30,6 @@ class PreConsiderationViewModel @Inject constructor(
 
     init {
         loadPosts()
-
-        savedStateHandle
-            .getStateFlow("needRefresh", false)
-            .onEach { needRefresh ->
-                if (needRefresh) {
-                    loadPosts()
-                    savedStateHandle["needRefresh"] = false
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun loadPosts() {

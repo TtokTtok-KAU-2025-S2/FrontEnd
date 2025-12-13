@@ -41,16 +41,6 @@ class NoiseVoteDetailViewModel @Inject constructor(
 
     init {
         loadPostDetail()
-
-        savedStateHandle
-            .getStateFlow("needRefresh", false)
-            .onEach { needRefresh ->
-                if (needRefresh) {
-                    loadPostDetail()
-                    savedStateHandle["needRefresh"] = false
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun loadPostDetail() {
