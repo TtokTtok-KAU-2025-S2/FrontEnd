@@ -270,6 +270,19 @@
                     app:strokeColor="@android:color/white"
                     app:strokeWidth="1dp" />
 
+                <!-- AI 분석 이유 표시 -->
+                <TextView
+                    android:id="@+id/tvAiReason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_ai_reason"
+                    android:padding="12dp"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

@@ -253,13 +253,16 @@ class NoiseLogFormFragment : Fragment() {
                     Log.d("NoiseLogFormFragment", "  - 🤖 AI 추천 카테고리 자동 선택: $categoryKorean")
                     selectNoiseType(categoryKorean)
 
-                    // AI 추천 텍스트 클릭 시 분석 이유 표시
+                    // AI 분석 이유를 TextView에 표시
+                    binding.tvAiReason.apply {
+                        text = "💡 분석 이유: ${aiResult.reason}"
+                        visibility = View.VISIBLE
+                    }
+
+                    // AI 추천 텍스트 클릭 시 분석 이유 토글
                     binding.tvAiSuggested.setOnClickListener {
-                        Toast.makeText(
-                            requireContext(),
-                            "AI 분석 이유: ${aiResult.reason}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        binding.tvAiReason.visibility =
+                            if (binding.tvAiReason.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                     }
 
                     Log.d("NoiseLogFormFragment", "  - UI 업데이트 완료")
@@ -273,6 +276,7 @@ class NoiseLogFormFragment : Fragment() {
                     // 실패 시 기본 메시지
                     binding.tvAiSuggested.text = "AI 분석 실패"
                     binding.tvAiSuggested.setOnClickListener(null)
+                    binding.tvAiReason.visibility = View.GONE
 
                     Toast.makeText(
                         requireContext(),
