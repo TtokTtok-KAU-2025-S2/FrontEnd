@@ -31,7 +31,7 @@
             android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/ic_arrow_left"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="뒤로가기"
             app:tint="@android:color/white" />
@@ -465,6 +465,7 @@
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:layout_marginBottom="32dp"
             android:text="일기 저장"
             android:textColor="@android:color/white"
             android:textSize="16sp"

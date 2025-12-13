@@ -18,7 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="48dp">
 
             <!-- Header with back button -->
             <LinearLayout
@@ -34,7 +37,8 @@
                     android:layout_height="40dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="뒤로가기"
-                    android:src="@android:drawable/ic_menu_revert" />
+                    android:src="@drawable/ic_arrow_left"
+                    app:tint="@android:color/white" />
 
                 <TextView
                     android:layout_width="0dp"
