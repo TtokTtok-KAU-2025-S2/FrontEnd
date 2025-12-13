@@ -42,7 +42,7 @@ fun WritingCommunityScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(White)
+            .background(Black)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
@@ -50,40 +50,46 @@ fun WritingCommunityScreen(
         WhiteHeader(
             onBack = onClickBack
         )
+        
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(White)
+        ) {
+            Spacer(Modifier.height(32.dp))
 
-        Spacer(Modifier.height(32.dp))
+            // 제목 입력
+            PostTitleField(
+                title = title,
+                onValueChange = { title = it }
+            )
 
-        // 제목 입력
-        PostTitleField(
-            title = title,
-            onValueChange = { title = it }
-        )
+            Spacer(Modifier.height(32.dp))
 
-        Spacer(Modifier.height(32.dp))
+            PostContentField(
+                content = content,
+                onValueChange = { content = it }
+            )
 
-        PostContentField(
-            content = content,
-            onValueChange = { content = it }
-        )
+            Spacer(Modifier.height(32.dp))
 
-        Spacer(Modifier.height(32.dp))
+            PostImagePickerButton(
+                selectedImageUri = selectedImageUri,
+                onClickAddImage = {
+                    imagePickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
+            )
 
-        PostImagePickerButton(
-            selectedImageUri = selectedImageUri,
-            onClickAddImage = {
-                imagePickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }
-        )
+            Spacer(Modifier.height(32.dp))
 
-        Spacer(Modifier.height(32.dp))
-
-        PostBottomActions(
-            enabled = title.isNotBlank() && content.isNotBlank(),
-            onSubmit = {
-                onClickCreate(title, content, selectedImageUri)
-            }
-        )
+            PostBottomActions(
+                enabled = title.isNotBlank() && content.isNotBlank(),
+                onSubmit = {
+                    onClickCreate(title, content, selectedImageUri)
+                }
+            )
+        }
     }
 }

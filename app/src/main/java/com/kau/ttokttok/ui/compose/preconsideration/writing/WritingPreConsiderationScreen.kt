@@ -41,9 +41,9 @@ fun WritingPreConsiderationScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Black)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .background(White)
     ) {
         // 헤더
         WhiteHeader(
@@ -51,46 +51,52 @@ fun WritingPreConsiderationScreen(
             onBack = onClickBack
         )
 
-        Spacer(Modifier.height(32.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(White)
+        ) {
+            Spacer(Modifier.height(32.dp))
 
-        // 제목 입력
-        PostTitleField(
-            title = title,
-            onValueChange = { title = it }
-        )
+            // 제목 입력
+            PostTitleField(
+                title = title,
+                onValueChange = { title = it }
+            )
 
-        Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(32.dp))
 
-        PostContentField(
-            content = content,
-            onValueChange = { content = it }
-        )
+            PostContentField(
+                content = content,
+                onValueChange = { content = it }
+            )
 
-        Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(32.dp))
 
-        AdvanceNoticeSection(
-            noticeDate = noticeDate,
-            onNoticeDateChange = { noticeDate = it},
-            noticeTime = noticeTime,
-            onNoticeTimeChange =  { noticeTime = it},
-            noticeReason = noticeReason,
-            onNoticeReasonChange = { noticeReason = it }
-        )
+            AdvanceNoticeSection(
+                noticeDate = noticeDate,
+                onNoticeDateChange = { noticeDate = it},
+                noticeTime = noticeTime,
+                onNoticeTimeChange =  { noticeTime = it},
+                noticeReason = noticeReason,
+                onNoticeReasonChange = { noticeReason = it }
+            )
 
-        Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(32.dp))
 
-        PostBottomActions(
-            enabled = title.isNotBlank() && content.isNotBlank() && noticeDate.isNotBlank() && noticeTime.isNotBlank() && noticeReason.isNotBlank(),
-            onSubmit = {
-                if (isEdit) {
-                    onClickModify(title, content, noticeDate, noticeTime, noticeReason)
+            PostBottomActions(
+                enabled = title.isNotBlank() && content.isNotBlank() && noticeDate.isNotBlank() && noticeTime.isNotBlank() && noticeReason.isNotBlank(),
+                onSubmit = {
+                    if (isEdit) {
+                        onClickModify(title, content, noticeDate, noticeTime, noticeReason)
+                    }
+
+                    else {
+                        onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+                    }
+
                 }
-
-                else {
-                    onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
-                }
-
-            }
-        )
+            )
+        }
     }
 }

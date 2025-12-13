@@ -25,6 +25,8 @@ fun MonthReportScreen(
             .fillMaxSize()
             .background(Slate900)
             .padding(horizontal = 12.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
     ) {
         Column(

@@ -33,7 +33,9 @@ fun NoiseVoteDetailScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(White)
+            .background(Black)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         val pullToRefreshState = rememberPullToRefreshState()
 
@@ -45,7 +47,8 @@ fun NoiseVoteDetailScreen(
 
         PullToRefreshBox(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(Gray50Bg),
             state = pullToRefreshState,
             isRefreshing = uiState.isLoading,
             onRefresh = onRefresh

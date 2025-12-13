@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.button.PostBottomActions
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
 import com.kau.ttokttok.ui.component.common.textfield.PostContentField
-import com.kau.ttokttok.ui.theme.White
+import com.kau.ttokttok.ui.theme.*
 
 @Preview
 @Composable
@@ -30,7 +30,7 @@ fun NoiseVoteCommentModifyScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(White)
+            .background(Black)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
@@ -39,20 +39,26 @@ fun NoiseVoteCommentModifyScreen(
             onBack = onClickBack
         )
 
-        Spacer(modifier.height(32.dp))
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(White)
+        ) {
+            Spacer(modifier.height(32.dp))
 
-        PostContentField(
-            content = content,
-            onValueChange = { content = it }
-        )
+            PostContentField(
+                content = content,
+                onValueChange = { content = it }
+            )
 
-        Spacer(modifier.height(32.dp))
+            Spacer(modifier.height(32.dp))
 
-        PostBottomActions(
-            enabled = content.isNotBlank(),
-            onSubmit = {
-                onClickModify(content)
-            }
-        )
+            PostBottomActions(
+                enabled = content.isNotBlank(),
+                onSubmit = {
+                    onClickModify(content)
+                }
+            )
+        }
     }
 }

@@ -50,7 +50,9 @@ fun RegisterScreen(
                     start = Offset.Zero,
                     end = Offset.Infinite
                 )
-            ),
+            )
+            .statusBarsPadding()
+            .navigationBarsPadding(),
             contentAlignment = Alignment.Center
     ) {
         // 별빛 배경

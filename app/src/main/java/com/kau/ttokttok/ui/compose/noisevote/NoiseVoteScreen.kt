@@ -29,6 +29,7 @@ fun NoiseVoteScreen(
             .fillMaxSize()
             .background(Slate900)
             .statusBarsPadding()
+            .navigationBarsPadding()
             .padding(bottom = 64.dp)
     ) {
         val pullToRefreshState = rememberPullToRefreshState()

@@ -32,9 +32,9 @@ fun PreConsiderationDetailScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Black)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .background(Gray50Bg)
     ) {
         WhiteHeader(
             title = "사전 양해 게시판 상세",
@@ -45,7 +45,8 @@ fun PreConsiderationDetailScreen(
 
         PullToRefreshBox(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(Gray50Bg),
             state = pullToRefreshState,
             isRefreshing = uiState.isLoading,
             onRefresh = onRefresh
