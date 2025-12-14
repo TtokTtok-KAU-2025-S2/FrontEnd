@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.kau.ttokttok.R
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
 
@@ -23,8 +24,18 @@ class SplashFragment: Fragment() {
 
         setContent {
             SplashRoute(
-                onLogin = { findNavController().navigateTo(Destination.LOGIN)},
-                onMain =  { findNavController().navigateTo(Destination.MAIN)}
+                onLogin = {
+                    findNavController().navigateTo(Destination.LOGIN) {
+                        popUpTo(R.id.splashFragment) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onMain = {
+                    findNavController().navigateTo(Destination.MAIN) {
+                        popUpTo(R.id.splashFragment) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
     }

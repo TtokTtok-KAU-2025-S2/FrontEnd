@@ -99,7 +99,7 @@ fun NavController.onSuccessLogin() {
         R.id.mainFragment,
         null,
         navOptions {
-            popUpTo(graph.startDestinationId) {
+            popUpTo(R.id.loginFragment) {
                 inclusive = true
             }
 
@@ -111,7 +111,7 @@ fun NavController.onSuccessLogin() {
 // Logout 시 사용
 fun NavController.resetToLogin() {
     navigate (
-        R.id.loginFragment,
+        R.id.splashFragment,
         null,
         navOptions {
             popUpTo(graph.startDestinationId) {
