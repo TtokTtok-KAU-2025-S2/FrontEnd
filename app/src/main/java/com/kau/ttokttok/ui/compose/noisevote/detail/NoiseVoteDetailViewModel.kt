@@ -13,9 +13,7 @@ data class NoiseVoteDetailUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
 
-    val noiseVoteBoardDetail: NoiseVoteBoardDetail? = null,
-
-    val selectedVote: NoiseVoteType? = null
+    val noiseVoteBoardDetail: NoiseVoteBoardDetail? = null
 )
 
 sealed interface NoiseVoteDetailEvent {
@@ -86,7 +84,7 @@ class NoiseVoteDetailViewModel @Inject constructor(
     fun clickVote(voteType: NoiseVoteType) {
         if (_uiState.value.isLoading) return
 
-        val current = _uiState.value.selectedVote
+        val current = _uiState.value.noiseVoteBoardDetail?.myVoteType
 
         if (current == voteType) {
             cancelVote()
@@ -185,13 +183,11 @@ class NoiseVoteDetailViewModel @Inject constructor(
             }
 
             postVoteUseCase.invoke(noiseVoteId, voteType)
-                .onSuccess { data ->
+                .onSuccess {
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = null,
-
-                            selectedVote = data.voteType
+                            errorMessage = null
                         )
                     }
 
@@ -230,9 +226,7 @@ class NoiseVoteDetailViewModel @Inject constructor(
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = null,
-
-                            selectedVote = null,
+                            errorMessage = null
                         )
                     }
 

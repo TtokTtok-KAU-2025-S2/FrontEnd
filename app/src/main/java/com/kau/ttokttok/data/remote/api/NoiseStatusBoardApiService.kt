@@ -37,8 +37,8 @@ interface NoiseStatusBoardApiService {
         @Path("reportId") id: Long
     ): ApiResponse<String>
 
-    @DELETE("api/comment/{commentId}")
+    @DELETE("api/comments/{commentId}")
     suspend fun deleteComment(
         @Path("commentId") id: Long
-    ): ApiResponse<DeleteCommentRes>
+    ): ApiResponse<String>
 }

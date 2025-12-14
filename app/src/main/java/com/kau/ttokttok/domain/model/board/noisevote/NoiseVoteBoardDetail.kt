@@ -12,5 +12,6 @@ data class NoiseVoteBoardDetail(
     val avgDb: Int,
     val category: NoiseType,
     val voteCount: Map<NoiseVoteType, Int>,
-    val comments: List<Comment>
+    val comments: List<Comment>,
+    val myVoteType: NoiseVoteType?
 )

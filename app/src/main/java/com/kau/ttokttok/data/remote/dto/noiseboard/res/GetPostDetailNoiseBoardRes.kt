@@ -19,7 +19,9 @@ data class GetPostDetailNoiseBoardRes(
 
     val voteCounts: Map<String, Int>?,
 
-    val comments: List<CommentDTO>?
+    val comments: List<CommentDTO>?,
+
+    val myVoteType: NoiseVoteType?
 )
 
 fun GetPostDetailNoiseBoardRes.toNoiseVoteBoardDetail(): NoiseVoteBoardDetail {
@@ -35,7 +37,9 @@ fun GetPostDetailNoiseBoardRes.toNoiseVoteBoardDetail(): NoiseVoteBoardDetail {
         voteCount = voteCounts?.mapKeys { (key, _ ) -> NoiseVoteType.from(key) } ?: emptyMap(),
         comments = comments?.map { dto ->
             dto.toDomain()
-        } ?: emptyList()
+        } ?: emptyList(),
+
+        myVoteType = myVoteType
     )
 }
 

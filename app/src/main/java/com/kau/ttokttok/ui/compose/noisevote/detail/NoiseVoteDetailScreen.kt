@@ -72,7 +72,7 @@ fun NoiseVoteDetailScreen(
 
                 // 2) 투표 카드
                 VoteSectionCard(
-                    userVote = uiState.selectedVote,
+                    userVote = uiState.noiseVoteBoardDetail?.myVoteType,
                     votes = uiState.noiseVoteBoardDetail?.voteCount ?: emptyMap(),
                     totalVotes = uiState.noiseVoteBoardDetail?.voteCount?.values?.sum() ?: 0,
                     onVote = { voteType ->
