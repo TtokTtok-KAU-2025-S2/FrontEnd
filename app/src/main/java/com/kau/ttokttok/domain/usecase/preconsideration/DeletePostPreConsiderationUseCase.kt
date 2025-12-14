@@ -8,7 +8,5 @@ import javax.inject.Singleton
 class DeletePostPreConsiderationUseCase @Inject constructor(
     private val repository: PreConsiderationRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<String> {
-        return repository.deletePost(id)
-    }
+    suspend operator fun invoke(id: Long): Result<Unit> = repository.deletePost(id)
 }

@@ -1,15 +1,7 @@
 package com.kau.ttokttok._core.network.di
 
 import com.kau.ttokttok._core.network.auth.TokenProvider
-import com.kau.ttokttok.data.remote.api.AIApiService
-import com.kau.ttokttok.data.remote.api.AuthApiService
-import com.kau.ttokttok.data.remote.api.CommunityApiService
-import com.kau.ttokttok.data.remote.api.NoiseCalendarApiService
-import com.kau.ttokttok.data.remote.api.NoiseRecordApiService
-import com.kau.ttokttok.data.remote.api.NoiseStatusBoardApiService
-import com.kau.ttokttok.data.remote.api.PreNoticeApiService
-import com.kau.ttokttok.data.remote.api.RecordingApiService
-import com.kau.ttokttok.data.remote.api.ReportApiService
+import com.kau.ttokttok.data.remote.api.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

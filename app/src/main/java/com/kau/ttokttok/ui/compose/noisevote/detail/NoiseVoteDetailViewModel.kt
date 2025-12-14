@@ -1,22 +1,11 @@
 package com.kau.ttokttok.ui.compose.noisevote.detail
 
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.Comment
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteBoardDetail
-import com.kau.ttokttok.domain.model.board.noisevote.NoiseVoteType
-import com.kau.ttokttok.domain.usecase.noisevote.AddCommentUseCase
-import com.kau.ttokttok.domain.usecase.noisevote.CancelVoteUseCase
-import com.kau.ttokttok.domain.usecase.noisevote.DeleteCommentUseCase
-import com.kau.ttokttok.domain.usecase.noisevote.GetPostDetailNoiseVoteUseCase
-import com.kau.ttokttok.domain.usecase.noisevote.ModifyCommentUseCase
-import com.kau.ttokttok.domain.usecase.noisevote.PostVoteUseCase
+import com.kau.ttokttok.domain.model.board.noisevote.*
+import com.kau.ttokttok.domain.usecase.noisevote.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,10 +13,12 @@ data class NoiseVoteDetailUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
 
-    val noiseVoteBoardDetail: NoiseVoteBoardDetail? = null,
-
-    val selectedVote: NoiseVoteType? = null
+    val noiseVoteBoardDetail: NoiseVoteBoardDetail? = null
 )
+
+sealed interface NoiseVoteDetailEvent {
+    data class ShowAlert(val title: String, val message: String): NoiseVoteDetailEvent
+}
 
 @HiltViewModel
 class NoiseVoteDetailViewModel @Inject constructor(
@@ -35,7 +26,6 @@ class NoiseVoteDetailViewModel @Inject constructor(
     private val postVoteUseCase: PostVoteUseCase,
     private val cancelVoteUseCase: CancelVoteUseCase,
     private val addCommentUseCase: AddCommentUseCase,
-    private val modifyCommentUseCase: ModifyCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
@@ -43,6 +33,9 @@ class NoiseVoteDetailViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(NoiseVoteDetailUiState())
     val uiState: StateFlow<NoiseVoteDetailUiState> = _uiState
+
+    private val _events = MutableSharedFlow<NoiseVoteDetailEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<NoiseVoteDetailEvent> = _events.asSharedFlow()
 
     init {
         loadPostDetail()
@@ -52,7 +45,8 @@ class NoiseVoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -61,19 +55,28 @@ class NoiseVoteDetailViewModel @Inject constructor(
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
+                            errorMessage = null,
+
                             noiseVoteBoardDetail = data
                         )
                     }
 
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
+                            errorMessage = errorMessage
                         )
                     }
+
+                    emit(NoiseVoteDetailEvent.ShowAlert(
+                        title = "조회 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }
@@ -81,7 +84,7 @@ class NoiseVoteDetailViewModel @Inject constructor(
     fun clickVote(voteType: NoiseVoteType) {
         if (_uiState.value.isLoading) return
 
-        val current = _uiState.value.selectedVote
+        val current = _uiState.value.noiseVoteBoardDetail?.myVoteType
 
         if (current == voteType) {
             cancelVote()
@@ -96,7 +99,8 @@ class NoiseVoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -104,50 +108,28 @@ class NoiseVoteDetailViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 
                     loadPostDetail()
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
-                        )
-                    }
-                }
-        }
-    }
-
-    fun modifyComment(comment: Comment) {
-        viewModelScope.launch {
-            _uiState.update { current->
-                current.copy(
-                    isLoading = true
-                )
-            }
-
-            modifyCommentUseCase.invoke(comment)
-                .onSuccess {
-                    _uiState.update { after ->
-                        after.copy(
-                            isLoading = true
+                            errorMessage = errorMessage
                         )
                     }
 
-                    loadPostDetail()
-                }
-
-                .onFailure { error ->
-                    _uiState.update { after ->
-                        after.copy(
-                            isLoading = false,
-                            errorMessage = error.message
-                        )
-                    }
+                    emit(NoiseVoteDetailEvent.ShowAlert(
+                        title = "댓글 추가 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }
@@ -156,7 +138,8 @@ class NoiseVoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -164,20 +147,28 @@ class NoiseVoteDetailViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 
                     loadPostDetail()
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
+                            errorMessage = errorMessage
                         )
                     }
+
+                    emit(NoiseVoteDetailEvent.ShowAlert(
+                        title = "댓글 삭제 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }
@@ -186,29 +177,37 @@ class NoiseVoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
-            val result = postVoteUseCase.invoke(noiseVoteId, voteType)
-                .onSuccess { data ->
+            postVoteUseCase.invoke(noiseVoteId, voteType)
+                .onSuccess {
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            selectedVote = data.voteType
+                            errorMessage = null
                         )
                     }
 
                     loadPostDetail()
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
+                            errorMessage = errorMessage
                         )
                     }
+
+                    emit(NoiseVoteDetailEvent.ShowAlert(
+                        title = "투표 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
     }
@@ -217,32 +216,42 @@ class NoiseVoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
-            val result = cancelVoteUseCase.invoke(noiseVoteId)
+            cancelVoteUseCase.invoke(noiseVoteId)
                 .onSuccess {
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            selectedVote = null,
+                            errorMessage = null
                         )
                     }
 
                     loadPostDetail()
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
+                            errorMessage = errorMessage
                         )
                     }
-                }
 
-            Log.d("viewModel", "$result")
+                    emit(NoiseVoteDetailEvent.ShowAlert(
+                        title = "투표 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
+                }
         }
+    }
+
+    private fun emit(event: NoiseVoteDetailEvent) {
+        _events.tryEmit(event)
     }
 }

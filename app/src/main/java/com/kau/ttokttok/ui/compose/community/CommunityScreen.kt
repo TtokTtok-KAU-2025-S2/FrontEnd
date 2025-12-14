@@ -1,14 +1,7 @@
 package com.kau.ttokttok.ui.compose.community
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,8 +31,9 @@ fun CommunityScreen(
         modifier = modifier
             .fillMaxSize()
             .background(Slate900)
-            .statusBarsPadding()
             .padding(bottom = 64.dp)       // pb-16
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         // Header
         BoardHeader(

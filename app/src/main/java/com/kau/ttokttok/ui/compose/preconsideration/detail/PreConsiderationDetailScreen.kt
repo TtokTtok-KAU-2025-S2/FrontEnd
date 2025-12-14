@@ -2,39 +2,39 @@ package com.kau.ttokttok.ui.compose.preconsideration.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kau.ttokttok.ui.component.common.header.WhiteHeader
-import com.kau.ttokttok.ui.component.preconsideration.AdvanceNoticeDisplayCard
-import com.kau.ttokttok.ui.component.preconsideration.PreConsiderationBoardDetailContent
+import com.kau.ttokttok.ui.component.preconsideration.*
 import com.kau.ttokttok.ui.theme.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun PreConsiderationDetailScreen(
     modifier: Modifier = Modifier,
     uiState: PreConsiderationDetailUiState = PreConsiderationDetailUiState(),
+    onRefresh: () -> Unit = {},
     onClickBack: () -> Unit = { },
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    val pullToRefreshState = rememberPullToRefreshState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Black)
             .statusBarsPadding()
-            .background(Gray50Bg)
+            .navigationBarsPadding()
     ) {
         WhiteHeader(
             title = "사전 양해 게시판 상세",
@@ -43,17 +43,32 @@ fun PreConsiderationDetailScreen(
             onDelete = { showDeleteDialog = true}
         )
 
-        PreConsiderationBoardDetailContent(
-            uiState = uiState
-        )
-
-        AdvanceNoticeDisplayCard(
-            noticeDate = uiState.preConsiderationBoardDetail?.noticeDate ?: "",
-            noticeTime = uiState.preConsiderationBoardDetail?.noticeTime ?: "",
-            noticeReason = uiState.preConsiderationBoardDetail?.noticeReason ?: "",
+        PullToRefreshBox(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        )
+                .fillMaxSize()
+                .background(Gray50Bg),
+            state = pullToRefreshState,
+            isRefreshing = uiState.isLoading,
+            onRefresh = onRefresh
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp)
+            ) {
+                PreConsiderationBoardDetailContent(
+                    uiState = uiState
+                )
+
+                AdvanceNoticeDisplayCard(
+                    noticeDate = uiState.preConsiderationBoardDetail?.noticeDate ?: "ERROR",
+                    noticeTime = uiState.preConsiderationBoardDetail?.noticeTime ?: "ERROR",
+                    noticeReason = uiState.preConsiderationBoardDetail?.noticeReason ?: "ERROR",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
+        }
     }
 
     if (showDeleteDialog) {

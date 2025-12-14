@@ -1,4 +1,4 @@
-package com.kau.ttokttok.data.repository
+package com.kau.ttokttok.data.remote.repository
 
 import com.kau.ttokttok.data.remote.api.RecordingApiService
 import com.kau.ttokttok.data.remote.dto.recording.res.RecordingItem

@@ -57,6 +57,7 @@ fun LoginScreen(
                 )
             )
             .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         StarField(
             modifier = modifier

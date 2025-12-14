@@ -1,6 +1,7 @@
 package com.kau.ttokttok.domain.model.board.noisevote
 
 import com.kau.ttokttok.domain.model.board.Comment
+import com.kau.ttokttok.domain.model.common.enum.NoiseType
 import java.time.LocalDateTime
 
 data class NoiseVoteBoardDetail(
@@ -9,7 +10,8 @@ data class NoiseVoteBoardDetail(
     val reportedAt: LocalDateTime,
     val maxDb: Int,
     val avgDb: Int,
-    val category: String,
+    val category: NoiseType,
     val voteCount: Map<NoiseVoteType, Int>,
-    val comments: List<Comment>
+    val comments: List<Comment>,
+    val myVoteType: NoiseVoteType?
 )

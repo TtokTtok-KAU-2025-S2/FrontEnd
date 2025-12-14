@@ -1,0 +1,73 @@
+package com.kau.ttokttok.data.remote.repository
+
+import com.kau.ttokttok._core.network.result.*
+import com.kau.ttokttok.data.remote.api.AuthApiService
+import com.kau.ttokttok.data.remote.dto.auth.req.*
+import com.kau.ttokttok.domain.repository.AuthRepository
+import com.kau.ttokttok.domain.usecase.auth.LoginResult
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class AuthRepositoryImpl @Inject constructor(
+    private val api: AuthApiService
+) : AuthRepository {
+    override suspend fun login(email: String, password: String): Result<LoginResult> {
+        val req = LoginReq(
+            email = email,
+            password = password
+        )
+
+        return when (val response = safeApiCall { api.login(req) }) {
+            is NetworkResult.Success -> {
+                Result.success(response.data.toLoginResult())
+            }
+
+            is NetworkResult.Error -> {
+                Result.failure(Throwable(response.message))
+            }
+        }
+    }
+
+    override suspend fun register(
+        aptId: Long,
+        email: String,
+        password: String,
+        buildingNumber: Int,
+        unitNumber: Int
+    ): Result<Unit> {
+        val req = RegisterReq(
+            aptId = aptId,
+            email = email,
+            password = password,
+            buildingNumber = buildingNumber,
+            unitNumber = unitNumber
+        )
+
+        return when (val response = safeApiCall { api.register(req) }) {
+            is NetworkResult.Success -> {
+                Result.success(Unit)
+            }
+
+            is NetworkResult.Error -> {
+                Result.failure(Throwable(response.message))
+            }
+        }
+    }
+
+    override suspend fun requestTempPassword(email: String): Result<Unit> {
+        val req = RequestTempPasswordReq(
+            email = email
+        )
+
+        return when (val response = safeApiCall { api.requestTemporaryPassword(req) }) {
+            is NetworkResult.Success -> {
+                Result.success(Unit)
+            }
+
+            is NetworkResult.Error -> {
+                Result.failure(Throwable(response.message))
+            }
+        }
+    }
+}

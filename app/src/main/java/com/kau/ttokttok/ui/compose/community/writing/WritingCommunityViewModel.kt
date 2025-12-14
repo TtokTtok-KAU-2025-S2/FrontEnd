@@ -1,14 +1,11 @@
 package com.kau.ttokttok.ui.compose.community.writing
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kau.ttokttok.domain.usecase.community.CreatePostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +16,7 @@ data class WritingCommunityUiState(
 
 sealed interface WritingCommunityEvent {
     data object Success : WritingCommunityEvent
-    data class Error(val message: String) : WritingCommunityEvent
+    data class ShowAlert(val title: String, val message: String) : WritingCommunityEvent
 }
 
 @HiltViewModel
@@ -32,33 +29,44 @@ class WritingCommunityViewModel @Inject constructor(
     private val _event = MutableSharedFlow<WritingCommunityEvent>()
     val event: SharedFlow<WritingCommunityEvent> = _event.asSharedFlow()
 
-    fun createPost(title: String, content: String) {
+    fun createPost(title: String, content: String, imageUri: Uri?) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                errorMessage = null
-            )
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
 
-            useCase.invoke(title = title, content = content)
+            useCase.invoke(
+                title = title,
+                content = content,
+                imageUri = imageUri?.toString()
+            )
                 .onSuccess {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false
-                    )
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
 
                     emit(WritingCommunityEvent.Success)
                 }
 
                 .onFailure { e ->
-                    val message = e.message ?: "게시글 작성에 실패했습니다."
+                    val errorMessage = e.message
 
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = message
+                        errorMessage = errorMessage
                     )
 
-                    emit(WritingCommunityEvent.Error(message))
+                    emit(WritingCommunityEvent.ShowAlert(
+                        title = "작성 실패",
+                        message = errorMessage ?: "알 수 없는 오류입니다."
+                    ))
                 }
-
         }
     }
 

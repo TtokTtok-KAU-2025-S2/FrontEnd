@@ -29,6 +29,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
+    uiState: SplashUiState = SplashUiState(),
     onFinished: () -> Unit = {}
 ) {
     // 최초 페이드 인용

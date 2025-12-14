@@ -6,9 +6,7 @@ import com.kau.ttokttok.R
 import com.kau.ttokttok.domain.usecase.MainUseCase
 import com.kau.ttokttok.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -76,8 +74,8 @@ class MainViewModel @Inject constructor(
             val buildingNumber = mainUseCase.getBuildingNumber()
             val unitNumber = mainUseCase.getUnitNumber()
 
-            _uiState.update { current ->
-                current.copy(
+            _uiState.update { after ->
+                after.copy(
                     isLoading = false,
 
                     buildingNumber = buildingNumber,

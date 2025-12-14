@@ -3,12 +3,7 @@ package com.kau.ttokttok.data.remote.api
 import com.kau.ttokttok._core.network.model.ApiResponse
 import com.kau.ttokttok.data.remote.dto.noiseboard.req.*
 import com.kau.ttokttok.data.remote.dto.noiseboard.res.*
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface NoiseStatusBoardApiService {
     @GET("api/noise-reports")
@@ -42,8 +37,8 @@ interface NoiseStatusBoardApiService {
         @Path("reportId") id: Long
     ): ApiResponse<String>
 
-    @DELETE("api/comment/{commentId}")
+    @DELETE("api/comments/{commentId}")
     suspend fun deleteComment(
         @Path("commentId") id: Long
-    ): ApiResponse<DeleteCommentRes>
+    ): ApiResponse<String>
 }

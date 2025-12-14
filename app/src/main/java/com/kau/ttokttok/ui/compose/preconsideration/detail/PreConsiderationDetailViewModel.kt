@@ -1,18 +1,10 @@
 package com.kau.ttokttok.ui.compose.preconsideration.detail
 
-import androidx.compose.runtime.currentComposer
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.preconsideration.PreConsiderationBoardDetail
-import com.kau.ttokttok.domain.usecase.preconsideration.DeletePostPreConsiderationUseCase
-import com.kau.ttokttok.domain.usecase.preconsideration.LoadPostDetailPreConsiderationUseCase
+import com.kau.ttokttok.domain.usecase.preconsideration.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,22 +16,24 @@ data class PreConsiderationDetailUiState(
 )
 
 sealed class PreConsiderationDetailEvent {
-    object DeleteSuccess : PreConsiderationDetailEvent()
+    data object DeleteSuccess : PreConsiderationDetailEvent()
+
+    data class ShowAlert(val title: String, val message: String) : PreConsiderationDetailEvent()
 }
 
 @HiltViewModel
 class PreConsiderationDetailViewModel @Inject constructor(
     private val loadPostDetailUseCase: LoadPostDetailPreConsiderationUseCase,
     private val deletePostUseCase: DeletePostPreConsiderationUseCase,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val preConsiderationId: Long = checkNotNull(savedStateHandle.get<Long>("preConsiderationId"))
 
     private val _uiState = MutableStateFlow(PreConsiderationDetailUiState())
     val uiState: StateFlow<PreConsiderationDetailUiState> = _uiState
 
-    private val _event = MutableSharedFlow<PreConsiderationDetailEvent>()
-    val event: SharedFlow<PreConsiderationDetailEvent> = _event
+    private val _events = MutableSharedFlow<PreConsiderationDetailEvent>()
+    val events: SharedFlow<PreConsiderationDetailEvent> = _events
 
     init {
         loadPostDetail()
@@ -49,7 +43,8 @@ class PreConsiderationDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -58,20 +53,26 @@ class PreConsiderationDetailViewModel @Inject constructor(
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
+                            errorMessage = null,
                             preConsiderationBoardDetail = response
                         )
                     }
                 }
 
-                .onFailure { response ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = response.message
+                            errorMessage = errorMessage
                         )
                     }
 
-                    // TODO: 다이얼로그 추가하기
+                    emit(PreConsiderationDetailEvent.ShowAlert(
+                        title = "실패",
+                        message = errorMessage ?: "알 수 없는 오류입니다."
+                    ))
                 }
         }
     }
@@ -80,30 +81,44 @@ class PreConsiderationDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
             deletePostUseCase.invoke(preConsiderationId)
-                .onSuccess { response ->
+                .onSuccess {
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = response
+                            errorMessage = null
                         )
                     }
 
-                    _event.emit(PreConsiderationDetailEvent.DeleteSuccess)
+                    _events.emit(PreConsiderationDetailEvent.DeleteSuccess)
                 }
 
-                .onFailure { error ->
+                .onFailure { e ->
+                    val errorMessage = e.message
+
                     _uiState.update { after ->
                         after.copy(
                             isLoading = false,
-                            errorMessage = error.message
+                            errorMessage = e.message
                         )
+
+
                     }
+
+                    emit(PreConsiderationDetailEvent.ShowAlert(
+                        title = "삭제 실패",
+                        message = errorMessage ?: "ERROR"
+                    ))
                 }
         }
+    }
+
+    private fun emit(event: PreConsiderationDetailEvent) {
+        _events.tryEmit(event)
     }
 }

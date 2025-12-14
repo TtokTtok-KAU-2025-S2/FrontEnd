@@ -1,13 +1,8 @@
 package com.kau.ttokttok.data.remote.api
 
 import com.kau.ttokttok._core.network.model.ApiResponse
-import com.kau.ttokttok.data.remote.dto.report.res.CreateReportRes
-import com.kau.ttokttok.data.remote.dto.report.res.GetApartMonthReportRes
-import com.kau.ttokttok.data.remote.dto.report.res.GetApartmentStatsRes
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import com.kau.ttokttok.data.remote.dto.report.res.*
+import retrofit2.http.*
 
 interface ReportApiService {
     @GET("api/stats/nationwide")

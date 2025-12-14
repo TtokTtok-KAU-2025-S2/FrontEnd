@@ -1,13 +1,12 @@
 package com.kau.ttokttok.domain.usecase.community
 
 import com.kau.ttokttok.domain.repository.CommunityRepository
-import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
+import javax.inject.Singleton
 
-
-class CreatePostUseCase(
+@Singleton
+class CreatePostUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(title: String, content: String): Result<String> = runCatching {
-        repository.createPost(title, content)
-    }
+    suspend operator fun invoke(title: String, content: String, imageUri: String?): Result<Unit> = repository.createPost(title, content, imageUri)
 }

@@ -1,13 +1,10 @@
 package com.kau.ttokttok.ui.compose.community.detail
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.kau.ttokttok.domain.model.board.community.CommunityBoardDetail
 import com.kau.ttokttok.domain.usecase.community.GetPostDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -19,9 +16,14 @@ data class CommunityDetailUiState(
     val communityBoardDetail: CommunityBoardDetail = CommunityBoardDetail(
         title = "제목 NULL",
         createdAt = LocalDateTime.now(),
-        content = "내용 NULL"
+        content = "내용 NULL",
+        pictureUrl = null
     )
 )
+
+sealed interface CommunityDetailEvent {
+    data class ShowAlert(val title: String, val message: String) : CommunityDetailEvent
+}
 
 @HiltViewModel
 class CommunityDetailViewModel @Inject constructor(
@@ -33,36 +35,54 @@ class CommunityDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CommunityDetailUiState())
     val uiState: StateFlow<CommunityDetailUiState> = _uiState
 
+    private val _events = MutableSharedFlow<CommunityDetailEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<CommunityDetailEvent> = _events.asSharedFlow()
+
     init {
-        getCommunityDetail(communityId)
+        getCommunityDetail()
     }
 
-    fun getCommunityDetail(id: Long) {
+    fun getCommunityDetail() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true
-            )
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
 
-            useCase.invoke(id)
-                .onSuccess { detail ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = null,
+            useCase.invoke(communityId)
+                .onSuccess { data ->
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = null,
 
-                        communityBoardDetail = detail
-                    )
-
+                            communityBoardDetail = data
+                        )
+                    }
                 }
 
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = e.message,
-                    )
+                    val errorMessage = e.message
 
-                    // TODO: 다이얼로그 추가
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    emit(CommunityDetailEvent.ShowAlert(
+                        title = "조회 실패",
+                        message = errorMessage ?: "알 수 없는 오류입니다."
+                    ))
                 }
 
         }
+    }
+
+    private fun emit(event: CommunityDetailEvent) {
+        _events.tryEmit(event)
     }
 }

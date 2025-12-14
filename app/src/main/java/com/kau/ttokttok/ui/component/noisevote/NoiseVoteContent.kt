@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.kau.ttokttok._core.util.DateUtils.formatDateTime
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun NoiseVoteContent(
@@ -66,7 +66,7 @@ fun NoiseVoteContent(
                         contentAlignment = Alignment.CenterEnd
                     ) {
                         Text(
-                            text = reportedAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")),
+                            text = reportedAt.formatDateTime(),
                             style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray.copy(alpha = 0.7f))
                         )
                     }

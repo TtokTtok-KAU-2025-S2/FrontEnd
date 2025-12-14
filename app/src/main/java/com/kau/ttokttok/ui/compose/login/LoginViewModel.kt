@@ -2,16 +2,9 @@ package com.kau.ttokttok.ui.compose.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.domain.usecase.AuthUseCase
-import com.kau.ttokttok.domain.usecase.auth.RequestTempPasswordUseCase
+import com.kau.ttokttok.domain.usecase.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,13 +15,13 @@ data class LoginUiState(
 
 sealed interface LoginEvent {
     data object NavigateHome : LoginEvent
-    data object NavigateSignup : LoginEvent
+
     data class ShowAlert(val title: String, val message: String) : LoginEvent
 }
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
+    private val loginUseCase: LoginUseCase,
     private val requestTempPasswordUseCase: RequestTempPasswordUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -39,36 +32,40 @@ class LoginViewModel @Inject constructor(
 
     fun onClickLogin(email: String, password: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
 
-            try {
-                when (val result = authUseCase.login(email, password)) {
-                    is NetworkResult.Success -> {
-                        emit(LoginEvent.NavigateHome)
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                    }
-
-                    is NetworkResult.Error -> {
-                        val message = result.message ?: result.exception?.message
-
-                        _uiState.value =
-                            _uiState.value.copy(isLoading = false, errorMessage = message)
-
-                        emit(
-                            LoginEvent.ShowAlert(
-                                title = "로그인 실패",
-                                message = message ?: "알 수 없는 오류입니다."
-                            )
+            loginUseCase.invoke(email, password)
+                .onSuccess {
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
+
+                    emit(LoginEvent.NavigateHome)
                 }
-            } catch (e: IllegalArgumentException) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
-                emit(LoginEvent.ShowAlert("입력 오류", e.message ?: "잘못된 입력입니다."))
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
-                emit(LoginEvent.ShowAlert("로그인 실패", e.message ?: "알 수 없는 오류입니다."))
-            }
+
+                .onFailure { e ->
+                    val errorMessage = e.message
+
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    emit(LoginEvent.ShowAlert(
+                        title = "로그인 실패",
+                        message = errorMessage ?: "알 수 없는 오류입니다."
+                    ))
+                }
         }
     }
 
@@ -76,7 +73,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { current ->
                 current.copy(
-                    isLoading = true
+                    isLoading = true,
+                    errorMessage = null
                 )
             }
 
@@ -84,7 +82,8 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.update { current ->
                         current.copy(
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
 
@@ -96,11 +95,11 @@ class LoginViewModel @Inject constructor(
                     )
                 }
 
-                .onFailure { throwable ->
-                    val errorMessage = throwable.message ?: "ERROR"
+                .onFailure { e ->
+                    val errorMessage = e.message
 
-                    _uiState.update { current ->
-                        current.copy(
+                    _uiState.update { after ->
+                        after.copy(
                             isLoading = false,
                             errorMessage = errorMessage
                         )
@@ -109,7 +108,7 @@ class LoginViewModel @Inject constructor(
                     emit(
                         LoginEvent.ShowAlert(
                             title = "임시 비밀번호 발급 실패",
-                            message = errorMessage
+                            message = errorMessage ?: "알 수 없는 오류입니다."
                         )
                     )
                 }

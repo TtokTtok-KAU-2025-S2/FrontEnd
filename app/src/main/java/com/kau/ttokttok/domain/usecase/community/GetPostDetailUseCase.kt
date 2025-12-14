@@ -2,13 +2,12 @@ package com.kau.ttokttok.domain.usecase.community
 
 import com.kau.ttokttok.domain.model.board.community.CommunityBoardDetail
 import com.kau.ttokttok.domain.repository.CommunityRepository
-import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
+import javax.inject.Singleton
 
-
-class GetPostDetailUseCase(
+@Singleton
+class GetPostDetailUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<CommunityBoardDetail> = runCatching {
-        repository.getPostDetail(id)
-    }
+    suspend operator fun invoke(id: Long): Result<CommunityBoardDetail> = repository.getPostDetail(id)
 }

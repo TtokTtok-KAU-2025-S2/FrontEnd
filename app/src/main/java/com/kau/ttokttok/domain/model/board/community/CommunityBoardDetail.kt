@@ -5,5 +5,6 @@ import java.time.LocalDateTime
 data class CommunityBoardDetail(
     val title: String,
     val createdAt: LocalDateTime,
-    val content: String
+    val content: String,
+    val pictureUrl: String?
 )

@@ -13,7 +13,6 @@ import javax.inject.Inject
 private const val AUTH_PREFS = "auth_prefs"
 val Context.authDataStore by preferencesDataStore(name = AUTH_PREFS)
 
-// TODO: DataStore 보안 추가하기
 class AuthStorage @Inject constructor(
     @ApplicationContext private val context: Context
 ) {

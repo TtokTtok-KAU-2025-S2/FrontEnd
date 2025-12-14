@@ -7,11 +7,15 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
 
 class CommunityFragment : Fragment() {
+    private val viewModel: CommunityViewModel by viewModels()
+    private var first = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,6 +39,18 @@ class CommunityFragment : Fragment() {
                     )
                 }
             )
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (first) {
+            first = false
+        }
+
+        else {
+            viewModel.loadPosts()
         }
     }
 }

@@ -23,13 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kau.ttokttok.ui.compose.community.detail.Gray200
-import com.kau.ttokttok.ui.compose.community.detail.Gray400
-import com.kau.ttokttok.ui.compose.community.detail.Gray500
+import com.kau.ttokttok._core.util.DateUtils.formatDateTime
 import com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailUiState
-import com.kau.ttokttok.ui.theme.Gray50Bg
-import com.kau.ttokttok.ui.theme.Gray900
-import java.time.format.DateTimeFormatter
+import com.kau.ttokttok.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,9 +69,7 @@ fun PreConsiderationBoardDetailContent(
                         fontSize = 12.sp
                     )
                     Text(
-                        text = uiState.preConsiderationBoardDetail?.createdAt?.format(
-                            DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
-                        ) ?: "",
+                        text = uiState.preConsiderationBoardDetail?.createdAt?.formatDateTime() ?: "",
                         color = Gray400,
                         fontSize = 11.sp
                     )

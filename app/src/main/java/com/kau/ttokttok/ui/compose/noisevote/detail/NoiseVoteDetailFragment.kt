@@ -7,9 +7,15 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import com.kau.ttokttok.ui.navigation.Destination
+import com.kau.ttokttok.ui.navigation.navigateTo
 
 class NoiseVoteDetailFragment : Fragment() {
+    private val viewModel: NoiseVoteDetailViewModel by viewModels()
+    private var first = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -21,8 +27,31 @@ class NoiseVoteDetailFragment : Fragment() {
 
         setContent {
             NoiseVoteDetailRoute(
-                onClickBack = { findNavController().popBackStack() }
+                onClickBack = { findNavController().popBackStack() },
+                onClickCommentModify = { id, content ->
+                    val args = Bundle().apply {
+                        putLong("noiseVoteCommentId", id)
+                        putString("noiseVoteCommentContent", content)
+                    }
+
+                    findNavController().navigateTo(
+                        dest = Destination.NOISE_VOTE_COMMENT_MODIFY,
+                        args = args
+                    )
+                }
             )
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (first) {
+            first = false
+        }
+
+        else {
+            viewModel.loadPostDetail()
         }
     }
 }

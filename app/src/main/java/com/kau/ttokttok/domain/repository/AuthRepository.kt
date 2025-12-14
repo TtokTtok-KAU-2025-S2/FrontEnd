@@ -1,14 +1,15 @@
 package com.kau.ttokttok.domain.repository
 
-import com.kau.ttokttok._core.network.result.NetworkResult
-import com.kau.ttokttok.data.remote.dto.auth.req.LoginReq
-import com.kau.ttokttok.data.remote.dto.auth.req.RegisterReq
-import com.kau.ttokttok.data.remote.dto.auth.req.RequestTempPasswordReq
-import com.kau.ttokttok.data.remote.dto.auth.res.LoginRes
-import com.kau.ttokttok.data.remote.dto.auth.res.RegisterRes
+import com.kau.ttokttok.domain.usecase.auth.LoginResult
 
 interface AuthRepository {
-    suspend fun login(loginReq: LoginReq): NetworkResult<LoginRes>
-    suspend fun register(registerReq: RegisterReq): NetworkResult<RegisterRes>
-    suspend fun requestTempPassword(email: String): String
+    suspend fun login(email: String, password: String): Result<LoginResult>
+    suspend fun register(
+        aptId: Long,
+        email: String,
+        password: String,
+        buildingNumber: Int,
+        unitNumber: Int
+    ): Result<Unit>
+    suspend fun requestTempPassword(email: String): Result<Unit>
 }

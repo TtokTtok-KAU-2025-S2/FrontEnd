@@ -4,7 +4,7 @@ import com.kau.ttokttok.domain.model.board.community.CommunityBoard
 import com.kau.ttokttok.domain.model.board.community.CommunityBoardDetail
 
 interface CommunityRepository {
-    suspend fun createPost(title: String, content: String) : String
-    suspend fun getPosts(): List<CommunityBoard>
-    suspend fun getPostDetail(id: Long): CommunityBoardDetail
+    suspend fun createPost(title: String, content: String, imageUri: String?): Result<Unit>
+    suspend fun getPosts(): Result<List<CommunityBoard>>
+    suspend fun getPostDetail(id: Long): Result<CommunityBoardDetail>
 }

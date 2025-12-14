@@ -1,20 +1,17 @@
 package com.kau.ttokttok.ui.compose.preconsideration.writing
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kau.ttokttok.ui.component.common.AppDialog
 
 @Composable
 fun WritingPreConsiderationRoute(
     viewModel: WritingPreConsiderationViewModel = hiltViewModel(),
     onClickBack: () -> Unit
 ) {
-    val snackbar = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // 다이얼로그 상태
     val showDialog = remember { mutableStateOf(false)}
     val dialogTitle = remember { mutableStateOf("")}
     val dialogMessage = remember { mutableStateOf("")}
@@ -22,28 +19,38 @@ fun WritingPreConsiderationRoute(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is WritingPreconsiderationEvent.ShowMessage -> {
-                    snackbar.showSnackbar(event.message)
-                }
-
                 is WritingPreconsiderationEvent.ShowAlert -> {
                     dialogTitle.value = event.title
                     dialogMessage.value = event.message
                     showDialog.value = true
                 }
 
-                WritingPreconsiderationEvent.onSuccess -> {
+                WritingPreconsiderationEvent.Success -> {
                     onClickBack()
                 }
             }
         }
     }
 
+    if (showDialog.value) {
+        AppDialog(
+            title = dialogTitle.value,
+            message = dialogMessage.value,
+            onDismiss = { showDialog.value = false }
+        )
+    }
+
     WritingPreConsiderationScreen(
+        uiState = uiState,
+        isEdit = viewModel.isEdit,
         onClickBack = onClickBack,
         onClickCreate = {
             title, content, noticeDate, noticeTime, noticeReason
                 -> viewModel.onClickCreate(title, content, noticeDate, noticeTime, noticeReason)
+        },
+        onClickModify = {
+            title, content, noticeDate, noticeTime, noticeReason
+                -> viewModel.onClickModify(title, content, noticeDate, noticeTime, noticeReason)
         }
     )
 }
