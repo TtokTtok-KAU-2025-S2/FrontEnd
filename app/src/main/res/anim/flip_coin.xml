@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 동전 뒤집기 애니메이션 (Y축 회전) -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator">
+
+    <!-- X축 크기를 줄여서 뒤집히는 효과 (앞면에서 옆면) -->
+    <scale
+        android:fromXScale="1.0"
+        android:toXScale="0.0"
+        android:fromYScale="1.0"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="200" />
+
+    <!-- X축 크기를 늘려서 뒤집히는 효과 (옆면에서 뒷면) -->
+    <scale
+        android:fromXScale="0.0"
+        android:toXScale="1.0"
+        android:fromYScale="1.0"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="200"
+        android:duration="200" />
+
+    <!-- 살짝 튀는 효과 추가 -->
+    <scale
+        android:fromXScale="1.0"
+        android:toXScale="1.1"
+        android:fromYScale="1.0"
+        android:toYScale="1.1"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="400"
+        android:duration="100" />
+
+    <scale
+        android:fromXScale="1.1"
+        android:toXScale="1.0"
+        android:fromYScale="1.1"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="500"
+        android:duration="100" />
+
+</set>
+

@@ -1,21 +1,22 @@
 package com.kau.ttokttok.data.remote.api
 
-import com.kau.ttokttok.data.remote.dto.req.LoginReq
-import com.kau.ttokttok.data.remote.dto.req.RegisterReq
-import com.kau.ttokttok.data.remote.dto.res.CommonRes
-import retrofit2.Response
+import com.kau.ttokttok._core.network.model.ApiResponse
+import com.kau.ttokttok.data.remote.dto.auth.req.*
+import com.kau.ttokttok.data.remote.dto.auth.res.*
 import retrofit2.http.Body
-import retrofit2.http.DELETE
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
-// TODO: BE연동_바꾸기
 interface AuthApiService {
-    @POST("/login")
-    suspend fun login(@Body req: LoginReq): Response<CommonRes<Unit>>
+    @Headers("No-Auth: true")
+    @POST("api/users/login")
+    suspend fun login(@Body req: LoginReq): ApiResponse<LoginRes>
 
-    @POST("/register")
-    suspend fun register(@Body req: RegisterReq): Response<CommonRes<Unit>>
+    @Headers("No-Auth: true")
+    @POST("api/users/join")
+    suspend fun register(@Body req: RegisterReq): ApiResponse<RegisterRes>
 
-    @DELETE("/user")
-    suspend fun logout(): Response<CommonRes<Unit>>
+    @Headers("No-Auth: true")
+    @POST("api/users/issue-temporary-password")
+    suspend fun requestTemporaryPassword(@Body req: RequestTempPasswordReq): ApiResponse<String>
 }

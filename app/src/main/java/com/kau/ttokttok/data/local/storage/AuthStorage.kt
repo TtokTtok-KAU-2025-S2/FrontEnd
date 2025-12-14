@@ -4,31 +4,26 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 private const val AUTH_PREFS = "auth_prefs"
-
-// Context 확장 프로퍼티 (싱글톤처럼 사용)
 val Context.authDataStore by preferencesDataStore(name = AUTH_PREFS)
 
-// TODO: DataStore 보안 추가하기
-class AuthStorage(private val context: Context) {
+class AuthStorage @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     private object Keys {
         val JWT = stringPreferencesKey("jwt_token")
         val REFRESH = stringPreferencesKey("refresh_token")
     }
 
-    val jwt: Flow<String?> = context.authDataStore.data.map { prefs ->
-        prefs[Keys.JWT]
-    }
+    val jwt: Flow<String?> = context.authDataStore.data.map { it[Keys.JWT] }
+    val refresh: Flow<String?> = context.authDataStore.data.map { it[Keys.REFRESH] }
 
-    val refresh: Flow<String?> = context.authDataStore.data.map { prefs ->
-        prefs[Keys.REFRESH]
-    }
-
-    // 토큰 저장
     suspend fun save(jwt: String, refresh: String) {
         context.authDataStore.edit { prefs ->
             prefs[Keys.JWT] = jwt
@@ -36,11 +31,11 @@ class AuthStorage(private val context: Context) {
         }
     }
 
-    // 토큰 읽기
-    suspend fun readJWT(): String? =
-        context.authDataStore.data.first()[Keys.JWT]
+    suspend fun readJWT(): String? = context.authDataStore.data.first()[Keys.JWT]
 
-    // 토큰 삭제
+    // (선택) refresh 읽기함수 있으면 편함
+    suspend fun readRefresh(): String? = context.authDataStore.data.first()[Keys.REFRESH]
+
     suspend fun clear() {
         context.authDataStore.edit { prefs ->
             prefs.remove(Keys.JWT)

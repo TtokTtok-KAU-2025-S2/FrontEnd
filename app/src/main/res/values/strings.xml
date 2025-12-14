@@ -1,3 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ttokttok</string>
+    <string name="app_name">똑똑</string>
+
+    <!-- 소음 일기 관련 문자열 -->
+    <string name="noise_diary_title">똑똑 소음 일기</string>
+    <string name="default_address">래미안 아파트 301동 1502호</string>
+    <string name="total_records">총 기록</string>
+    <string name="this_month">이번 달</string>
+    <string name="average_db">평균 dB</string>
+    <string name="select_date">📅 날짜 선택</string>
+    <string name="create_report">리포트 생성</string>
+    <string name="add_noise_record">추가</string>
+    <string name="record_count_format">%d건</string>
+    <string name="selected_count_format">%d개 선택됨</string>
+
+    <!-- 알림 설정 페이지 -->
+    <string name="back_button">뒤로가기</string>
+    <string name="notification_icon">알림 아이콘</string>
+    <string name="noise_status_icon">소음 현황판 아이콘</string>
+    <string name="prior_consent_icon">사전 양해 아이콘</string>
+    <string name="announcement_icon">공지사항 아이콘</string>
+    <string name="monthly_report_icon">월간 리포트 아이콘</string>
+    <string name="do_not_disturb_icon">방해금지 아이콘</string>
+
+    <!-- 전국 데이터 화면 -->
+    <string name="national_data_title">전국 아파트 소음 분석</string>
+    <string name="search_hint">아파트명 또는 지역 검색</string>
+    <string name="moving_tip_title">💡 이사 참고 데이터</string>
+    <string name="moving_tip_desc">전국 아파트의 소음 리포트 데이터를 기반으로 분석한 정보입니다. 이사 전 참고하세요!</string>
+    <string name="no_results">검색 결과가 없습니다</string>
+    <string name="monthly_distribution">한달 소음 유형 분포</string>
+    <string name="noise_level_low">조용함</string>
+    <string name="noise_level_medium">보통</string>
+    <string name="noise_level_high">시끄러움</string>
+    <string name="active_status_high">앱 활성도 : 상</string>
+    <string name="active_status_medium">앱 활성도 : 중</string>
+    <string name="active_status_low">앱 활성도 : 하</string>
+    <string name="total_reports">건</string>
 </resources>

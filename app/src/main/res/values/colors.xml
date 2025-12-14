@@ -1,10 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 기본 색상 -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <!-- Primary 색상 -->
+    <color name="colorPrimary">#2563eb</color>
+    <color name="tab_selected_bg">#2563eb</color>
+
+    <!-- AI 관련 색상 -->
+    <color name="ai_pink_light">#E91E63</color>
+    <color name="ai_purple">#CE93D8</color>
+
+    <!-- Material Design 기본 색상 -->
     <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
+    <color name="purple_700">#FF6200EE</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- 소리 강도 배경색 -->
+    <color name="level_green_bg">#14532d</color>
+    <color name="level_yellow_bg">#713f12</color>
+    <color name="level_orange_bg">#7c2d12</color>
+    <color name="level_red_bg">#7f1d1d</color>
+
+    <!-- Material Design 기본 색상 -->
+    <color name="colorAccent">#4CAF50</color>
+
+    <!-- 배경/텍스트 -->
+    <color name="background_light">#F5F5F5</color>
+    <color name="background_dark">#1E293B</color>
+    <color name="card_dark">#334155</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_light">#E2E8F0</color>
+
+    <!-- dB 레벨 색상 -->
+    <color name="db_safe">#4CAF50</color>
+    <color name="db_moderate">#FF9800</color>
+    <color name="db_high">#F44336</color>
+
+    <!-- 소음 유형 차트 색상 -->
+    <color name="chart_blue">#3B82F6</color>
+    <color name="chart_green">#10B981</color>
+    <color name="chart_orange">#F59E0B</color>
+    <color name="chart_red">#EF4444</color>
+    <color name="chart_purple">#8B5CF6</color>
+    <color name="chart_pink">#EC4899</color>
+    <color name="chart_gray">#6B7280</color>
 </resources>

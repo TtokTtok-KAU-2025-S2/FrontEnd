@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 필요한 도메인만 한정 허용 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">
+            ttokttok-dev-env.eba-dp3skxgf.ap-northeast-2.elasticbeanstalk.com
+        </domain>
+    </domain-config>
+</network-security-config>

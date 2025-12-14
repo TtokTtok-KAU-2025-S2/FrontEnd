@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.kau.ttokttok.ui.compose.splash.SplashFragment"
+        android:label="splash"
+        />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.kau.ttokttok.ui.compose.login.LoginFragment"
+        android:label="Login"
+        />
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.kau.ttokttok.ui.compose.register.RegisterFragment"
+        android:label="Register"
+        />
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.kau.ttokttok.ui.compose.main.MainFragment"
+        android:label="Main"
+        />
+
+    <fragment
+        android:id="@+id/noiseVoteFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.NoiseVoteFragment"
+        android:label="NoiseVote"
+        />
+
+    <fragment
+        android:id="@+id/noiseVoteDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.detail.NoiseVoteDetailFragment"
+        android:label="NoiseVoteDetail">
+
+        <argument
+            android:name="noiseVoteId"
+            app:argType="long"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/noiseVoteCommentModifyFragment"
+        android:name="com.kau.ttokttok.ui.compose.noisevote.comment.modify.NoiseVoteCommentModifyFragment"
+        android:label="NoiseVoteCommentModify">
+
+        <argument
+            android:name="noiseVoteCommentId"
+            app:argType="long"
+            />
+
+        <argument
+            android:name="noiseVoteCommentContent"
+            app:argType="string"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/monthReportFragment"
+        android:name="com.kau.ttokttok.ui.compose.monthreport.MonthReportFragment"
+        android:label="MonthReport">
+
+        <action
+            android:id="@+id/action_monthReportFragment_to_nationalApartmentFragment"
+            app:destination="@id/nationalApartmentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nationalApartmentFragment"
+        android:name="com.kau.ttokttok.ui.xml.korea.NationalApartmentFragment"
+        android:label="NationalApartment"
+        />
+
+    <fragment
+        android:id="@+id/preConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.PreConsiderationFragment"
+        android:label="PreConsideration"
+        />
+
+    <fragment
+        android:id="@+id/writingPreConsiderationFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.writing.WritingPreConsiderationFragment"
+        android:label="writingPreConsideration"
+        />
+
+        <argument
+            android:name="preConsiderationId"
+            app:argType="long"
+            />
+
+    <fragment
+        android:id="@+id/preConsiderationDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.preconsideration.detail.PreConsiderationDetailFragment"
+        android:label="PreConsiderationDetail">
+
+        <argument
+            android:name="preConsiderationId"
+            app:argType="long"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.CommunityFragment"
+        android:label="Community"
+        />
+
+    <fragment
+        android:id="@+id/writingCommunityFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.writing.WritingCommunityFragment"
+        android:label="writingCommunity"
+        />
+
+    <fragment
+        android:id="@+id/communityDetailFragment"
+        android:name="com.kau.ttokttok.ui.compose.community.detail.CommunityDetailFragment"
+        android:label="CommunityDetail"
+        />
+
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.SettingFragment"
+        android:label="Setting"
+        >
+        <action
+            android:id="@+id/action_settingFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_changeNicknameFragment"
+            app:destination="@id/changeNicknameFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_changeAddressFragment"
+            app:destination="@id/changeAddressFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.kau.ttokttok.ui.xml.notification.NotificationFragment"
+        android:label="Notification"
+        />
+
+    <!-- 소음일기 관련 Fragment -->
+    <fragment
+        android:id="@+id/noiseLogFragment"
+        android:name="com.kau.ttokttok.ui.xml.calendar.NoiseLogFragment"
+        android:label="Noise Log"
+        />
+
+    <fragment
+        android:id="@+id/noiseLogFormFragment"
+        android:name="com.kau.ttokttok.ui.xml.calendar.NoiseLogFormFragment"
+        android:label="Noise Log Form"
+        />
+
+    <fragment
+        android:id="@+id/noiseMeasurementFragment"
+        android:name="com.kau.ttokttok.ui.xml.calendar.NoiseMeasurementFragment"
+        android:label="Noise Measurement"
+        />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.profile.EditProfileFragment"
+        android:label="Profile edit"
+        />
+    <fragment
+        android:id="@+id/changeNicknameFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.nickname.ChangeNicknameFragment"
+        android:label="Nickname change"
+        />
+    <fragment
+        android:id="@+id/changeAddressFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.address.ChangeAddressFragment"
+        android:label="Address change"
+        />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.kau.ttokttok.ui.compose.setting.password.ChangePasswordFragment"
+        android:label="Password change"
+        />
+
+</navigation>

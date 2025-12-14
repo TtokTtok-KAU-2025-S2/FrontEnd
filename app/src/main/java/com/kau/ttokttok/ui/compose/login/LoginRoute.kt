@@ -1,22 +1,18 @@
 package com.kau.ttokttok.ui.compose.login
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kau.ttokttok.ui.component.common.AppDialog
 
 @Composable
 fun LoginRoute(
-    viewModel: LoginViewModel = hiltViewModel()
-    // TODO: Navigator 추가하기
+    viewModel: LoginViewModel = hiltViewModel(),
+    onRegister: () -> Unit,
+    onSuccess: () -> Unit,
 ) {
-    // val uiState by viewModel.uiState.collectAsState()
-    val snackbar = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // 다이얼로그 상태
     val showDialog = remember { mutableStateOf(false)}
     val dialogTitle = remember { mutableStateOf("")}
     val dialogMessage = remember { mutableStateOf("")}
@@ -24,10 +20,6 @@ fun LoginRoute(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is LoginEvent.ShowMessage -> {
-                    snackbar.showSnackbar(event.message)
-                }
-
                 is LoginEvent.ShowAlert -> {
                     dialogTitle.value = event.title
                     dialogMessage.value = event.message
@@ -35,17 +27,12 @@ fun LoginRoute(
                 }
 
                 LoginEvent.NavigateHome -> {
-                    // TODO: Navigator 추가하기
-                }
-
-                LoginEvent.NavigateSignup -> {
-                    // TODO: Navigator 추가하기
+                    onSuccess()
                 }
             }
         }
     }
 
-    // 화면 다이얼로그 표시
     if (showDialog.value) {
         AppDialog(
             title = dialogTitle.value,
@@ -54,30 +41,15 @@ fun LoginRoute(
         )
     }
 
-    // 콜백 연결
     LoginScreen(
         onClickLogin = {
             email, pw -> viewModel.onClickLogin(email, pw)
         },
 
-        onClickSignup = {
-            viewModel.onClickSignUp()
-        },
+        onClickRegister = onRegister,
 
-        onClickKaKao = {
-            viewModel.onClickKaKao()
-        },
-
-        onClickNaver = {
-            viewModel.onClickNaver()
-        },
-
-        onClickFindId = {
-            viewModel.onClickFindId()
-        },
-
-        onClickFindPassword = {
-            viewModel.onClickFindPassword()
+        onRequestTempPassword = {
+            email -> viewModel.onRequestTempPassword(email)
         }
     )
 }

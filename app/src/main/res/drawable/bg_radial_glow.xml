@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 별빛 배경 위에 얹히는 은은한 빛 효과 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="450dp"
+        android:centerX="0.3"
+        android:centerY="0.3"
+        android:startColor="#14FFFFFF"
+        android:endColor="#00FFFFFF" />
+</shape>
+

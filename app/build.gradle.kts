@@ -32,6 +32,7 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 
     compileOptions {
@@ -57,6 +58,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.media3.effect)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -96,4 +99,11 @@ dependencies {
     ksp(libs.hilt.compiler)
     // (선택) Compose에서 HiltViewModel 쓸 경우
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // coil
+    implementation(libs.coil.compose)
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0") //파이차트 (전국 아파트 현황)
 }

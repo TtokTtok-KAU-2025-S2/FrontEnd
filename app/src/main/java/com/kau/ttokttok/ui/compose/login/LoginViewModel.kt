@@ -2,13 +2,9 @@ package com.kau.ttokttok.ui.compose.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kau.ttokttok.domain.repository.AuthRepository
+import com.kau.ttokttok.domain.usecase.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,14 +15,14 @@ data class LoginUiState(
 
 sealed interface LoginEvent {
     data object NavigateHome : LoginEvent
-    data object NavigateSignup : LoginEvent
-    data class ShowMessage(val message: String) : LoginEvent
+
     data class ShowAlert(val title: String, val message: String) : LoginEvent
 }
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-
+    private val loginUseCase: LoginUseCase,
+    private val requestTempPasswordUseCase: RequestTempPasswordUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -34,34 +30,92 @@ class LoginViewModel @Inject constructor(
     private val _events = MutableSharedFlow<LoginEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<LoginEvent> = _events.asSharedFlow()
 
+    fun onClickLogin(email: String, password: String) {
+        viewModelScope.launch {
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            loginUseCase.invoke(email, password)
+                .onSuccess {
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+
+                    emit(LoginEvent.NavigateHome)
+                }
+
+                .onFailure { e ->
+                    val errorMessage = e.message
+
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    emit(LoginEvent.ShowAlert(
+                        title = "로그인 실패",
+                        message = errorMessage ?: "알 수 없는 오류입니다."
+                    ))
+                }
+        }
+    }
+
+    fun onRequestTempPassword(email: String) {
+        viewModelScope.launch {
+            _uiState.update { current ->
+                current.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            requestTempPasswordUseCase.invoke(email)
+                .onSuccess {
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+
+                    emit(
+                        LoginEvent.ShowAlert(
+                            title = "임시 비밀번호 발급 성공",
+                            message = "이메일을 확인해주세요!"
+                        )
+                    )
+                }
+
+                .onFailure { e ->
+                    val errorMessage = e.message
+
+                    _uiState.update { after ->
+                        after.copy(
+                            isLoading = false,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    emit(
+                        LoginEvent.ShowAlert(
+                            title = "임시 비밀번호 발급 실패",
+                            message = errorMessage ?: "알 수 없는 오류입니다."
+                        )
+                    )
+                }
+        }
+    }
+
     private fun emit(event: LoginEvent) {
         _events.tryEmit(event)
-    }
-
-    fun onClickLogin(id: String, pw: String) {
-        viewModelScope.launch {
-            try {
-                // TODO: 나중에 repository로 부르기
-                throw Exception("테스트용 실패")
-            } catch (e: Exception) {
-                emit(LoginEvent.ShowAlert("로그인 실패", e.message ?: "알 수 없는 오류입니다."))
-            }
-        }
-    }
-
-    fun onClickSignUp() = emit(LoginEvent.NavigateSignup)
-    fun onClickFindId() = emit(LoginEvent.ShowMessage("준비 중"))
-    fun onClickFindPassword() = emit(LoginEvent.ShowMessage("준비 중"))
-
-    // TODO: 추후 필요시 구현하기!
-    fun onClickKaKao() {
-        viewModelScope.launch {
-            _events.emit(LoginEvent.ShowAlert("준비 중", "카카오 로그인은 아직 구현되지 않았습니다."))
-        }
-    }
-    fun onClickNaver() {
-        viewModelScope.launch {
-            _events.emit(LoginEvent.ShowAlert("준비 중", "네이버 로그인은 아직 구현되지 않았습니다."))
-        }
     }
 }
