@@ -19,7 +19,7 @@ data class CreateNoiseRecordRes(
     // 서버에서 LocalDateTime 문자열을 내려주므로, Moshi 커스텀 어댑터 없이 String으로 수신
     val occuredAt: String,
     val updateAt: String,
-    val hasReport: Boolean = false // ✅ 서버에서 리포트 생성 여부를 내려줄 경우 사용, 기본값 false
+    val reportYn: Boolean = false // ✅ 서버에서 리포트 생성 여부를 내려줄 경우 사용, 기본값 false
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
@@ -37,7 +37,7 @@ data class CreateNoiseRecordRes(
             memo = memoText,
             measuredAt = measuredDate,
             duration = duration.toLong(),
-            hasReport = hasReport
+            hasReport = reportYn
         )
     }
 
