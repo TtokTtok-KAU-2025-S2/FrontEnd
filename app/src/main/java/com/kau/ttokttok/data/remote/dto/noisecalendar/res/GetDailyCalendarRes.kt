@@ -30,7 +30,8 @@ data class DailyCalendarRecord(
     val dbAvg: Double,
     val description: String?,  // 사용자가 작성한 메모 (소음일기용)
     val summary: String?,      // AI가 자동 생성한 요약 (소음현황판용)
-    val hasReport: Boolean = false // ✅ 서버에서 리포트 생성 여부를 내려줄 경우 사용, 없으면 기본값 false
+    val reportYn: Boolean = false, // ✅ 서버에서 리포트 생성 여부를 내려줄 경우 사용, 없으면 기본값 false
+    val duration: Long = 0L // ✅ 서버에서 측정 시간을 내려주지 않으면 기본값 0
 ) {
     /**
      * Response String 날짜를 Domain 모델로 변환
@@ -49,7 +50,8 @@ data class DailyCalendarRecord(
             avgDecibel = dbAvg,
             memo = memoText,
             measuredAt = measuredDate,
-            hasReport = hasReport
+            hasReport = reportYn,
+            duration = duration // ✅ 서버에서 받은 duration을 Domain으로 전달
         )
     }
 

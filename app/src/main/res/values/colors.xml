@@ -39,6 +39,9 @@
     <color name="db_moderate">#FF9800</color>
     <color name="db_high">#F44336</color>
 
+    <!-- 버튼 스트로크 색상 -->
+    <color name="default_stroke_color">#94a3b8</color>
+
     <!-- 소음 유형 차트 색상 -->
     <color name="chart_blue">#3B82F6</color>
     <color name="chart_green">#10B981</color>
@@ -47,4 +50,9 @@
     <color name="chart_purple">#8B5CF6</color>
     <color name="chart_pink">#EC4899</color>
     <color name="chart_gray">#6B7280</color>
+    <color name="chart_cyan">#06B6D4</color>
+    <color name="chart_indigo">#6366F1</color>
+    <color name="chart_lime">#84CC16</color>
+    <color name="chart_rose">#F43F5E</color>
+    <color name="chart_amber">#FBBF24</color>
 </resources>

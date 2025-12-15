@@ -20,9 +20,11 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import com.kau.ttokttok.R
 import com.kau.ttokttok.databinding.FragmentMyProfileBinding
+import com.kau.ttokttok.data.local.storage.UserStorage
 import com.kau.ttokttok.ui.navigation.Destination
 import com.kau.ttokttok.ui.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * 소음 일기 캘린더 화면
@@ -38,6 +40,9 @@ class NoiseLogFragment : Fragment() {
 
     private var _binding: FragmentMyProfileBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var userStorage: UserStorage
 
     // FAB 애니메이션을 위한 Handler
     private val handler = Handler(Looper.getMainLooper())
@@ -107,6 +112,7 @@ class NoiseLogFragment : Fragment() {
         setupCalendar()
         setupFab()
         setupReportButton()
+        setupAddress()
         observeViewModel()
 
         // 초기 로드 시 오늘 날짜의 일기 자동 조회
@@ -127,6 +133,25 @@ class NoiseLogFragment : Fragment() {
     }
 
     /**
+     * UserStorage에서 주소 정보 조회 및 UI 업데이트
+     */
+    private fun setupAddress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val buildingNumber = userStorage.getBuildingNumber()
+            val unitNumber = userStorage.getUnitNumber()
+
+            // 두 값이 모두 있으면 주소 표시, 하나라도 없으면 기본값
+            val address = if (buildingNumber != null && unitNumber != null) {
+                "${buildingNumber}동 ${unitNumber}호"
+            } else {
+                getString(R.string.default_address)
+            }
+
+            binding.tvAddress.text = address
+        }
+    }
+
+    /**
      * RecyclerView 설정
      * - 삭제: 해당 일기 삭제
      * - 수정: 일기 수정 화면으로 이동
@@ -143,6 +168,7 @@ class NoiseLogFragment : Fragment() {
                     putString("memo", log.memo)
                     putDouble("max_db", log.maxDecibel)
                     putDouble("avg_db", log.avgDecibel)
+                    putLong("duration", log.duration) // ✅ duration 추가 (수정 시 시간 표시)
                     putLong("measured_at", log.measuredAt.time)
                 }
                 findNavController().navigateTo(Destination.NOISE_LOG_FORM, bundle)
@@ -205,7 +231,7 @@ class NoiseLogFragment : Fragment() {
             viewModel.createReport(ids)
 
             adapter.clearSelection()
-            // 성공/실패 메시지는 ViewModel의 uiMessage Flow를 통해 표시됨
+            // 성공/실패 메시지는 ViewModel.uiMessage Flow를 통해 표시됨
         }
     }
 
@@ -299,7 +325,10 @@ class NoiseLogFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // 다른 화면에서 돌아올 때 데이터 새로고침 (일기 추가/수정 후)
+        // 다른 화면에서 돌아올 때 주소 정보 새로고침 (사용자가 주소를 변경했을 수 있음)
+        setupAddress()
+
+        // 데이터 새로고침 (일기 추가/수정 후)
         viewModel.loadAllLogs()
         viewModel.fetchTotalNoiseRecordCount()
         viewModel.fetchMonthlyNoiseRecordCount()
