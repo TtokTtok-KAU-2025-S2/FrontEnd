@@ -154,8 +154,13 @@ class NoiseLogFormFragment : Fragment() {
             put("망치질", binding.chipHammer)
             put("가구 끄는 소리", binding.chipFurniture)
             put("음악 소리", binding.chipMusic)
-            put("아이들 뛰는 소리", binding.chipKids)
-            put("청소기 소리", binding.chipVacuum)
+            put("고성방가", binding.chipVoice)
+            put("반려동물 소리", binding.chipPet)
+            put("가전제품 소리", binding.chipAppliance)
+            put("문 여닫는 소리", binding.chipDoor)
+            put("물 소리", binding.chipWater)
+            put("인테리어 공사", binding.chipConstruction)
+            put("운동 기구 소리", binding.chipExercise)
             put("기타", binding.chipEtc)
         }
 
@@ -200,14 +205,18 @@ class NoiseLogFormFragment : Fragment() {
         // 모든 버튼 초기화 후 선택된 버튼만 강조
         noiseTypeButtonMap.forEach { (_, button) ->
             button.apply {
-                strokeColor = ContextCompat.getColorStateList(requireContext(), android.R.color.black)
+                setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+                strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.default_stroke_color)
                 strokeWidth = 1
             }
         }
 
         noiseTypeButtonMap[type]?.apply {
+            setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
             strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.colorPrimary)
-            strokeWidth = 4
+            strokeWidth = 0
             Log.d("NoiseLogFormFragment", "  - UI 업데이트: \"$type\" 버튼 강조 완료")
         } ?: run {
             Log.e("NoiseLogFormFragment", "  ⚠️ 경고: \"$type\" 버튼을 찾을 수 없음!")
@@ -304,11 +313,29 @@ class NoiseLogFormFragment : Fragment() {
         return true
     }
 
+    /**
+     * 한글 카테고리 이름을 영문 코드로 변환
+     */
+    private fun mapCategoryToCode(koreanName: String): String = when (koreanName) {
+        "발걸음" -> "FOOTSTEPS"
+        "망치질" -> "HAMMERING"
+        "가구 끄는 소리" -> "FURNITURE"
+        "음악 소리" -> "MUSIC"
+        "고성방가" -> "VOICE"
+        "반려동물 소리" -> "PET"
+        "가전제품 소리" -> "APPLIANCE"
+        "문 여닫는 소리" -> "DOOR"
+        "물 소리" -> "WATER"
+        "인테리어 공사" -> "CONSTRUCTION"
+        "운동 기구 소리" -> "EXERCISE"
+        else -> "UNKNOWN"
+    }
+
 
     private fun saveNoiseLog() {
         val noiseLog = NoiseLog(
             id = logId, // 수정 모드일 때 기존 ID 유지, 신규일 때 null
-            noiseType = selectedNoiseType!!,
+            noiseType = mapCategoryToCode(selectedNoiseType!!),
             maxDecibel = maxDb,
             avgDecibel = avgDb,
             memo = binding.etMemo.text.toString(),
@@ -371,7 +398,7 @@ class NoiseLogFormFragment : Fragment() {
                     putString(ARG_MEMO, log.memo)
                     putDouble(ARG_MAX_DB, log.maxDecibel)
                     putDouble(ARG_AVG_DB, log.avgDecibel)
-                    putLong(ARG_DURATION, 0) // 수정 모드에서는 duration 사용 안함
+                    putLong(ARG_DURATION, log.duration)
                     putLong(ARG_MEASURED_AT, log.measuredAt.time)
                 }
             }

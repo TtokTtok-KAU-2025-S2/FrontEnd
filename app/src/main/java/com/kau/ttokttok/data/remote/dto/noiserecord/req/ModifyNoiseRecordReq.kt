@@ -41,8 +41,13 @@ data class ModifyNoiseRecordReq(
             "HAMMERING", "망치질" -> "HAMMERING"
             "FURNITURE", "가구 끄는 소리", "가구" -> "FURNITURE"
             "MUSIC", "음악 소리", "음악" -> "MUSIC"
-            "KIDS", "아이들 뛰는 소리" -> "UNKNOWN"
-            "VACUUM", "청소기 소리" -> "UNKNOWN"
+            "VOICE", "고성방가" -> "VOICE"
+            "PET", "반려동물 소리" -> "PET"
+            "APPLIANCE", "가전제품 소리" -> "APPLIANCE"
+            "DOOR", "문 여닫는 소리" -> "DOOR"
+            "WATER", "물 소리" -> "WATER"
+            "CONSTRUCTION", "인테리어 공사" -> "CONSTRUCTION"
+            "EXERCISE", "운동 기구 소리" -> "EXERCISE"
             else -> "UNKNOWN"
         }
 

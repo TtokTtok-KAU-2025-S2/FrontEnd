@@ -21,5 +21,12 @@ data class NoiseDistribution(
     val FURNITURE: Int? = 0,
     val HAMMERING: Int? = 0,
     val MUSIC: Int? = 0,
+    val VOICE: Int? = 0,
+    val PET: Int? = 0,
+    val APPLIANCE: Int? = 0,
+    val DOOR: Int? = 0,
+    val WATER: Int? = 0,
+    val CONSTRUCTION: Int? = 0,
+    val EXERCISE: Int? = 0,
     val UNKNOWN: Int? = 0
 )

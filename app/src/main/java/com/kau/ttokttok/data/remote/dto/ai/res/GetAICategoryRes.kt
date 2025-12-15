@@ -5,7 +5,7 @@ package com.kau.ttokttok.data.remote.dto.ai.res
  *
  * AI가 분석한 소음 카테고리 및 상세 정보
  *
- * @param category 소음 카테고리 (MUSIC, FOOTSTEPS, HAMMERING, FURNITURE, UNKNOWN)
+ * @param category 소음 카테고리 (FOOTSTEPS, HAMMERING, FURNITURE, MUSIC, VOICE, PET, APPLIANCE, DOOR, WATER, CONSTRUCTION, EXERCISE, UNKNOWN)
  * @param transcript 음성 인식 결과 (예: "음악 소리")
  * @param reason AI가 해당 카테고리로 판단한 이유
  * @param createdAt 분석 완료 시각
@@ -44,6 +44,13 @@ fun String.toCategoryKorean(): String = when (this) {
     "HAMMERING" -> "망치질"
     "FURNITURE" -> "가구 끄는 소리"
     "MUSIC" -> "음악 소리"
+    "VOICE" -> "고성방가"
+    "PET" -> "반려동물 소리"
+    "APPLIANCE" -> "가전제품 소리"
+    "DOOR" -> "문 여닫는 소리"
+    "WATER" -> "물 소리"
+    "CONSTRUCTION" -> "인테리어 공사"
+    "EXERCISE" -> "운동 기구 소리"
     "UNKNOWN" -> "기타"
     else -> "알 수 없음"
 }

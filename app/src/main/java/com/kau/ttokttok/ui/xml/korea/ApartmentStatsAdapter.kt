@@ -76,6 +76,7 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
                 return
             }
 
+            // 0이 아닌 항목들만 파이 차트에 추가
             getNoiseTypes(distribution).forEach { type ->
                 if (type.count > 0) {
                     val percentage = (type.count.toFloat() / total * 100)
@@ -99,7 +100,7 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
                 selectionShift = 5f
                 valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
                     override fun getFormattedValue(value: Float): String {
-                        return "${value.toInt()}%"
+                        return if (value > 1f) "${value.toInt()}%" else ""
                     }
                 }
             }
@@ -126,33 +127,66 @@ class ApartmentStatsAdapter : ListAdapter<Apartment, ApartmentStatsAdapter.ViewH
 
             if (total == 0) return
 
-            getNoiseTypes(distribution).forEach { type ->
+            // getNoiseTypes와 동일한 순서로 범례 생성
+            // 2열 레이아웃: 짝수 인덱스면 왼쪽, 홀수 인덱스면 오른쪽
+            var leftContainer: ViewGroup? = null
+
+            getNoiseTypes(distribution).forEachIndexed { index, type ->
                 if (type.count > 0) {
+                    // 2개씩 묶어서 행 생성
+                    if (index % 2 == 0) {
+                        leftContainer = android.widget.LinearLayout(context).apply {
+                            layoutParams = android.widget.LinearLayout.LayoutParams(
+                                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            orientation = android.widget.LinearLayout.HORIZONTAL
+                            binding.legendContainer.addView(this)
+                        }
+                    }
+
                     val percentage = (type.count.toFloat() / total * 100).toInt()
                     val legendBinding = ItemLegendBinding.inflate(
                         inflater,
-                        binding.legendContainer,
+                        leftContainer,
                         false
                     )
                     legendBinding.tvLegendLabel.text = "${type.label} (${percentage}%)"
                     legendBinding.colorIndicator.setBackgroundColor(context.getColor(type.colorRes))
-                    binding.legendContainer.addView(legendBinding.root)
+
+                    // 너비를 50%로 설정하여 2열 레이아웃 구성
+                    val params = android.widget.LinearLayout.LayoutParams(
+                        0,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                    legendBinding.root.layoutParams = params
+                    leftContainer?.addView(legendBinding.root)
                 }
             }
         }
 
         // 총 리포트 건수
         private fun getTotalCount(d: NoiseDistribution) =
-            (d.FOOTSTEPS ?: 0) + (d.FURNITURE ?: 0) +
-            (d.HAMMERING ?: 0) + (d.MUSIC ?: 0) + (d.UNKNOWN ?: 0)
+            (d.FOOTSTEPS ?: 0) + (d.HAMMERING ?: 0) + (d.FURNITURE ?: 0) +
+            (d.MUSIC ?: 0) + (d.VOICE ?: 0) + (d.PET ?: 0) +
+            (d.APPLIANCE ?: 0) + (d.DOOR ?: 0) + (d.WATER ?: 0) +
+            (d.CONSTRUCTION ?: 0) + (d.EXERCISE ?: 0) + (d.UNKNOWN ?: 0)
 
         // 노이즈 타입별 데이터
         private fun getNoiseTypes(d: NoiseDistribution) = listOf(
-            NoiseType("발걸음", d.FOOTSTEPS ?: 0, R.color.chart_blue),
-            NoiseType("가구", d.FURNITURE ?: 0, R.color.chart_green),
-            NoiseType("망치질", d.HAMMERING ?: 0, R.color.chart_orange),
-            NoiseType("음악", d.MUSIC ?: 0, R.color.chart_purple),
-            NoiseType("기타", d.UNKNOWN ?: 0, R.color.chart_gray)
+            NoiseType("발걸음", d.FOOTSTEPS ?: 0, R.color.chart_blue),          // 파랑
+            NoiseType("망치질", d.HAMMERING ?: 0, R.color.chart_red),           // 빨강
+            NoiseType("가구", d.FURNITURE ?: 0, R.color.chart_green),           // 초록
+            NoiseType("음악", d.MUSIC ?: 0, R.color.chart_purple),              // 보라
+            NoiseType("고성방가", d.VOICE ?: 0, R.color.chart_pink),            // 분홍
+            NoiseType("반려동물", d.PET ?: 0, R.color.chart_cyan),              // 청록
+            NoiseType("가전제품", d.APPLIANCE ?: 0, R.color.chart_orange),      // 주황
+            NoiseType("문", d.DOOR ?: 0, R.color.chart_indigo),                 // 인디고
+            NoiseType("물", d.WATER ?: 0, R.color.chart_amber),                 // 황금색
+            NoiseType("공사", d.CONSTRUCTION ?: 0, R.color.chart_lime),         // 라임
+            NoiseType("운동기구", d.EXERCISE ?: 0, R.color.chart_rose),         // 장미색
+            NoiseType("기타", d.UNKNOWN ?: 0, R.color.chart_gray)               // 회색
         )
     }
 
