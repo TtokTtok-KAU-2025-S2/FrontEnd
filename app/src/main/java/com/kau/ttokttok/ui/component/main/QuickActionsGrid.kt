@@ -45,7 +45,7 @@ fun QuickActionsGrid(
 
         // 2) 게시판
         ActionCardItem(
-            title = "게시판",
+            title = "공지사항",
             subtitle = "이웃과 소통하기",
             gradient = listOf(Color(0xFF60A5FA), Color(0xFF22D3EE)), // from-blue-400 to-cyan-500
             icon = {
